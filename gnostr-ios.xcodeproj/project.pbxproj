@@ -29,7 +29,7 @@
 
 /* Begin PBXFileReference section */
 		95394E5F29F2F4F8009A74DF /* Routes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routes.swift; sourceTree = "<group>"; };
-		CA3C5401286A2BC2001E1858 /* LibP2PChatExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LibP2PChatExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA3C5401286A2BC2001E1858 /* gnostr-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "gnostr-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA3C5404286A2BC2001E1858 /* LibP2PChatExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibP2PChatExampleApp.swift; sourceTree = "<group>"; };
 		CA3C5408286A2BC2001E1858 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA3C540B286A2BC2001E1858 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -75,7 +75,7 @@
 		CA3C5402286A2BC2001E1858 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CA3C5401286A2BC2001E1858 /* LibP2PChatExample.app */,
+				CA3C5401286A2BC2001E1858 /* gnostr-ios.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -144,9 +144,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CA3C5400286A2BC2001E1858 /* LibP2PChatExample */ = {
+		CA3C5400286A2BC2001E1858 /* gnostr-ios */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CA3C540F286A2BC2001E1858 /* Build configuration list for PBXNativeTarget "LibP2PChatExample" */;
+			buildConfigurationList = CA3C540F286A2BC2001E1858 /* Build configuration list for PBXNativeTarget "gnostr-ios" */;
 			buildPhases = (
 				CA3C53FD286A2BC2001E1858 /* Sources */,
 				CA3C53FE286A2BC2001E1858 /* Frameworks */,
@@ -156,7 +156,7 @@
 			);
 			dependencies = (
 			);
-			name = LibP2PChatExample;
+			name = "gnostr-ios";
 			packageProductDependencies = (
 				CA3C542D286A2C3C001E1858 /* LibP2PNoise */,
 				CA3C5430286A2C4F001E1858 /* LibP2PMPLEX */,
@@ -164,7 +164,7 @@
 				95D22A7229F5E87400DF98C7 /* LibP2PMDNS */,
 			);
 			productName = LibP2PChatExample;
-			productReference = CA3C5401286A2BC2001E1858 /* LibP2PChatExample.app */;
+			productReference = CA3C5401286A2BC2001E1858 /* gnostr-ios.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -182,7 +182,7 @@
 					};
 				};
 			};
-			buildConfigurationList = CA3C53FC286A2BC2001E1858 /* Build configuration list for PBXProject "LibP2PChatExample" */;
+			buildConfigurationList = CA3C53FC286A2BC2001E1858 /* Build configuration list for PBXProject "gnostr-ios" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -201,7 +201,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CA3C5400286A2BC2001E1858 /* LibP2PChatExample */,
+				CA3C5400286A2BC2001E1858 /* gnostr-ios */,
 			);
 		};
 /* End PBXProject section */
@@ -426,7 +426,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CA3C53FC286A2BC2001E1858 /* Build configuration list for PBXProject "LibP2PChatExample" */ = {
+		CA3C53FC286A2BC2001E1858 /* Build configuration list for PBXProject "gnostr-ios" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CA3C540D286A2BC2001E1858 /* Debug */,
@@ -435,7 +435,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CA3C540F286A2BC2001E1858 /* Build configuration list for PBXNativeTarget "LibP2PChatExample" */ = {
+		CA3C540F286A2BC2001E1858 /* Build configuration list for PBXNativeTarget "gnostr-ios" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CA3C5410286A2BC2001E1858 /* Debug */,
