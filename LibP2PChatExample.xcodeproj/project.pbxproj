@@ -364,10 +364,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"LibP2PChatExample/Preview Content\"";
-				DEVELOPMENT_TEAM = EF4K9WDULC;
+				DEVELOPMENT_TEAM = M684FYCYG6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LibP2PChatExample/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "gnostr-ios";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Chat uses the local network to find peers to chat with.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -379,7 +381,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.brandontoms.LibP2PChatExample;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.gnostr.gnostr-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -396,10 +398,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"LibP2PChatExample/Preview Content\"";
-				DEVELOPMENT_TEAM = EF4K9WDULC;
+				DEVELOPMENT_TEAM = M684FYCYG6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LibP2PChatExample/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "gnostr-ios";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Chat uses the local network to find peers to chat with.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -411,7 +415,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.brandontoms.LibP2PChatExample;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.gnostr.gnostr-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
