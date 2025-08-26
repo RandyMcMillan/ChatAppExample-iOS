@@ -86,7 +86,7 @@ struct SettingsView: View {
                     Text("0.1.1")
                 }
                 Link(
-                    destination: URL(string: "https://github.com/swift-libp2p")!,
+                    destination: URL(string: "https://github.com/RandyMcMillan/ChatAppExample-iOS")!,
                     label:  {
                         HStack {
                             Image(systemName: "chevron.left.forwardslash.chevron.right")
@@ -96,7 +96,7 @@ struct SettingsView: View {
                     }
                 )
                 Link(
-                    destination: URL(string: "https://github.com/swift-libp2p/libp2p-chat-app.git")!,
+                    destination: URL(string: "https://github.com/RandyMcMillan/ChatAppExample-iOS")!,
                     label:  {
                         HStack {
                             Image(systemName: "chevron.left.forwardslash.chevron.right")
