@@ -153,7 +153,11 @@ class ViewModel: ObservableObject, ChatDelegate {
     /// - Starting a TCP Server and listening for inbound TCP requests
     /// - Starting the mDNS Discovery service (searching for libp2p peers on the same network LAN)
     public func startP2PService() async {
-        try? await self.p2pService.start()
+        do {
+            try await self.p2pService.start()
+        } catch {
+            print("Failed to start libp2p: \(error)")
+        }
     }
 
     /// Attempts to shutdown the libp2p service

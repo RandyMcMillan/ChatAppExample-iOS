@@ -5,6 +5,7 @@
 //  Created by Brandon Toms on 5/29/22.
 //
 
+import Foundation
 import LibP2P
 import LibP2PNoise
 import LibP2PMPLEX
@@ -32,10 +33,9 @@ class LibP2PService {
     static let shared = LibP2PService()
 
     private var app:Application
+    private var lna: LocalNetworkAuthorization?
     
     internal var delegate:ChatDelegate? = nil
-    
-    //private var lna:LocalNetworkAuthorization
     
     private var pingTask:RepeatedTask? = nil
     
@@ -77,7 +77,7 @@ class LibP2PService {
         try! routes(self.app)
         
         // Used to request Local Network Access
-        //self.lna = LocalNetworkAuthorization()
+        self.lna = LocalNetworkAuthorization()
     }
     
     public func deletePeerID() {
@@ -93,7 +93,9 @@ class LibP2PService {
     }
     
     public func start() async throws {
-        //guard await self.lna.requestAuthorization() else { return }
+        guard await self.lna?.requestAuthorization() ?? true else {
+            throw CocoaError(.userCancelled)
+        }
         if app.isRunning { return }
         try app.start()
         self.app.logger.notice("LibP2P Started!")
