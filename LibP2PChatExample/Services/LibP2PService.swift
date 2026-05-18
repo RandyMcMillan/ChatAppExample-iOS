@@ -32,6 +32,13 @@ extension Request {
 class LibP2PService {
     static let shared = LibP2PService()
 
+    private enum LifecycleState {
+        case stopped
+        case starting
+        case running
+        case stopping
+    }
+
     private var app:Application
     private let peerID: PeerID
     private var lna: LocalNetworkAuthorization?
@@ -42,6 +49,7 @@ class LibP2PService {
     
     private var pingTask:RepeatedTask? = nil
     private var runtimeHandlersInstalled = false
+    private var lifecycleState: LifecycleState = .stopped
     
     public var savedPeerID:PeerID? {
         if let pid = UserDefaults.standard.data(forKey: "MyPeerID") {
@@ -77,9 +85,17 @@ class LibP2PService {
         app.security.use(.noise)
         app.muxers.use(.mplex)
         app.discovery.use(.mdns)
-        app.servers.use(.tcp(host: "0.0.0.0", port: 10000))
+        app.servers.use(.tcp(host: "0.0.0.0", port: Self.listenPort))
         try! routes(app)
         return app
+    }
+
+    private static var listenPort: UInt16 {
+#if targetEnvironment(simulator)
+        return 10001
+#else
+        return 10000
+#endif
     }
 
     private func installRuntimeHandlersIfNeeded() {
@@ -132,22 +148,30 @@ class LibP2PService {
         guard await self.lna?.requestAuthorization() ?? true else {
             throw CocoaError(.userCancelled)
         }
+        guard self.lifecycleState != .running && self.lifecycleState != .starting else { return }
+        self.lifecycleState = .starting
         if self.app.didShutdown {
             self.app = Self.makeApplication(peerID: self.peerID)
             self.lna = LocalNetworkAuthorization()
             self.runtimeHandlersInstalled = false
         }
         self.installRuntimeHandlersIfNeeded()
-        if app.isRunning { return }
-        try app.start()
+        try await app.startup()
         self.app.logger.notice("LibP2P Started!")
+        self.lifecycleState = .running
     }
     
-    public func stop() {
-        guard app.isRunning else { return }
+    public func stop() async {
+        guard self.lifecycleState == .running else { return }
+        self.lifecycleState = .stopping
         self.pingTask?.cancel()
-        app.shutdown()
+        do {
+            try await app.asyncShutdown()
+        } catch {
+            self.app.logger.error("Failed to shut down libp2p: \(error)")
+        }
         self.runtimeHandlersInstalled = false
+        self.lifecycleState = .stopped
     }
     
     public func send(message:String, to peer:PeerID) {
