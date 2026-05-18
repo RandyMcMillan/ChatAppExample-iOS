@@ -10,6 +10,9 @@ import LibP2P
 import LibP2PNoise
 import LibP2PMPLEX
 import LibP2PMDNS
+#if os(iOS)
+import UIKit
+#endif
 
 /// Any class that conforms to the ChatDelegate can register themselves on the LibP2PService to get notified of Chat events
 protocol ChatDelegate {
@@ -98,7 +101,20 @@ class LibP2PService {
            port > 0 {
             return port
         }
-        return 0
+        return defaultListenPort
+    }
+
+    private static var defaultListenPort: Int {
+        #if os(macOS)
+        return 10000
+        #elseif os(iOS)
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            return 10002
+        }
+        return 10001
+        #else
+        return 10000
+        #endif
     }
 
     private func installRuntimeHandlersIfNeeded() {
@@ -114,7 +130,7 @@ class LibP2PService {
                     }
                     self.app.logger.notice("Dialing peer \(peer.peer) at \(address)")
                     do {
-                        try self.app.newStream(to: address, forProtocol: "/chat/1.0.0")
+                        try self.app.newStream(to: address, forProtocol: "/ipfs/id/1.0.0")
                     } catch {
                         self.app.logger.error("Failed to dial peer \(peer.peer): \(error)")
                     }
