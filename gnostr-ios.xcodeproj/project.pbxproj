@@ -65,9 +65,9 @@
 
 /* Begin PBXFileReference section */
 		4B6BD8FB2FBBA42C007007B5 /* gnostr-ipad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "gnostr-ipad.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B6BD8FC2FBBA42C007007B5 /* gnostr-iphone copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "gnostr-iphone copy-Info.plist"; path = "/Users/Shared/gnostr-org/.github/ChatAppExample-iOS/gnostr-iphone copy-Info.plist"; sourceTree = "<absolute>"; };
+		4B6BD8FC2FBBA42C007007B5 /* gnostr-iphone-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "gnostr-iphone-Info.plist"; path = "/Users/Shared/gnostr-org/.github/ChatAppExample-iOS/gnostr-iphone-Info.plist"; sourceTree = "<absolute>"; };
 		4B6BD91E2FBBA434007007B5 /* gnostr-macos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "gnostr-macos.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B6BD91F2FBBA434007007B5 /* gnostr-ipad copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "gnostr-ipad copy-Info.plist"; path = "/Users/Shared/gnostr-org/.github/ChatAppExample-iOS/gnostr-ipad copy-Info.plist"; sourceTree = "<absolute>"; };
+		4B6BD91F2FBBA434007007B5 /* gnostr-ipad-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "gnostr-ipad-Info.plist"; path = "/Users/Shared/gnostr-org/.github/ChatAppExample-iOS/gnostr-ipad-Info.plist"; sourceTree = "<absolute>"; };
 		95394E5F29F2F4F8009A74DF /* Routes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routes.swift; sourceTree = "<group>"; };
 		CA3C5401286A2BC2001E1858 /* gnostr-iphone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "gnostr-iphone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA3C5404286A2BC2001E1858 /* LibP2PChatExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibP2PChatExampleApp.swift; sourceTree = "<group>"; };
@@ -131,8 +131,8 @@
 				CA3C5403286A2BC2001E1858 /* LibP2PChatExample */,
 				CA3C5402286A2BC2001E1858 /* Products */,
 				CA55D76729085D1D007B8F2D /* Frameworks */,
-				4B6BD8FC2FBBA42C007007B5 /* gnostr-iphone copy-Info.plist */,
-				4B6BD91F2FBBA434007007B5 /* gnostr-ipad copy-Info.plist */,
+				4B6BD8FC2FBBA42C007007B5 /* gnostr-iphone-Info.plist */,
+				4B6BD91F2FBBA434007007B5 /* gnostr-ipad-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -423,7 +423,7 @@
 				DEVELOPMENT_TEAM = M684FYCYG6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "gnostr-iphone copy-Info.plist";
+				INFOPLIST_FILE = "gnostr-iphone-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = gnostr;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Chat uses the local network to find peers to chat with.";
@@ -457,7 +457,7 @@
 				DEVELOPMENT_TEAM = M684FYCYG6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "gnostr-iphone copy-Info.plist";
+				INFOPLIST_FILE = "gnostr-iphone-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = gnostr;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Chat uses the local network to find peers to chat with.";
@@ -491,7 +491,7 @@
 				DEVELOPMENT_TEAM = M684FYCYG6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "gnostr-ipad copy-Info.plist";
+				INFOPLIST_FILE = "gnostr-ipad-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = gnostr;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Chat uses the local network to find peers to chat with.";
@@ -525,7 +525,7 @@
 				DEVELOPMENT_TEAM = M684FYCYG6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "gnostr-ipad copy-Info.plist";
+				INFOPLIST_FILE = "gnostr-ipad-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = gnostr;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Chat uses the local network to find peers to chat with.";
