@@ -156,9 +156,14 @@ class LibP2PService {
             self.runtimeHandlersInstalled = false
         }
         self.installRuntimeHandlersIfNeeded()
-        try await app.startup()
-        self.app.logger.notice("LibP2P Started!")
-        self.lifecycleState = .running
+        do {
+            try await app.startup()
+            self.app.logger.notice("LibP2P Started!")
+            self.lifecycleState = .running
+        } catch {
+            self.lifecycleState = .stopped
+            throw error
+        }
     }
     
     public func stop() async {
