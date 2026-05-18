@@ -106,7 +106,16 @@ class LibP2PService {
             self.app.logger.notice("We discovered a peer: \(peer)")
             self.app.connections.getConnectionsToPeer(peer: peer.peer, on: nil).whenSuccess { conns in
                 if conns.isEmpty {
-                    try? self.app.newStream(to: peer.addresses.first!, forProtocol: "/chat/1.0.0")
+                    guard let address = peer.addresses.first(where: { $0.description.contains("/tcp/") }) else {
+                        self.app.logger.warning("No dialable TCP address found for peer \(peer.peer)")
+                        return
+                    }
+                    self.app.logger.notice("Dialing peer \(peer.peer) at \(address)")
+                    do {
+                        try self.app.newStream(to: address, forProtocol: "/chat/1.0.0")
+                    } catch {
+                        self.app.logger.error("Failed to dial peer \(peer.peer): \(error)")
+                    }
                 }
             }
         }
