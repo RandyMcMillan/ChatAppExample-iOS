@@ -82,7 +82,8 @@ class LibP2PService {
     private static func makeApplication(peerID: PeerID) -> Application {
         let app = Application(.testing, peerID: peerID)
         app.logger.logLevel = .notice
-        app.connectionManager.setIdleTimeout(.seconds(30))
+        // Keep connections open long enough for pubsub chatter and simulator pauses.
+        app.connectionManager.setIdleTimeout(.seconds(300))
         app.security.use(.noise)
         app.muxers.use(.mplex)
         app.discovery.use(.mdns)
@@ -92,11 +93,12 @@ class LibP2PService {
     }
 
     private static var listenPort: Int {
-#if targetEnvironment(simulator)
-        return 10001
-#else
-        return 10000
-#endif
+        if let value = ProcessInfo.processInfo.environment["P2P_LISTEN_PORT"],
+           let port = Int(value),
+           port > 0 {
+            return port
+        }
+        return 0
     }
 
     private func installRuntimeHandlersIfNeeded() {
@@ -120,8 +122,9 @@ class LibP2PService {
             }
         }
 
-        self.app.events.on(self, event: .disconnected({ conn, peerID in
-            if let peerID = peerID { let _ = self.app.peers.removeAllAddresses(forPeer: peerID) }
+        self.app.events.on(self, event: .disconnected({ _, peerID in
+            guard let peerID = peerID else { return }
+            self.app.logger.notice("Disconnected from peer \(peerID.b58String); keeping discovered addresses for re-dial")
         }))
 
         self.pingTask?.cancel()
@@ -225,8 +228,8 @@ class LibP2PService {
         }
     }
     
-    /// This recurring task acts as a Keep-Alive service for Peers that support the `/chat/1.0.0` protocol
-    /// We Ping these peers at an interval that's shorter than our Idle Timeout set above (30 seconds) in order to keep the Connection alive
+    /// This recurring task acts as a Keep-Alive service for Peers that support the `/chat/1.0.0` protocol.
+    /// It keeps direct chat connections from idling out while pubsub traffic is sparse.
     public func pingDiscoveredUsers() {
         let _ = self.app.peers.getPeers(supportingProtocol: .init("chat/1.0.0")! ).map { peers in
             return peers.compactMap { peerID in
