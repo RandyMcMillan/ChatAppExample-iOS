@@ -165,7 +165,7 @@ class ViewModel: ObservableObject, ChatDelegate {
     /// - Stopping the mDNS Discovery service
     public func stopP2PService() async {
         // Stop the service
-        await self.p2pService.stop()
+        self.p2pService.stop()
         // Mark all peers inactive
         for i in 0..<self.chats.count {
             self.chats[i].peer.isActive = false
