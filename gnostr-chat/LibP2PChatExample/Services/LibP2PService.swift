@@ -7,6 +7,7 @@
 
 import Foundation
 import Crypto
+import Combine
 import LibP2P
 import LibP2PNoise
 import LibP2PMPLEX
@@ -33,7 +34,7 @@ extension Request {
 /// - registering our Route handlers
 /// - listening for peer discovery events
 /// - sending messages to connected peers
-class LibP2PService {
+class LibP2PService: ObservableObject {
     static let shared = LibP2PService()
 
     private enum RuntimeProfile: String {
@@ -51,6 +52,12 @@ class LibP2PService {
         case stopping
     }
 
+    public enum PeerConnectionState: Equatable {
+        case disconnected
+        case dialing
+        case connected
+    }
+
     private var app:Application
     private let peerID: PeerID
     private var lna: LocalNetworkAuthorization?
@@ -65,6 +72,7 @@ class LibP2PService {
     private var topologyRegistrations: [TopologyRegistration] = []
     private var discoveredPeerAddresses: [String: Multiaddr] = [:]
     private let discoveredPeerAddressesQueue = DispatchQueue(label: "LibP2PService.discoveredPeerAddresses")
+    @Published private var peerConnectionStates: [String: PeerConnectionState] = [:]
     
     public var savedPeerID:PeerID? {
         Self.loadStoredPeerID(for: Self.runtimeProfile)
@@ -156,6 +164,28 @@ class LibP2PService {
         return app
     }
 
+    public func connectionState(for peerID: PeerID) -> PeerConnectionState {
+        self.peerConnectionStates[peerID.b58String] ?? .disconnected
+    }
+
+    public func markPeerConnected(_ peerID: PeerID) {
+        DispatchQueue.main.async {
+            self.peerConnectionStates[peerID.b58String] = .connected
+        }
+    }
+
+    public func markPeerDialing(_ peerID: PeerID) {
+        DispatchQueue.main.async {
+            self.peerConnectionStates[peerID.b58String] = .dialing
+        }
+    }
+
+    public func markPeerDisconnected(_ peerID: PeerID) {
+        DispatchQueue.main.async {
+            self.peerConnectionStates[peerID.b58String] = .disconnected
+        }
+    }
+
     private func recordDiscoveredAddress(_ address: Multiaddr, for peerID: PeerID) {
         self.discoveredPeerAddressesQueue.sync {
             self.discoveredPeerAddresses[peerID.b58String] = address
@@ -174,14 +204,17 @@ class LibP2PService {
             try self.app.newStream(to: address, forProtocol: "/ipfs/id/1.0.0")
         } catch {
             self.app.logger.error("Failed to dial peer \(peerID): \(error)")
+            self.markPeerDisconnected(peerID)
         }
     }
 
     private func redial(peerID: PeerID) {
         guard let address = self.discoveredAddress(for: peerID) else {
             self.app.logger.warning("No stored address available for peer \(peerID.b58String); cannot redial")
+            self.markPeerDisconnected(peerID)
             return
         }
+        self.markPeerDialing(peerID)
         self.dial(peerID: peerID, address: address)
     }
 
@@ -197,7 +230,10 @@ class LibP2PService {
                         return
                     }
                     self.recordDiscoveredAddress(address, for: peer.peer)
+                    self.markPeerDialing(peer.peer)
                     self.dial(peerID: peer.peer, address: address)
+                } else {
+                    self.markPeerConnected(peer.peer)
                 }
             }
         }
@@ -205,6 +241,7 @@ class LibP2PService {
         self.app.events.on(self, event: .disconnected({ _, peerID in
             guard let peerID = peerID else { return }
             self.app.logger.notice("Disconnected from peer \(peerID.b58String); scheduling redial")
+            self.markPeerDialing(peerID)
             self.app.eventLoopGroup.any().scheduleTask(in: .seconds(1)) {
                 self.redial(peerID: peerID)
             }
