@@ -14,7 +14,8 @@ struct ChatRow: View {
     @ObservedObject var chat:Chat
     
     var body: some View {
-        HStack(spacing: 8) {
+        let isActive = viewModel.isActive(peer: chat.peer)
+        return HStack(spacing: 8) {
             PeerIconView(
                 peer: chat.peer,
                 frame: CGSize(width: 70, height: 70)
@@ -41,6 +42,16 @@ struct ChatRow: View {
                 }
             }
         }
+        .padding(.vertical, 6)
+        .padding(.horizontal, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.clear)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(isActive ? Color.green : Color.clear, lineWidth: 2)
+        )
     }
 }
 
