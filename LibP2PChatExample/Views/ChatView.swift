@@ -167,11 +167,7 @@ struct ChatView: View {
     func scrollTo(messageID: UUID, anchor: UnitPoint? = nil, shouldAnimate: Bool, proxy:ScrollViewProxy) {
         DispatchQueue.main.async {
             withAnimation(shouldAnimate ? Animation.easeOut : nil) {
-                if let anchor = anchor {
-                    proxy.scrollTo(messageID, anchor: anchor)
-                } else {
-                    proxy.scrollTo(messageID, anchor: UnitPoint(x: 0, y: -70.0))
-                }
+                proxy.scrollTo(messageID, anchor: anchor ?? .bottom)
             }
         }
     }
