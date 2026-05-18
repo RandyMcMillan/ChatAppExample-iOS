@@ -78,6 +78,7 @@ class ViewModel: ObservableObject, ChatDelegate {
                 // Mark the existing peer as active
                 if let index = self.chats.firstIndex(where: { $0.peer.peer == peer }) {
                     self.chats[index].peer.isActive = true
+                    self.p2pService.markPeerConnected(peer)
                 }
                 // Let the existing peer know of our nickname if we have one set...
                 DispatchQueue.global().async {
@@ -100,6 +101,7 @@ class ViewModel: ObservableObject, ChatDelegate {
                     messages: []
                 )
             )
+            self.p2pService.markPeerConnected(peer)
             // Let the new peer know of our nickname if we have one set...
             DispatchQueue.global().async {
                 if let nickname = self.nickname {
