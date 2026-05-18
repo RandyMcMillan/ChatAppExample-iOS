@@ -55,7 +55,6 @@ class LibP2PService {
     
     private init() {
         let peerID: PeerID
-        let peerID:PeerID
         if let existingPeerID = UserDefaults.standard.data(forKey: "MyPeerID") {
             peerID = try! PeerID(marshaledPrivateKey: existingPeerID)
         } else if let existingPeerID = UserDefaults.standard.string(forKey: "MyPeerID") {
@@ -148,6 +147,7 @@ class LibP2PService {
         guard app.isRunning else { return }
         self.pingTask?.cancel()
         app.shutdown()
+        self.runtimeHandlersInstalled = false
     }
     
     public func send(message:String, to peer:PeerID) {
