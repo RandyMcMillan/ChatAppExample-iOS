@@ -74,14 +74,18 @@ class LibP2PService {
         self.peerID = Self.loadOrCreatePeerID(for: Self.runtimeProfile)
         self.app = Self.makeApplication(peerID: self.peerID)
         self.lna = LocalNetworkAuthorization()
+        self.app.logger.notice("Resolved runtime profile: \(Self.runtimeProfile.rawValue) on port \(Self.listenPort)")
     }
 
     private static var runtimeProfile: RuntimeProfile {
-        #if os(macOS)
-        return .macOS
-        #elseif targetEnvironment(macCatalyst)
+        #if targetEnvironment(macCatalyst)
         return .macCatalyst
+        #elseif os(macOS)
+        return .macOS
         #elseif os(iOS)
+        if ProcessInfo.processInfo.isiOSAppOnMac {
+            return .madeForiPad
+        }
         switch UIDevice.current.userInterfaceIdiom {
         case .pad:
             return .iPad
