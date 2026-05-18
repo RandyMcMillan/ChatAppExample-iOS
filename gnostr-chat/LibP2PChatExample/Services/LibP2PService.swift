@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Crypto
 import LibP2P
 import LibP2PNoise
 import LibP2PMPLEX
@@ -35,6 +36,14 @@ extension Request {
 class LibP2PService {
     static let shared = LibP2PService()
 
+    private enum RuntimeProfile: String {
+        case macOS
+        case macCatalyst
+        case iPad
+        case iPhone
+        case iOSAppOnMac
+    }
+
     private enum LifecycleState {
         case stopped
         case starting
@@ -56,30 +65,72 @@ class LibP2PService {
     private var topologyRegistrations: [TopologyRegistration] = []
     
     public var savedPeerID:PeerID? {
-        if let pid = UserDefaults.standard.data(forKey: "MyPeerID") {
-            return try? PeerID(marshaledPrivateKey: pid)
-        } else if let pem = UserDefaults.standard.string(forKey: "MyPeerID") {
-            return try? PeerID(pem: pem, password: "Test123")
-        } else {
-            return nil
-        }
+        Self.loadStoredPeerID(for: Self.runtimeProfile)
     }
     
     private init() {
-        let peerID: PeerID
-        if let existingPeerID = UserDefaults.standard.data(forKey: "MyPeerID") {
-            peerID = try! PeerID(marshaledPrivateKey: existingPeerID)
-        } else if let existingPeerID = UserDefaults.standard.string(forKey: "MyPeerID") {
-            peerID = try! PeerID(pem: existingPeerID, password: "Test123")
-        } else {
-            peerID = try! PeerID(.Ed25519)
-            if let pem = try? peerID.exportKeyPair(as: .privatePEMString(encryptedWithPassword: "Test123")) {
-                UserDefaults.standard.set(String(pem), forKey: "MyPeerID")
-            }
-        }
-        self.peerID = peerID
-        self.app = Self.makeApplication(peerID: peerID)
+        self.peerID = Self.loadOrCreatePeerID(for: Self.runtimeProfile)
+        self.app = Self.makeApplication(peerID: self.peerID)
         self.lna = LocalNetworkAuthorization()
+    }
+
+    private static var runtimeProfile: RuntimeProfile {
+        #if os(macOS)
+        return .macOS
+        #elseif targetEnvironment(macCatalyst)
+        return .macCatalyst
+        #elseif os(iOS)
+        if ProcessInfo.processInfo.isiOSAppOnMac {
+            return .iOSAppOnMac
+        }
+        return UIDevice.current.userInterfaceIdiom == .pad ? .iPad : .iPhone
+        #else
+        return .iPhone
+        #endif
+    }
+
+    private static var listenPort: Int {
+        if let value = ProcessInfo.processInfo.environment["P2P_LISTEN_PORT"],
+           let port = Int(value),
+           port > 0 {
+            return port
+        }
+        switch Self.runtimeProfile {
+        case .macOS:
+            return 10000
+        case .iPhone:
+            return 10001
+        case .iPad:
+            return 10002
+        case .macCatalyst:
+            return 10003
+        case .iOSAppOnMac:
+            return 10004
+        }
+    }
+
+    private static var peerIDStorageKey: String {
+        "MyPeerID.\(Self.runtimeProfile.rawValue)"
+    }
+
+    private static func loadStoredPeerID(for profile: RuntimeProfile) -> PeerID? {
+        let key = "MyPeerID.\(profile.rawValue)"
+        guard let data = UserDefaults.standard.data(forKey: key) else { return nil }
+        return try? PeerID(marshaledPeerID: data)
+    }
+
+    private static func loadOrCreatePeerID(for profile: RuntimeProfile) -> PeerID {
+        let key = "MyPeerID.\(profile.rawValue)"
+        if let saved = Self.loadStoredPeerID(for: profile) {
+            return saved
+        }
+
+        let seed = Data(SHA256.hash(data: Data("gnostr-chat.peerid.\(profile.rawValue)".utf8)))
+        let privateKey = try! Curve25519.Signing.PrivateKey(rawRepresentation: seed)
+        let peerID = try! PeerID(marshaledPrivateKey: privateKey.marshal())
+        let marshaled = try! peerID.marshal(includingPrivateKey: true)
+        UserDefaults.standard.set(Data(marshaled), forKey: key)
+        return peerID
     }
 
     private static func makeApplication(peerID: PeerID) -> Application {
@@ -93,28 +144,6 @@ class LibP2PService {
         app.servers.use(.tcp(host: "0.0.0.0", port: Self.listenPort))
         try! routes(app)
         return app
-    }
-
-    private static var listenPort: Int {
-        if let value = ProcessInfo.processInfo.environment["P2P_LISTEN_PORT"],
-           let port = Int(value),
-           port > 0 {
-            return port
-        }
-        return defaultListenPort
-    }
-
-    private static var defaultListenPort: Int {
-        #if os(macOS)
-        return 10000
-        #elseif os(iOS)
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            return 10002
-        }
-        return 10001
-        #else
-        return 10000
-        #endif
     }
 
     private func installRuntimeHandlersIfNeeded() {
@@ -153,6 +182,7 @@ class LibP2PService {
     }
     
     public func deletePeerID() {
+        UserDefaults.standard.removeObject(forKey: Self.peerIDStorageKey)
         UserDefaults.standard.removeObject(forKey: "MyPeerID")
     }
     
