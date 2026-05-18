@@ -41,7 +41,7 @@ class LibP2PService {
         case macCatalyst
         case iPad
         case iPhone
-        case iOSAppOnMac
+        case madeForiPad
     }
 
     private enum LifecycleState {
@@ -63,6 +63,8 @@ class LibP2PService {
     private var runtimeHandlersInstalled = false
     private var lifecycleState: LifecycleState = .stopped
     private var topologyRegistrations: [TopologyRegistration] = []
+    private var discoveredPeerAddresses: [String: Multiaddr] = [:]
+    private let discoveredPeerAddressesQueue = DispatchQueue(label: "LibP2PService.discoveredPeerAddresses")
     
     public var savedPeerID:PeerID? {
         Self.loadStoredPeerID(for: Self.runtimeProfile)
@@ -80,10 +82,14 @@ class LibP2PService {
         #elseif targetEnvironment(macCatalyst)
         return .macCatalyst
         #elseif os(iOS)
-        if ProcessInfo.processInfo.isiOSAppOnMac {
-            return .iOSAppOnMac
+        switch UIDevice.current.userInterfaceIdiom {
+        case .pad:
+            return .iPad
+        case .mac:
+            return .madeForiPad
+        default:
+            return .iPhone
         }
-        return UIDevice.current.userInterfaceIdiom == .pad ? .iPad : .iPhone
         #else
         return .iPhone
         #endif
@@ -104,7 +110,7 @@ class LibP2PService {
             return 10002
         case .macCatalyst:
             return 10003
-        case .iOSAppOnMac:
+        case .madeForiPad:
             return 10004
         }
     }
@@ -146,6 +152,35 @@ class LibP2PService {
         return app
     }
 
+    private func recordDiscoveredAddress(_ address: Multiaddr, for peerID: PeerID) {
+        self.discoveredPeerAddressesQueue.sync {
+            self.discoveredPeerAddresses[peerID.b58String] = address
+        }
+    }
+
+    private func discoveredAddress(for peerID: PeerID) -> Multiaddr? {
+        self.discoveredPeerAddressesQueue.sync {
+            self.discoveredPeerAddresses[peerID.b58String]
+        }
+    }
+
+    private func dial(peerID: PeerID, address: Multiaddr) {
+        self.app.logger.notice("Dialing peer \(peerID) at \(address)")
+        do {
+            try self.app.newStream(to: address, forProtocol: "/ipfs/id/1.0.0")
+        } catch {
+            self.app.logger.error("Failed to dial peer \(peerID): \(error)")
+        }
+    }
+
+    private func redial(peerID: PeerID) {
+        guard let address = self.discoveredAddress(for: peerID) else {
+            self.app.logger.warning("No stored address available for peer \(peerID.b58String); cannot redial")
+            return
+        }
+        self.dial(peerID: peerID, address: address)
+    }
+
     private func installRuntimeHandlersIfNeeded() {
         guard !self.runtimeHandlersInstalled, let delegate = self.delegate else { return }
 
@@ -157,19 +192,18 @@ class LibP2PService {
                         self.app.logger.warning("No dialable TCP address found for peer \(peer.peer)")
                         return
                     }
-                    self.app.logger.notice("Dialing peer \(peer.peer) at \(address)")
-                    do {
-                        try self.app.newStream(to: address, forProtocol: "/ipfs/id/1.0.0")
-                    } catch {
-                        self.app.logger.error("Failed to dial peer \(peer.peer): \(error)")
-                    }
+                    self.recordDiscoveredAddress(address, for: peer.peer)
+                    self.dial(peerID: peer.peer, address: address)
                 }
             }
         }
 
         self.app.events.on(self, event: .disconnected({ _, peerID in
             guard let peerID = peerID else { return }
-            self.app.logger.notice("Disconnected from peer \(peerID.b58String); keeping discovered addresses for re-dial")
+            self.app.logger.notice("Disconnected from peer \(peerID.b58String); scheduling redial")
+            self.app.eventLoopGroup.any().scheduleTask(in: .seconds(1)) {
+                self.redial(peerID: peerID)
+            }
         }))
 
         self.pingTask?.cancel()
