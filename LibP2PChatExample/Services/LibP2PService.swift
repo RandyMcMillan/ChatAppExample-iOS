@@ -162,8 +162,8 @@ class LibP2PService {
             self.app = Self.makeApplication(peerID: self.peerID)
             self.lna = LocalNetworkAuthorization()
             self.runtimeHandlersInstalled = false
+            self.reinstallTopologyRegistrations()
         }
-        self.reinstallTopologyRegistrations()
         self.installRuntimeHandlersIfNeeded()
         do {
             try app.start()
