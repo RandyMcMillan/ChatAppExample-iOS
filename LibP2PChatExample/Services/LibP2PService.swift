@@ -33,11 +33,15 @@ class LibP2PService {
     static let shared = LibP2PService()
 
     private var app:Application
+    private let peerID: PeerID
     private var lna: LocalNetworkAuthorization?
     
-    internal var delegate:ChatDelegate? = nil
+    internal var delegate:ChatDelegate? = nil {
+        didSet { installRuntimeHandlersIfNeeded() }
+    }
     
     private var pingTask:RepeatedTask? = nil
+    private var runtimeHandlersInstalled = false
     
     public var savedPeerID:PeerID? {
         if let pid = UserDefaults.standard.data(forKey: "MyPeerID") {
@@ -50,6 +54,7 @@ class LibP2PService {
     }
     
     private init() {
+        let peerID: PeerID
         let peerID:PeerID
         if let existingPeerID = UserDefaults.standard.data(forKey: "MyPeerID") {
             peerID = try! PeerID(marshaledPrivateKey: existingPeerID)
@@ -61,23 +66,55 @@ class LibP2PService {
                 UserDefaults.standard.set(String(pem), forKey: "MyPeerID")
             }
         }
-                 
-        // Configure our libp2p stack
-        self.app = Application(.testing, peerID: peerID)
-        // Set the applications log level
-        self.app.logger.logLevel = .notice
-        // We set the Connections idleTimeout to a large value like 30 seconds
-        self.app.connectionManager.setIdleTimeout(.seconds(30))
-        self.app.security.use(.noise)
-        self.app.muxers.use(.mplex)
-        self.app.discovery.use(.mdns)
-        self.app.servers.use(.tcp(host: "0.0.0.0", port: 10000))
-        
-        // Register the `/chat/1.0.0` Protocol / Route
-        try! routes(self.app)
-        
-        // Used to request Local Network Access
+        self.peerID = peerID
+        self.app = Self.makeApplication(peerID: peerID)
         self.lna = LocalNetworkAuthorization()
+    }
+
+    private static func makeApplication(peerID: PeerID) -> Application {
+        let app = Application(.testing, peerID: peerID)
+        app.logger.logLevel = .notice
+        app.connectionManager.setIdleTimeout(.seconds(30))
+        app.security.use(.noise)
+        app.muxers.use(.mplex)
+        app.discovery.use(.mdns)
+        app.servers.use(.tcp(host: "0.0.0.0", port: 10000))
+        try! routes(app)
+        return app
+    }
+
+    private func installRuntimeHandlersIfNeeded() {
+        guard !self.runtimeHandlersInstalled, let delegate = self.delegate else { return }
+
+        self.app.discovery.onPeerDiscovered(self.app) { peer in
+            self.app.logger.notice("We discovered a peer: \(peer)")
+            self.app.connections.getConnectionsToPeer(peer: peer.peer, on: nil).whenSuccess { conns in
+                if conns.isEmpty {
+                    guard let address = peer.addresses.first(where: { $0.description.contains("/tcp/") }) else {
+                        self.app.logger.warning("No dialable TCP address found for peer \(peer.peer)")
+                        return
+                    }
+                    self.app.logger.notice("Dialing peer \(peer.peer) at \(address)")
+                    do {
+                        try self.app.newStream(to: address, forProtocol: "/chat/1.0.0")
+                    } catch {
+                        self.app.logger.error("Failed to dial peer \(peer.peer): \(error)")
+                    }
+                }
+            }
+        }
+
+        self.app.events.on(self, event: .disconnected({ conn, peerID in
+            if let peerID = peerID { let _ = self.app.peers.removeAllAddresses(forPeer: peerID) }
+        }))
+
+        self.pingTask?.cancel()
+        self.pingTask = self.app.eventLoopGroup.any().scheduleRepeatedTask(initialDelay: .seconds(15), delay: .seconds(15), { _ in
+            self.pingDiscoveredUsers()
+        })
+
+        self.runtimeHandlersInstalled = true
+        self.app.logger.notice("Installed runtime handlers for delegate \(String(describing: delegate))")
     }
     
     public func deletePeerID() {
@@ -96,40 +133,15 @@ class LibP2PService {
         guard await self.lna?.requestAuthorization() ?? true else {
             throw CocoaError(.userCancelled)
         }
+        if self.app.didShutdown {
+            self.app = Self.makeApplication(peerID: self.peerID)
+            self.lna = LocalNetworkAuthorization()
+            self.runtimeHandlersInstalled = false
+        }
+        self.installRuntimeHandlersIfNeeded()
         if app.isRunning { return }
         try app.start()
         self.app.logger.notice("LibP2P Started!")
-        
-        // This gets called for all discovered peers (they may or may not supoprt /chat/1.0.0)
-        // Same as `app.events.on(app, event: .discovered(...))`
-        app.discovery.onPeerDiscovered(app) { peer in
-            self.app.logger.notice("We discovered a peer: \(peer)")
-            self.app.connections.getConnectionsToPeer(peer: peer.peer, on: nil).whenSuccess { conns in
-                if conns.isEmpty {
-                    guard let address = peer.addresses.first(where: { $0.description.contains("/tcp/") }) else {
-                        self.app.logger.warning("No dialable TCP address found for peer \(peer.peer)")
-                        return
-                    }
-                    self.app.logger.notice("Dialing peer \(peer.peer) at \(address)")
-                    do {
-                        try self.app.newStream(to: address, forProtocol: "/chat/1.0.0")
-                    } catch {
-                        self.app.logger.error("Failed to dial peer \(peer.peer): \(error)")
-                    }
-                }
-            }
-        }
-        
-        // We remove any old addresses upon disconnection...
-        // TODO: Libp2p should mark a Multiaddress in our Peerbook as old/unconnectable upon a dial failing.
-        app.events.on(self, event: .disconnected({ conn, peerID in
-            if let peerID = peerID { let _ = self.app.peers.removeAllAddresses(forPeer: peerID) }
-        }))
-        
-        // Sechedule our repeating Ping Users Task
-        self.pingTask = app.eventLoopGroup.any().scheduleRepeatedTask(initialDelay: .seconds(15), delay: .seconds(15), { task in
-            self.pingDiscoveredUsers()
-        })
     }
     
     public func stop() {
