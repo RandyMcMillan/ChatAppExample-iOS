@@ -36,12 +36,11 @@ class ViewModel: ObservableObject, ChatDelegate {
             self.nickname = nickname
         }
 
-        // Instantiate our LibP2PService on a background thread to prevent QOS inversion warnings
-        // - Note: there's a brief moment where our p2pService is nil, the forced unwrapping of it could cause a crash...
-        Task(priority: .medium) {
-            // Grab a shared instance of our LibP2PService
-            self.p2pService = LibP2PService.shared
+        // Create the shared libp2p service before any UI-triggered start calls can fire.
+        self.p2pService = LibP2PService.shared
 
+        // Instantiate our LibP2PService on a background thread to prevent QOS inversion warnings
+        Task(priority: .medium) {
             // Create a Topology subscription for the `/chat/1.0.0` protocol
             // As libp2p discovers peers, and their supported protocols, it will notify us
             self.p2pService.topology(
