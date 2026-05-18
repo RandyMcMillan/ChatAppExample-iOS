@@ -6,12 +6,14 @@
 //
 
 import Foundation
+import Combine
 import PeerID
 
 class Chat: ObservableObject, Identifiable, Codable {
     var id:String { peer.id }
     @Published var peer:Person
     @Published var messages:[Message]
+    private var peerCancellable: AnyCancellable?
     
     var lastMessage:Message? {
         self.messages.last
@@ -20,6 +22,7 @@ class Chat: ObservableObject, Identifiable, Codable {
     internal init(peer: Person, messages: [Message]) {
         self.peer = peer
         self.messages = messages
+        self.bindPeer()
     }
     
     enum CodingKeys: String, CodingKey {
@@ -37,6 +40,13 @@ class Chat: ObservableObject, Identifiable, Codable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         peer = try values.decode(Person.self, forKey: .peer)
         messages = try values.decode([Message].self, forKey: .messages)
+        self.bindPeer()
+    }
+
+    private func bindPeer() {
+        self.peerCancellable = self.peer.objectWillChange.sink { [weak self] _ in
+            self?.objectWillChange.send()
+        }
     }
 }
 
