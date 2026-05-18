@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var viewModel: ViewModel
-    @State var isServiceRunning: Bool = false
+    @State var isServiceRunning: Bool = true
     @State var chatSelected: Chat? = nil
 
     var body: some View {
@@ -60,6 +60,13 @@ struct ContentView: View {
                     .disabled(!viewModel.isReady)
             }
             .navigationTitle("Chats")
+            .onAppear {
+                if isServiceRunning {
+                    Task.detached(priority: .background) {
+                        await viewModel.startP2PService()
+                    }
+                }
+            }
             .toolbar {
                 NavigationLink(destination: {
                     SettingsView()

@@ -163,7 +163,8 @@ class ViewModel: ObservableObject, ChatDelegate {
     /// This includes...
     /// - Stopping the TCP Server
     /// - Stopping the mDNS Discovery service
-    public func stopP2PService() async {
+    @MainActor
+    public func stopP2PService() {
         // Stop the service
         self.p2pService.stop()
         // Mark all peers inactive
