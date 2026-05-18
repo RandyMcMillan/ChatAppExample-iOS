@@ -50,6 +50,7 @@ class LibP2PService {
     private var pingTask:RepeatedTask? = nil
     private var runtimeHandlersInstalled = false
     private var lifecycleState: LifecycleState = .stopped
+    private var topologyRegistrations: [TopologyRegistration] = []
     
     public var savedPeerID:PeerID? {
         if let pid = UserDefaults.standard.data(forKey: "MyPeerID") {
@@ -141,7 +142,14 @@ class LibP2PService {
     }
     
     public func topology(_ reg:TopologyRegistration) {
+        self.topologyRegistrations.append(reg)
         self.app.topology.register(reg)
+    }
+
+    private func reinstallTopologyRegistrations() {
+        for registration in self.topologyRegistrations {
+            self.app.topology.register(registration)
+        }
     }
     
     public func start() async throws {
@@ -155,6 +163,7 @@ class LibP2PService {
             self.lna = LocalNetworkAuthorization()
             self.runtimeHandlersInstalled = false
         }
+        self.reinstallTopologyRegistrations()
         self.installRuntimeHandlersIfNeeded()
         do {
             try app.start()
