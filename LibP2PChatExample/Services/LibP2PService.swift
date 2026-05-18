@@ -90,7 +90,7 @@ class LibP2PService {
         return app
     }
 
-    private static var listenPort: UInt16 {
+    private static var listenPort: Int {
 #if targetEnvironment(simulator)
         return 10001
 #else
@@ -157,7 +157,7 @@ class LibP2PService {
         }
         self.installRuntimeHandlersIfNeeded()
         do {
-            try await app.startup()
+            try app.start()
             self.app.logger.notice("LibP2P Started!")
             self.lifecycleState = .running
         } catch {
@@ -166,15 +166,11 @@ class LibP2PService {
         }
     }
     
-    public func stop() async {
+    public func stop() {
         guard self.lifecycleState == .running else { return }
         self.lifecycleState = .stopping
         self.pingTask?.cancel()
-        do {
-            try await app.asyncShutdown()
-        } catch {
-            self.app.logger.error("Failed to shut down libp2p: \(error)")
-        }
+        app.shutdown()
         self.runtimeHandlersInstalled = false
         self.lifecycleState = .stopped
     }
