@@ -10,6 +10,7 @@ import SwiftUI
 struct ChatView: View {
     
     @EnvironmentObject var viewModel:ViewModel
+    @ObservedObject private var p2pService = LibP2PService.shared
     @FocusState private var isFocused
     @State private var text:String = ""
     
@@ -124,6 +125,17 @@ struct ChatView: View {
     func toolbarView() -> some View {
         VStack {
             let height2:CGFloat = 38
+            let connectionState = p2pService.connectionState(for: chat.peer.peer)
+            let sendButtonColor: Color = {
+                switch connectionState {
+                case .connected:
+                    return .green
+                case .dialing:
+                    return .yellow
+                case .disconnected:
+                    return .gray
+                }
+            }()
             HStack {
                 ZStack {
                     Text(text).foregroundColor(.clear)
@@ -151,11 +163,10 @@ struct ChatView: View {
                         .frame(width: height2, height: height2)
                         .background(
                             Circle()
-                                .foregroundColor(text.isEmpty || !chat.peer.isActive ? .gray : .blue)
+                                .foregroundColor(text.isEmpty ? .gray : sendButtonColor)
                         )
                 }
-                .disabled(text.isEmpty)
-                .disabled(!chat.peer.isActive)
+                .disabled(text.isEmpty || connectionState != .connected)
             }
             .frame(height: height)
         }
