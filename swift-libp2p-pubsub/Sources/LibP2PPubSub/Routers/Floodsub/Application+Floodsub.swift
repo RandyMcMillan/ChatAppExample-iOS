@@ -18,7 +18,7 @@ extension Application.PubSubServices.Provider {
     public static var floodsub: Self {
         .init {
             $0.pubsub.use { app -> FloodSub in
-                let fsub = try! FloodSub(group: app.eventLoopGroup, libp2p: app, emitSelf: true)
+                let fsub = try! FloodSub(group: app.eventLoopGroup, libp2p: app)
                 app.lifecycle.use(fsub)
                 return fsub
             }
