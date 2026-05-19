@@ -33,15 +33,15 @@ public func configure(_ app: Application) async throws {
             app.logger.notice("Libp2p listening at \(fullAddress)")
         }
     }
+}
 
-    fileprivate func listenPort() -> Int {
-        if let value = ProcessInfo.processInfo.environment["P2P_LISTEN_PORT"],
-           let port = Int(value),
-           port > 0 {
-            return port
-        }
-        return 10000
+fileprivate func listenPort() -> Int {
+    if let value = ProcessInfo.processInfo.environment["P2P_LISTEN_PORT"],
+       let port = Int(value),
+       port > 0 {
+        return port
     }
+    return 10000
 }
 
 /// An example of a custom command you can add to your app
