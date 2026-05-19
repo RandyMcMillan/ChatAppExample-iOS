@@ -164,7 +164,7 @@ struct ChatView: View {
                         .frame(width: height2, height: height2)
                         .background(
                             Circle()
-                                .foregroundColor(text.isEmpty ? .gray : sendButtonColor)
+                                .foregroundColor(sendButtonColor.opacity(text.isEmpty ? 0.45 : 1.0))
                         )
                 }
                 .disabled(text.isEmpty || (!isPeerConnected && connectionState != .dialing))
