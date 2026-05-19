@@ -9,9 +9,10 @@ struct AppTests {
     // This is an example of how you can test various aspects of your libp2p app
     @Test func testExample() async throws {
         // Init our app
-        let app = try await Application.make(.detect(), peerID: .ephemeral())
+        let app = try await Application.make(.testing, peerID: .ephemeral())
         // Configure it
         try await configure(app)
+        app.environment.arguments = ["libp2p"]
         // Start the app
         try await app.startup()
         

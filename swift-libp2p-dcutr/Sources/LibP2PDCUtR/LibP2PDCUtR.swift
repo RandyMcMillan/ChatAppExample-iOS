@@ -3,7 +3,6 @@ import SwiftProtobuf
 
 enum DCUtRWire {
     static let protocolID = "/libp2p/dcutr/1.0.0"
-    static let punchProtocol = "/ipfs/ping/1.0.0"
 
     static func encode(_ message: HolePunch) throws -> ByteBuffer {
         let data = try message.serializedData()
@@ -24,7 +23,6 @@ final class DCUtRCoordinator: @unchecked Sendable {
         var connectSentAt: Date?
         var connectReceivedAt: Date?
         var waitingForSync: Bool = false
-        var pendingDirectDial: Bool = false
     }
 
     private let application: Application
@@ -89,13 +87,14 @@ final class DCUtRCoordinator: @unchecked Sendable {
         return PeerInfo(peer: peer, addresses: addrs)
     }
 
-    private func firstDialableAddress(in peerInfo: PeerInfo) -> Multiaddr? {
-        peerInfo.addresses.first { address in
+    func dialablePeerInfo(in peerInfo: PeerInfo) -> PeerInfo {
+        let addresses = peerInfo.addresses.filter { address in
             let protocols = address.protocols()
             return protocols.contains(.ip4)
                 && protocols.contains(.tcp)
                 && !protocols.contains(.p2p_circuit)
         }
+        return PeerInfo(peer: peerInfo.peer, addresses: addresses)
     }
 
     private func initiatePunch(for peer: PeerID, relayConnection: Connection) {
@@ -116,14 +115,15 @@ final class DCUtRCoordinator: @unchecked Sendable {
         attempt.remotePeerInfo = remoteInfo
         attempt.waitingForSync = true
         self.setAttempt(attempt, for: peer)
-        guard let address = self.firstDialableAddress(in: remoteInfo) else {
+        let dialableInfo = self.dialablePeerInfo(in: remoteInfo)
+        guard !dialableInfo.addresses.isEmpty else {
             self.application.logger.warning("DCUtR: no dialable address available for sync to \(peer.b58String)")
             return
         }
         let delay = max(0.0, halfRTT)
         self.application.eventLoopGroup.any().scheduleTask(in: .milliseconds(Int64(delay * 1000))) {
             do {
-                try self.application.newStream(to: address, forProtocol: DCUtRWire.protocolID)
+                try self.application.newStream(to: dialableInfo, forProtocol: DCUtRWire.protocolID)
             } catch {
                 self.application.logger.error("DCUtR: failed to open sync stream to \(peer.b58String): \(error)")
             }
@@ -132,12 +132,13 @@ final class DCUtRCoordinator: @unchecked Sendable {
 
     private func dialDirect(for peer: PeerID, remoteInfo: PeerInfo) {
         let relayConnection = self.attempt(for: peer).relayConnection
-        guard let address = self.firstDialableAddress(in: remoteInfo) else {
+        let dialableInfo = self.dialablePeerInfo(in: remoteInfo)
+        guard !dialableInfo.addresses.isEmpty else {
             self.application.logger.warning("DCUtR: no dialable address available for direct punch to \(peer.b58String)")
             return
         }
         do {
-            try self.application.newStream(to: address, forProtocol: DCUtRWire.punchProtocol)
+            try self.application.newStream(to: dialableInfo, forProtocol: DCUtRWire.protocolID)
             self.application.eventLoopGroup.any().scheduleTask(in: .seconds(2)) {
                 relayConnection?.close().whenComplete { _ in }
             }

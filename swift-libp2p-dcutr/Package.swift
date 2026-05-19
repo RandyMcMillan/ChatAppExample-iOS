@@ -42,5 +42,12 @@ let package = Package(
                 .copy("Protobuf/HolePunch.proto"),
             ]
         ),
+        .testTarget(
+            name: "LibP2PDCUtRTests",
+            dependencies: [
+                .target(name: "LibP2PDCUtR"),
+                .product(name: "LibP2P", package: "swift-libp2p"),
+            ]
+        ),
     ]
 )
