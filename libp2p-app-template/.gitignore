@@ -10,5 +10,6 @@ DerivedData/
 .netrc
 .keys/
 .env*
+!.env.development
 .peer-id*
 Package.resolved
