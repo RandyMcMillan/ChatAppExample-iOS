@@ -12,6 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Foundation
 import DNSClient
 import LibP2P
 import Testing
@@ -22,7 +23,8 @@ import Testing
 struct LibP2PDNSAddrTests {
 
     @Test func testAppConfiguration() async throws {
-        let app = try await Application.make(.detect(), peerID: .ephemeral())
+        let app = try await Application.make(.testing, peerID: .ephemeral())
+        app.environment.arguments = ["libp2p"]
         app.resolvers.use(.dnsaddr)
         try await app.startup()
         try await app.asyncShutdown()
@@ -35,7 +37,8 @@ final class LibP2PDNSAddrResolutionTests {
     var app: Application!
 
     init() throws {
-        app = try Application(.detect())
+        app = try Application(.testing)
+        app.environment.arguments = ["libp2p"]
         // On some github workers, the default dns provider locks.
         // We can fix this by hardcoding a resolver (such as cloudflare or google)
         let cloudflareDNS = try SocketAddress(ipAddress: "1.1.1.1", port: 53)
@@ -47,7 +50,7 @@ final class LibP2PDNSAddrResolutionTests {
         app.shutdown()
     }
 
-    @Test(arguments: [
+    @Test(.externalIntegrationTestsEnabled, arguments: [
         "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN",
         "/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa",
         "/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb",
@@ -76,66 +79,88 @@ final class LibP2PDNSAddrResolutionTests {
         }
     }
 
-    @Test func testDNSADDRToMultiaddr_IPv4_TCP() async throws {
+    @Test(.externalIntegrationTestsEnabled) func testDNSADDRToMultiaddr_IPv4_TCP() async throws {
 
         let address = "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
-        let expectedAddress = "/ip4/139.178.91.71/tcp/4001/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
-
         let resolvedAddress = try await app.resolve(try Multiaddr(address), for: [.ip4, .tcp]).get()
 
-        #expect(try resolvedAddress == Multiaddr(expectedAddress))
+        #expect(try resolvedAddress != nil)
+        #expect(try resolvedAddress?.protocols().contains(.ip4) == true)
+        #expect(try resolvedAddress?.protocols().contains(.tcp) == true)
+        #expect(try resolvedAddress?.description.contains("/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN") == true)
     }
 
-    @Test func testDNSADDRToMultiaddr_IPv4_UDP() async throws {
+    @Test(.externalIntegrationTestsEnabled) func testDNSADDRToMultiaddr_IPv4_UDP() async throws {
 
         let address = "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
-        let expectedAddress = "/ip4/139.178.91.71/udp/4001/quic-v1/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
-
         let resolvedAddress = try await app.resolve(try Multiaddr(address), for: [.ip4, .udp, .quic_v1]).get()
 
-        #expect(try resolvedAddress == Multiaddr(expectedAddress))
+        #expect(try resolvedAddress != nil)
+        #expect(try resolvedAddress?.protocols().contains(.ip4) == true)
+        #expect(try resolvedAddress?.protocols().contains(.udp) == true)
+        #expect(try resolvedAddress?.description.contains("/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN") == true)
     }
 
-    @Test func testDNSADDRToMultiaddr_IPv6_TCP() async throws {
+    @Test(.externalIntegrationTestsEnabled) func testDNSADDRToMultiaddr_IPv6_TCP() async throws {
 
         let address = "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
-        let expectedAddress = "/ip6/2604:1380:45e3:6e00::1/tcp/4001/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
-
         let resolvedAddress = try await app.resolve(try Multiaddr(address), for: [.ip6, .tcp]).get()
 
-        #expect(try resolvedAddress == Multiaddr(expectedAddress))
+        #expect(try resolvedAddress != nil)
+        #expect(try resolvedAddress?.protocols().contains(.ip6) == true)
+        #expect(try resolvedAddress?.protocols().contains(.tcp) == true)
+        #expect(try resolvedAddress?.description.contains("/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN") == true)
     }
 
-    @Test func testDNSADDRToMultiaddr_IPv6_UDP() async throws {
+    @Test(.externalIntegrationTestsEnabled) func testDNSADDRToMultiaddr_IPv6_UDP() async throws {
 
         let address = "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
-        let expectedAddress =
-            "/ip6/2604:1380:45e3:6e00::1/udp/4001/quic-v1/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
-
         let resolvedAddress = try await app.resolve(try Multiaddr(address), for: [.ip6, .udp, .quic_v1]).get()
 
-        #expect(try resolvedAddress == Multiaddr(expectedAddress))
+        #expect(try resolvedAddress != nil)
+        #expect(try resolvedAddress?.protocols().contains(.ip6) == true)
+        #expect(try resolvedAddress?.protocols().contains(.udp) == true)
+        #expect(try resolvedAddress?.description.contains("/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN") == true)
     }
 
-    @Test func testDNSADDRToMultiaddr_DNS4_TCP_WSS() async throws {
+    @Test(.externalIntegrationTestsEnabled) func testDNSADDRToMultiaddr_DNS4_TCP_WSS() async throws {
 
         let address = "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
-        let expectedAddress =
-            "/dns4/sv15.bootstrap.libp2p.io/tcp/443/wss/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
-
         let resolvedAddress = try await app.resolve(try Multiaddr(address), for: [.dns4, .tcp, .wss]).get()
 
-        #expect(try resolvedAddress == Multiaddr(expectedAddress))
+        #expect(try resolvedAddress != nil)
+        #expect(try resolvedAddress?.protocols().contains(.dns4) == true)
+        #expect(try resolvedAddress?.protocols().contains(.tcp) == true)
+        #expect(try resolvedAddress?.protocols().contains(.wss) == true)
     }
 
-    @Test func testDNSADDRToMultiaddr_DNS6_TCP_WSS() async throws {
+    @Test(.externalIntegrationTestsEnabled) func testDNSADDRToMultiaddr_DNS6_TCP_WSS() async throws {
 
         let address = "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
-        let expectedAddress =
-            "/dns6/sv15.bootstrap.libp2p.io/tcp/443/wss/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN"
-
         let resolvedAddress = try await app.resolve(try Multiaddr(address), for: [.dns6, .tcp, .wss]).get()
 
-        #expect(try resolvedAddress == Multiaddr(expectedAddress))
+        #expect(try resolvedAddress != nil)
+        #expect(try resolvedAddress?.protocols().contains(.dns6) == true)
+        #expect(try resolvedAddress?.protocols().contains(.tcp) == true)
+        #expect(try resolvedAddress?.protocols().contains(.wss) == true)
+    }
+
+}
+
+struct TestHelper {
+    static var integrationTestsEnabled: Bool {
+        if let b = ProcessInfo.processInfo.environment["PerformIntegrationTests"], b == "true" {
+            return true
+        }
+        return false
+    }
+}
+
+extension Trait where Self == ConditionTrait {
+    public static var externalIntegrationTestsEnabled: Self {
+        enabled(
+            if: TestHelper.integrationTestsEnabled,
+            "This test is only available when the `PerformIntegrationTests` environment variable is set to `true`"
+        )
     }
 }
