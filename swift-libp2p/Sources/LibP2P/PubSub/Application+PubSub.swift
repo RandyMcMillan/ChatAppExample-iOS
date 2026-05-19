@@ -96,9 +96,12 @@ extension Application {
 
         public func publish(_ msg: [UInt8], toTopic topic: String) -> EventLoopFuture<PublishedResults> {
             let el = application.eventLoopGroup.next()
+            guard !services.isEmpty else {
+                return el.makeSucceededFuture(.storedLocally)
+            }
             return services.map { service in
                 service.publish(topic: topic, bytes: msg, on: el)
-            }.flatten(on: el).map { PublishedResults.publishedToPeers(1) }
+            }.flatten(on: el).map { _ in PublishedResults.publishedToPeers(services.count) }
         }
 
         public func subscribe(_ config: PubSub.SubscriptionConfig) throws -> PubSub.SubscriptionHandler {
