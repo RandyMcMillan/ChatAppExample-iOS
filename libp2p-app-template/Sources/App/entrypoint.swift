@@ -9,16 +9,17 @@ enum Entrypoint {
     static func main() async throws {
         // Determine the environment based on the executable being ran (testing, development or production)
         var env = try Environment.detect()
+        try ensureDevelopmentEnvironmentFileExists(for: env)
 
         // Set up our logger
         try LoggingSystem.bootstrap(from: &env)
 
-        // Create a persistent PeerID
+        // Create a persistent PeerID seeded from the development env password.
         let peerID: KeyPairFile = .persistent(
             // Specify the PeerIDs key type (RSA, Secp256k1 or Ed25519)
             type: .Ed25519,
-            // Keep the template runnable without extra setup; projects can switch this to `.envKey` later.
-            encryptedWith: .none,
+            // Keep the template deterministic by seeding it from .env.development.
+            encryptedWith: .envKey,
             // Store the encrypted keys in a writable app support directory.
             storedAt: .filePath(FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!)
         )
@@ -42,5 +43,15 @@ enum Entrypoint {
             throw error
         }
         try await app.asyncShutdown()
+    }
+
+    private static func ensureDevelopmentEnvironmentFileExists(for env: Environment) throws {
+        guard env.name == "development" else { return }
+
+        let url = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+            .appendingPathComponent(".env.development")
+        guard !FileManager.default.fileExists(atPath: url.path) else { return }
+
+        try "PEERID_PASSWORD=development\n".write(to: url, atomically: true, encoding: .utf8)
     }
 }
