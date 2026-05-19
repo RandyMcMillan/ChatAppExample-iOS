@@ -112,7 +112,7 @@ try await lib.asyncShutdown()
 | **Transport** |
 | [`swift-libp2p-tcp`](//github.com/swift-libp2p/swift-libp2p-tcp) | 🟢 | TCP transport (embedded) | N/A |
 | [`swift-libp2p-udp`](//github.com/swift-libp2p/swift-libp2p-udp) | 🟡 | UDP transport (embedded) | N/A |
-| `swift-libp2p-quic` | 🔴 | TODO: QUIC transport | N/A |
+| [`swift-libp2p-quic`](//github.com/swift-libp2p/swift-libp2p-quic) | 🟡 | QUIC transport scaffold | N/A |
 | [`swift-libp2p-websocket`](//github.com/swift-libp2p/swift-libp2p-websocket) | 🟢 | WebSocket transport | ![Build & Test (macos and linux)](https://github.com/swift-libp2p/swift-libp2p-websocket/actions/workflows/build+test.yml/badge.svg) |
 | `swift-libp2p-http` | 🔴 | TODO: HTTP1 transport | N/A |
 | `swift-libp2p-http2` | 🔴 | TODO: HTTP2 transport | N/A |
