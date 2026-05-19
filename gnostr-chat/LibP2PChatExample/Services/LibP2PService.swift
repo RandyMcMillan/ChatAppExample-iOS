@@ -198,6 +198,11 @@ class LibP2PService: ObservableObject {
         }
     }
 
+    private func isDialableTCPAddress(_ address: Multiaddr) -> Bool {
+        guard let tcp = address.tcpAddress else { return false }
+        return tcp.ip4
+    }
+
     private func dial(peerID: PeerID, address: Multiaddr) {
         self.app.logger.notice("Dialing peer \(peerID) at \(address)")
         do {
@@ -209,7 +214,8 @@ class LibP2PService: ObservableObject {
     }
 
     private func redial(peerID: PeerID) {
-        guard let address = self.discoveredAddress(for: peerID) else {
+        guard let address = self.discoveredAddress(for: peerID),
+              self.isDialableTCPAddress(address) else {
             self.app.logger.warning("No stored address available for peer \(peerID.b58String); cannot redial")
             self.markPeerDisconnected(peerID)
             return
@@ -225,8 +231,8 @@ class LibP2PService: ObservableObject {
             self.app.logger.notice("We discovered a peer: \(peer)")
             self.app.connections.getConnectionsToPeer(peer: peer.peer, on: nil).whenSuccess { conns in
                 if conns.isEmpty {
-                    guard let address = peer.addresses.first(where: { $0.description.contains("/tcp/") }) else {
-                        self.app.logger.warning("No dialable TCP address found for peer \(peer.peer)")
+                    guard let address = peer.addresses.first(where: { self.isDialableTCPAddress($0) }) else {
+                        self.app.logger.warning("No dialable IPv4 TCP address found for peer \(peer.peer)")
                         return
                     }
                     self.recordDiscoveredAddress(address, for: peer.peer)
