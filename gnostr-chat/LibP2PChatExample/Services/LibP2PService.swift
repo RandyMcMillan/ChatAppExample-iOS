@@ -277,11 +277,12 @@ class LibP2PService: ObservableObject {
     }
     
     public func start() async throws {
-        guard self.lifecycleState != .running && self.lifecycleState != .starting else { return }
+        guard self.lifecycleState == .stopped else { return }
+        self.lifecycleState = .starting
         guard await self.lna?.requestAuthorization() ?? true else {
+            self.lifecycleState = .stopped
             throw CocoaError(.userCancelled)
         }
-        self.lifecycleState = .starting
         if self.app.didShutdown {
             self.app = Self.makeApplication(peerID: self.peerID)
             self.lna = LocalNetworkAuthorization()
