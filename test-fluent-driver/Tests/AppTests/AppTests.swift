@@ -1,6 +1,7 @@
 import LibP2P
 import LibP2PTesting
 import Testing
+import FluentSQLiteDriver
 
 @testable import Fluent
 @testable import App
@@ -13,6 +14,7 @@ struct AppTests {
         app.logger.logLevel = .info
 
         // Configure the modules to be used
+        app.databases.use(.sqlite(.memory), as: .init(string: "test"), isDefault: true)
         app.peerstore.use(.fluent)
         app.peerstore.prepareMigrations()
 
