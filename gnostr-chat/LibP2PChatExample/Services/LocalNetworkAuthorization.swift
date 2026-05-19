@@ -11,6 +11,8 @@ public class LocalNetworkAuthorization: NSObject {
     private var browser: NWBrowser?
     private var netService: NetService?
     private var completion: ((Bool) -> Void)?
+    private var didResolveAuthorization = false
+    private let stateQueue = DispatchQueue(label: "LocalNetworkAuthorization.state")
     
     public func requestAuthorization() async -> Bool {
         return await withCheckedContinuation { continuation in
@@ -21,7 +23,10 @@ public class LocalNetworkAuthorization: NSObject {
     }
     
     private func requestAuthorization(completion: @escaping (Bool) -> Void) {
-        self.completion = completion
+        self.stateQueue.sync {
+            self.completion = completion
+            self.didResolveAuthorization = false
+        }
         
             // Create parameters, and allow browsing over peer-to-peer link.
         let parameters = NWParameters()
@@ -61,6 +66,17 @@ public class LocalNetworkAuthorization: NSObject {
         self.netService?.publish()
     }
     
+    private func completeAuthorization(_ granted: Bool) {
+        let completion: ((Bool) -> Void)? = self.stateQueue.sync {
+            guard !self.didResolveAuthorization else { return nil }
+            self.didResolveAuthorization = true
+            let completion = self.completion
+            self.completion = nil
+            return completion
+        }
+        self.reset()
+        completion?(granted)
+    }
     
     private func reset() {
         self.browser?.cancel()
@@ -72,8 +88,7 @@ public class LocalNetworkAuthorization: NSObject {
 
 extension LocalNetworkAuthorization : NetServiceDelegate {
     public func netServiceDidPublish(_ sender: NetService) {
-        self.reset()
         print("Local network permission has been granted")
-        completion?(true)
+        self.completeAuthorization(true)
     }
 }
