@@ -149,7 +149,7 @@ final class LibP2PPubSubGossipsubTests {
 
     @Test(.timeLimit(.minutes(1)))
     func testLibP2PPubSub_GossipSub_EmitSelfChatTopic() async throws {
-        let app = try Application(.testing, peerID: PeerID(.Ed25519))
+        let app = try await Application.make(.testing, peerID: PeerID(.Ed25519))
         app.logger.logLevel = .trace
         app.servers.use(.tcp(host: "127.0.0.1", port: 10000))
         app.security.use(.noise)
