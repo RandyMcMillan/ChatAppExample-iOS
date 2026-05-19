@@ -74,9 +74,11 @@ extension Application {
         }
 
         var storage: Storage {
-            guard let storage = self.application.storage[Key.self] else {
-                fatalError("DHT Service Storage not initialized. Initialize with app.dht.initialize()")
+            if let storage = self.application.storage[Key.self] {
+                return storage
             }
+            let storage = Storage()
+            self.application.storage[Key.self] = storage
             return storage
         }
 

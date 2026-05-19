@@ -87,9 +87,11 @@ extension Application {
         }
 
         var storage: Storage {
-            guard let storage = self.application.storage[Key.self] else {
-                fatalError("Discovery Services not initialized. Initialize with app.discovery.initialize()")
+            if let storage = self.application.storage[Key.self] {
+                return storage
             }
+            let storage = Storage()
+            self.application.storage[Key.self] = storage
             return storage
         }
 

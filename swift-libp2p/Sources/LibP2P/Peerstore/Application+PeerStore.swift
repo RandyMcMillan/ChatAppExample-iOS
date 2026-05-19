@@ -63,9 +63,11 @@ extension Application {
         public let application: Application
 
         var storage: Storage {
-            guard let storage = self.application.storage[Key.self] else {
-                fatalError("Peerstore not initialized. Configure with app.peerstore.initialize()")
+            if let storage = self.application.storage[Key.self] {
+                return storage
             }
+            let storage = Storage()
+            self.application.storage[Key.self] = storage
             return storage
         }
     }
