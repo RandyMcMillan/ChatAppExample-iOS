@@ -32,6 +32,7 @@ let package = Package(
                 .target(name: "App"),
                 .product(name: "LibP2PTesting", package: "swift-libp2p"),
                 .product(name: "XCTFluent", package: "fluent-kit"),
+                .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
             ],
             swiftSettings: swiftSettings),
     ]
