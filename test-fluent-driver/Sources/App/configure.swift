@@ -1,4 +1,5 @@
 import LibP2P
+import FluentSQLiteDriver
 
 // configures your application
 public func configure(_ app: Application) async throws {
@@ -9,6 +10,7 @@ public func configure(_ app: Application) async throws {
     // Install our modules on libp2p
 
     // Configure the modules to be used
+    app.databases.use(.sqlite(.memory), as: .init(string: "test"), isDefault: true)
 
     // register routes
     try routes(app)
