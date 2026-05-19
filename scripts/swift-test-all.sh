@@ -41,6 +41,18 @@ while IFS= read -r package_manifest; do
   package_path="$(dirname "${package_manifest}")"
   package_name="$(basename "${package_path}")"
 
+  case "${package_name}" in
+    swift-libp2p-redis)
+      "${script_dir}/redis-server.sh" \
+        "${project_root}/swift-libp2p-redis/.github/redis1.conf" \
+        "${project_root}/swift-libp2p-redis/.github/redis2.conf"
+      ;;
+    swift-libp2p-queues-redis-driver)
+      "${script_dir}/redis-server.sh" \
+        "${project_root}/swift-libp2p-queues-redis-driver/.github/redis1.conf"
+      ;;
+  esac
+
   echo "==> swift test --package-path ${package_name}"
   swift test --package-path "${package_path}" "$@"
 done < <(
