@@ -151,7 +151,7 @@ final class LibP2PPubSubGossipsubTests {
     func testLibP2PPubSub_GossipSub_EmitSelfChatTopic() async throws {
         let app = try await Application.make(.testing, peerID: PeerID(.Ed25519))
         app.logger.logLevel = .trace
-        app.environment.arguments = []
+        app.environment.arguments = [app.environment.arguments.first ?? "xctest"]
         app.servers.use(.tcp(host: "127.0.0.1", port: 10000))
         app.security.use(.noise)
         app.muxers.use(.yamux)
@@ -686,7 +686,7 @@ final class LibP2PPubSubGossipsubTests {
     var nextPort: Int = 10100
     private func makeHost() throws -> Application {
         let lib = try Application(.testing, peerID: PeerID(.Ed25519))
-        lib.environment.arguments = []
+        lib.environment.arguments = [lib.environment.arguments.first ?? "xctest"]
         lib.logger.logLevel = .info
         lib.connectionManager.use(connectionType: BasicConnectionLight.self)
         lib.security.use(.noise)

@@ -556,7 +556,7 @@ final class LibP2PPubSubFloodsubTests {
     func testFloodsubJSInterop() async throws {
         let app = try await Application.make(.testing, peerID: PeerID(.Ed25519))
         app.logger.logLevel = .trace
-        app.environment.arguments = []
+        app.environment.arguments = [app.environment.arguments.first ?? "xctest"]
 
         /// Configure our networking stack!
         app.servers.use(.tcp(host: "127.0.0.1", port: 10000))
@@ -617,7 +617,7 @@ final class LibP2PPubSubFloodsubTests {
     func testExternalPing() async throws {
         let app = try await Application.make(.testing, peerID: PeerID(.Ed25519))
         app.logger.logLevel = .trace
-        app.environment.arguments = []
+        app.environment.arguments = [app.environment.arguments.first ?? "xctest"]
 
         /// Configure our networking stack!
         app.servers.use(.tcp(host: "127.0.0.1", port: 10000))
@@ -643,7 +643,7 @@ final class LibP2PPubSubFloodsubTests {
     func testExternalFloodsubConnections() async throws {
         let app = try await Application.make(.testing, peerID: PeerID(.Ed25519))
         app.logger.logLevel = .trace
-        app.environment.arguments = []
+        app.environment.arguments = [app.environment.arguments.first ?? "xctest"]
 
         /// Configure our networking stack!
         app.servers.use(.tcp(host: "127.0.0.1", port: 10000))
@@ -714,7 +714,7 @@ final class LibP2PPubSubFloodsubTests {
     var nextPort: Int = 10200
     private func makeHost() throws -> Application {
         let lib = try Application(.testing, peerID: PeerID(.Ed25519))
-        lib.environment.arguments = []
+        lib.environment.arguments = [lib.environment.arguments.first ?? "xctest"]
         lib.connectionManager.use(connectionType: BasicConnectionLight.self)
         lib.logger.logLevel = .info
         lib.security.use(.noise)
