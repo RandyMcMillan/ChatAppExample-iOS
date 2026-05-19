@@ -1,4 +1,5 @@
 import LibP2P
+import Fluent
 import FluentSQLiteDriver
 
 // configures your application
