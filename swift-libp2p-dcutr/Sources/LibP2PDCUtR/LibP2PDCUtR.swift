@@ -70,7 +70,7 @@ final class DCUtRCoordinator: @unchecked Sendable {
         return PeerInfo(peer: rhs.peer, addresses: addresses)
     }
 
-    private func hasRelayReservation(in peerInfo: PeerInfo) -> Bool {
+    func hasRelayReservation(in peerInfo: PeerInfo) -> Bool {
         peerInfo.addresses.contains { $0.protocols().contains(.p2p_circuit) }
     }
 
