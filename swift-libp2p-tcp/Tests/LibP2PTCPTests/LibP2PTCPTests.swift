@@ -24,6 +24,7 @@ struct LibP2PTCPTests {
         let app = try await Application.make(.detect(), peerID: .ephemeral())
 
         app.servers.use(.tcp_embedded)
+        app.environment.arguments = ["libp2p"]
 
         try await app.startup()
 
