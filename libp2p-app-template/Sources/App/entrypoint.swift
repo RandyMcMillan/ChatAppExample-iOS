@@ -61,12 +61,17 @@ enum Entrypoint {
     private static func makeApplication(env: Environment, peerID: KeyPairFile) async throws -> Application {
         do {
             return try await Application.make(env, peerID: peerID)
-        } catch KeyPairFile.Error.unableToReadKeyPairFile,
-            KeyPairFile.Error.unableToDecryptKeyFile {
-            let storageURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-            let keyFilePath = storageURL.appendingPathComponent(".peer-id-ed25519.\(env.name)").path
-            try? FileManager.default.removeItem(atPath: keyFilePath)
-            return try await Application.make(env, peerID: peerID)
+        } catch {
+            switch error {
+            case KeyPairFile.Error.unableToReadKeyPairFile,
+                KeyPairFile.Error.unableToDecryptKeyFile:
+                let storageURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+                let keyFilePath = storageURL.appendingPathComponent(".peer-id-ed25519.\(env.name)").path
+                try? FileManager.default.removeItem(atPath: keyFilePath)
+                return try await Application.make(env, peerID: peerID)
+            default:
+                throw error
+            }
         }
     }
 }
