@@ -30,10 +30,7 @@ let package = Package(
             url: "https://github.com/swift-server/RediStack.git",
             .upToNextMajor(from: "1.4.1")
         ),
-        .package(
-            url: "https://github.com/swift-libp2p/swift-libp2p.git",
-            .upToNextMinor(from: "0.3.4")
-        ),
+        .package(path: "../swift-libp2p"),
     ],
     targets: [
         .target(

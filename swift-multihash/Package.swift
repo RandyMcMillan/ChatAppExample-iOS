@@ -27,9 +27,9 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/swift-libp2p/swift-varint.git", .upToNextMinor(from: "0.2.0")),
-        .package(url: "https://github.com/swift-libp2p/swift-multibase.git", .upToNextMinor(from: "0.2.0")),
-        .package(url: "https://github.com/swift-libp2p/swift-multicodec.git", .upToNextMinor(from: "0.2.0")),
+        .package(path: "../swift-varint"),
+        .package(path: "../swift-multibase"),
+        .package(path: "../swift-multicodec"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.9.0")),
     ],
     targets: [

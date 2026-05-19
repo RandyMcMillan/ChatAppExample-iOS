@@ -32,7 +32,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
 
         // LibP2P Core Modules
-        .package(url: "https://github.com/swift-libp2p/swift-libp2p.git", .upToNextMinor(from: "0.3.2")),
+        .package(path: "../swift-libp2p"),
 
         // NIO Test Utils
         .package(url: "https://github.com/apple/swift-nio.git", .upToNextMajor(from: "2.0.0")),
