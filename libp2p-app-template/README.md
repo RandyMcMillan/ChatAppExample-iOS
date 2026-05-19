@@ -21,6 +21,14 @@ open Package.swift
 
 3. Configure your server by modifying the ```App/configure.swift``` file
 
+The template now enables the core p2p stack plus discovery:
+- TCP transport
+- Noise security
+- Yamux muxing
+- DCUtR hole punching
+- mDNS peer discovery on the local network
+- KadDHT peer discovery for routed discovery and bootstrapping
+
 4. Handle your apps custom protocols by replacing the default echo route in ```App/routes.swift```
 
 5. Build & Run!
