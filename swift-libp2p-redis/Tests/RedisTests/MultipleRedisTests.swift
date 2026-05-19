@@ -84,7 +84,7 @@ struct MultipleRedisTests {
     }
 
     @Test func testApplicationRedis_Async() async throws {
-        let app = try await Application.make(peerID: .ephemeral())
+        let app = try await makeApp()
 
         app.redis(.one).configuration = redisConfig
         app.redis(.two).configuration = redisConfig2
@@ -110,6 +110,12 @@ struct MultipleRedisTests {
         }
 
         try await app.asyncShutdown()
+    }
+
+    private func makeApp() async throws -> Application {
+        let app = try await Application.make(peerID: .ephemeral())
+        app.environment.arguments = ["libp2p"]
+        return app
     }
 
     //func testSetAndGet() throws {

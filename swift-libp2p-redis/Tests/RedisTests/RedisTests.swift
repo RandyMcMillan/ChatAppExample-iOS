@@ -64,7 +64,7 @@ extension RedisTests {
     }
 
     @Test func testApplicationRedisAsync() async throws {
-        let app = try await Application.make(peerID: .ephemeral())
+        let app = try await makeApp()
 
         app.redis.configuration = redisConfig
         try await app.startup()
@@ -142,7 +142,7 @@ extension RedisTests {
     }
 
     @Test func testCodableAsync() async throws {
-        let app = try await Application.make(peerID: .ephemeral())
+        let app = try await makeApp()
 
         app.redis.configuration = redisConfig
         try await app.startup()
@@ -225,6 +225,12 @@ extension RedisTests {
             .wait()
 
         #expect(result == ["PONG"])
+    }
+
+    private func makeApp() async throws -> Application {
+        let app = try await Application.make(peerID: .ephemeral())
+        app.environment.arguments = ["libp2p"]
+        return app
     }
 }
 
@@ -353,7 +359,7 @@ extension RedisTests {
     }
 
     @Test func testCacheCustomCoders_Async() async throws {
-        let app = try await Application.make(peerID: .ephemeral())
+        let app = try await makeApp()
 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -413,7 +419,7 @@ extension RedisTests {
     }
 
     @Test func testRedisClientCustomCoders_Async() async throws {
-        let app = try await Application.make(peerID: .ephemeral())
+        let app = try await makeApp()
 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
