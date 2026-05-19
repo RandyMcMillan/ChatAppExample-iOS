@@ -63,6 +63,13 @@ class ViewModel: ObservableObject, ChatDelegate {
                 self.saveChats()
                 self.p2pService.stop()
             }
+
+            await NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main) { _ in
+                print("App became active, starting libp2p")
+                Task.detached(priority: .background) {
+                    await self.startP2PService()
+                }
+            }
             
             // Let our UI know that the libp2p service has initialized (this enables the settings icon and start/stop toggle)
             DispatchQueue.main.async {
