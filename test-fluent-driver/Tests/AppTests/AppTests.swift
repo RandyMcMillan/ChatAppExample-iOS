@@ -1,38 +1,31 @@
 import LibP2P
 import LibP2PTesting
+import Fluent
 import Testing
-%%IMPORT%%
+import XCTFluent
 
 @testable import App
 
 @Suite("App Tests", .serialized)
 struct AppTests {
 
+    let test = ArrayTestDatabase()
+
     private func configure(_ app: Application) async throws {
         // Set our log level
         app.logger.logLevel = .info
-        
+
         // Setup test database
-        %%INSTALLATION%%
-        
+
         // Configure the modules to be used
-        %%POST_INSTALLATION%%
-        
-        // Configure our peerstore to use fluent
+        app.databases.use(test.configuration, as: .test)
         app.peerstore.use(.fluent)
         app.peerstore.prepareMigrations()
-        
-        do {
-            // Enable auto migration
-            try await app.autoMigrate()
-            
-            // Reinit database before each run
-            try await app.resetDatabase()
-        } catch {
-            print(String(reflecting: error))
-            Issue.record(error)
-            fatalError()
-        }
+
+        try await app.autoMigrate()
+        try await app.resetDatabase()
+
+        // Configure our peerstore to use fluent
     }
     
     // This is an example of how you can test various aspects of your libp2p app
