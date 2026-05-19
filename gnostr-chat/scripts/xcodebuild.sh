@@ -10,6 +10,11 @@ configuration="${XCODE_CONFIGURATION:-Debug}"
 destination="${XCODE_DESTINATION:-platform=iOS Simulator,name=iPhone 16}"
 derived_data_path="${XCODE_DERIVED_DATA_PATH:-${project_root}/.build/DerivedData}"
 action="${1:-build}"
+build_action="${action}"
+
+if [[ "${action}" == "run" ]]; then
+  build_action="build"
+fi
 
 if (($#)); then
   shift
@@ -66,7 +71,7 @@ xcodebuild \
   -configuration "${configuration}" \
   -destination "${destination}" \
   -derivedDataPath "${derived_data_path}" \
-  "${action}" \
+  "${build_action}" \
   "$@"
 
 if [[ "${action}" == "run" ]]; then
