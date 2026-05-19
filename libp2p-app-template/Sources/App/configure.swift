@@ -1,6 +1,7 @@
 import LibP2P
 import LibP2PNoise
 import LibP2PYAMUX
+import LibP2PDCUtR
 
 // configures your application
 public func configure(_ app: Application) async throws {
@@ -11,6 +12,7 @@ public func configure(_ app: Application) async throws {
     // Configure your networking stack...
     app.security.use(.noise)
     app.muxers.use(.yamux)
+    app.dcutr.use(.dcutr)
     
     // Lets start a TCP server on the localhost bound to port 10000
     app.listen(.tcp(host: "127.0.0.1", port: 10000))

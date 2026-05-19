@@ -16,6 +16,8 @@ let package = Package(
         .package(path: "../swift-libp2p-noise"),
         // YAMUX Muxer Module
         .package(path: "../swift-libp2p-yamux"),
+        // Direct Connection Upgrade through Relay
+        .package(path: "../swift-libp2p-dcutr"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -26,6 +28,7 @@ let package = Package(
                 .product(name: "LibP2P", package: "swift-libp2p"),
                 .product(name: "LibP2PNoise", package: "swift-libp2p-noise"),
                 .product(name: "LibP2PYAMUX", package: "swift-libp2p-yamux"),
+                .product(name: "LibP2PDCUtR", package: "swift-libp2p-dcutr"),
             ],
             swiftSettings: swiftSettings),
         .testTarget(
