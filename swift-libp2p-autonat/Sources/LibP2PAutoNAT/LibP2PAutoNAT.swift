@@ -183,8 +183,10 @@ public final class AutoNATCoordinator: @unchecked Sendable {
         let token = Array(UUID().uuidString.utf8)
         let addresses = self.candidateDialbackAddresses()
         var shouldOpenStream = false
+        var existingFuture: EventLoopFuture<AutoNATStatus>?
         self.queue.sync {
             if let existing = self.pending[peer.b58String] {
+                existingFuture = existing.promise.futureResult
                 return
             }
             self.pending[peer.b58String] = PendingProbe(
@@ -198,7 +200,7 @@ public final class AutoNATCoordinator: @unchecked Sendable {
         }
 
         guard shouldOpenStream else {
-            return self.queue.sync { self.pending[peer.b58String]?.promise.futureResult ?? promise.futureResult }
+            return existingFuture ?? promise.futureResult
         }
 
         do {
