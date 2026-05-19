@@ -70,6 +70,10 @@ final class DCUtRCoordinator: @unchecked Sendable {
         return PeerInfo(peer: rhs.peer, addresses: addresses)
     }
 
+    private func hasRelayReservation(in peerInfo: PeerInfo) -> Bool {
+        peerInfo.addresses.contains { $0.protocols().contains(.p2p_circuit) }
+    }
+
     private func refreshPeerInfo(for peer: PeerID) {
         self.application.peers.getPeerInfo(byID: peer.b58String, on: self.application.eventLoopGroup.any()).whenSuccess { peerInfo in
             self.queue.sync {
@@ -78,6 +82,29 @@ final class DCUtRCoordinator: @unchecked Sendable {
                 attempt.remotePeerInfo = merged
                 self.attempts[peer.b58String] = attempt
             }
+            self.startPunchIfReady(for: peer)
+        }
+    }
+
+    private func startPunchIfReady(for peer: PeerID) {
+        let eventLoop = self.application.eventLoopGroup.any()
+        self.application.peers.getPeerInfo(byID: peer.b58String, on: eventLoop).whenSuccess { peerInfo in
+            guard self.hasRelayReservation(in: peerInfo) else { return }
+
+            var relayConnection: Connection?
+            self.queue.sync {
+                guard
+                    let attempt = self.attempts[peer.b58String],
+                    attempt.connectSentAt == nil,
+                    let connection = attempt.relayConnection
+                else {
+                    return
+                }
+                relayConnection = connection
+            }
+
+            guard let relayConnection else { return }
+            self.initiatePunch(for: peer, relayConnection: relayConnection)
         }
     }
 
@@ -169,11 +196,12 @@ final class DCUtRCoordinator: @unchecked Sendable {
     private func onConnected(_ connection: Connection) {
         guard self.isRelayConnection(connection), let peer = connection.remotePeer else { return }
         self.refreshPeerInfo(for: peer)
-        self.initiatePunch(for: peer, relayConnection: connection)
+        self.startPunchIfReady(for: peer)
     }
 
     private func onIdentifiedPeer(_ identifiedPeer: IdentifiedPeer) {
         self.refreshPeerInfo(for: identifiedPeer.peer)
+        self.startPunchIfReady(for: identifiedPeer.peer)
     }
 
     private func onDisconnected(_ connection: Connection, _ peer: PeerID?) {
