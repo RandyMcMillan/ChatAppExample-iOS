@@ -45,7 +45,7 @@ let package = Package(
         ),
         .testTarget(
             name: "LibP2PQUICTests",
-            dependencies: ["LibP2PQUIC"],
+            dependencies: ["LibP2PQUIC"]
         ),
     ]
 )
