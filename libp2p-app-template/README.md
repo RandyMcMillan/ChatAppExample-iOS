@@ -29,6 +29,8 @@ The template now enables the core p2p stack plus discovery:
 - mDNS peer discovery on the local network
 - KadDHT peer discovery for routed discovery and bootstrapping
 
+Set `P2P_LISTEN_PORT` before running if you want multiple template nodes on the same machine.
+
 4. Handle your apps custom protocols by replacing the default echo route in ```App/routes.swift```
 
 5. Build & Run!
