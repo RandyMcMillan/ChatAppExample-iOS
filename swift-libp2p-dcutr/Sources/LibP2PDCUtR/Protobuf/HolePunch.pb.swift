@@ -24,14 +24,14 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 struct HolePunch: Sendable {
-  enum `Type`: Int, SwiftProtobuf.Enum, CaseIterable {
+  enum Kind: Int, SwiftProtobuf.Enum, CaseIterable {
     case connect = 100
     case sync = 300
 
     init() { self = .connect }
   }
 
-  var type: HolePunch.Type = .connect
+  var type: HolePunch.Kind = .connect
   var obsAddrs: [Data] = []
   var unknownFields = SwiftProtobuf.UnknownStorage()
   init() {}
@@ -64,6 +64,6 @@ extension HolePunch: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
   }
 }
 
-extension HolePunch.Type: SwiftProtobuf._ProtoNameProviding {
+extension HolePunch.Kind: SwiftProtobuf._ProtoNameProviding {
   static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{7}\0CONNECT\0\u{4}SYNC\0")
 }

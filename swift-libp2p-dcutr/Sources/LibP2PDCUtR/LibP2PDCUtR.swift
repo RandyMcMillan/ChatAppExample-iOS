@@ -121,7 +121,7 @@ final class DCUtRCoordinator: @unchecked Sendable {
             return
         }
         let delay = max(0.0, halfRTT)
-        self.application.eventLoopGroup.any().scheduleTask(in: .milliseconds(Int(delay * 1000))) {
+        self.application.eventLoopGroup.any().scheduleTask(in: .milliseconds(Int64(delay * 1000))) {
             do {
                 try self.application.newStream(to: address, forProtocol: DCUtRWire.protocolID)
             } catch {
@@ -227,7 +227,7 @@ final class DCUtRCoordinator: @unchecked Sendable {
 }
 
 extension HolePunch {
-    init(type: HolePunch.`Type`, obsAddrs: [Data]) {
+    init(type: HolePunch.Kind, obsAddrs: [Data]) {
         self.init()
         self.type = type
         self.obsAddrs = obsAddrs

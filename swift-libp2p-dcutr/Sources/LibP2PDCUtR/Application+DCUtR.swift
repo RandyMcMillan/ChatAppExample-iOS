@@ -43,7 +43,7 @@ extension Application {
             provider.run(self.application)
         }
 
-        @preconcurrency public func use(_ makeCoordinator: @Sendable @escaping (Application) -> DCUtRCoordinator) {
+        @preconcurrency func use(_ makeCoordinator: @Sendable @escaping (Application) -> DCUtRCoordinator) {
             if self.application.storage[Key.self] == nil {
                 self.initialize()
             }
@@ -53,7 +53,7 @@ extension Application {
     }
 }
 
-extension Application.DCUTRServices.Provider {
+extension Application.DCUtRServices.Provider {
     public static var dcutr: Self {
         .init { app in
             app.dcutr.use { DCUtRCoordinator(application: $0) }
