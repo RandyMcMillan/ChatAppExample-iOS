@@ -38,4 +38,29 @@ final class LibP2PDCUtRTests: XCTestCase {
         XCTAssertEqual(dialable.peer, peer)
         XCTAssertEqual(dialable.addresses, [try Multiaddr("/ip4/127.0.0.1/tcp/10000")])
     }
+
+    func testHasRelayReservationRequiresCircuitAddress() throws {
+        let app = Application(.testing)
+        defer { app.shutdown() }
+
+        let coordinator = DCUtRCoordinator(application: app)
+        let peer = try PeerID()
+
+        let noRelay = PeerInfo(
+            peer: peer,
+            addresses: [
+                try Multiaddr("/ip4/127.0.0.1/tcp/10000"),
+            ]
+        )
+        XCTAssertFalse(coordinator.hasRelayReservation(in: noRelay))
+
+        let withRelay = PeerInfo(
+            peer: peer,
+            addresses: [
+                try Multiaddr("/ip4/127.0.0.1/tcp/10000"),
+                try Multiaddr("/ip4/127.0.0.1/tcp/10001/p2p-circuit"),
+            ]
+        )
+        XCTAssertTrue(coordinator.hasRelayReservation(in: withRelay))
+    }
 }
