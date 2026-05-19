@@ -53,9 +53,7 @@ extension HolePunch: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try visitor.visitSingularEnumField(value: self.type, fieldNumber: 1)
-    for v in self.obsAddrs {
-      try visitor.visitRepeatedBytesField(value: v, fieldNumber: 2)
-    }
+    try visitor.visitRepeatedBytesField(value: self.obsAddrs, fieldNumber: 2)
     try unknownFields.traverse(visitor: &visitor)
   }
 

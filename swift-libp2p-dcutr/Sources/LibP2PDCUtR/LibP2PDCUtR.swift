@@ -62,14 +62,14 @@ final class DCUtRCoordinator: @unchecked Sendable {
     }
 
     private func clearAttempt(for peer: PeerID) {
-        self.queue.sync { self.attempts.removeValue(forKey: peer.b58String) }
+        _ = self.queue.sync { self.attempts.removeValue(forKey: peer.b58String) }
     }
 
     private func localObservedAddresses() -> [Multiaddr] {
         self.application.peerInfo.addresses.filter { !($0.protocols().contains(.p2p_circuit)) }
     }
 
-    private func makePayload(type: HolePunch.`Type`) throws -> ByteBuffer {
+    private func makePayload(type: HolePunch.Kind) throws -> ByteBuffer {
         let message = HolePunch(type: type, obsAddrs: try self.localObservedAddresses().map { try $0.binaryPacked() })
         return try DCUtRWire.encode(message)
     }
