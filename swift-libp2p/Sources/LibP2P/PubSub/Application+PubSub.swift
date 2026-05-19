@@ -88,7 +88,7 @@ extension Application {
             print("----------------------------------")
         }
 
-        public enum PublishedResults {
+        public enum PublishedResults: Sendable {
             case failed(Error)
             case storedLocally
             case publishedToPeers(Int)
