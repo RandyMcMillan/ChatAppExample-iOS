@@ -74,7 +74,7 @@ final class DCUtRCoordinator: @unchecked Sendable {
         self.application.peers.getPeerInfo(byID: peer.b58String, on: self.application.eventLoopGroup.any()).whenSuccess { peerInfo in
             self.queue.sync {
                 let merged = self.mergePeerInfo(self.attempts[peer.b58String]?.remotePeerInfo, with: peerInfo)
-                var attempt = self.attempt(for: peer)
+                var attempt = self.attempts[peer.b58String] ?? Attempt()
                 attempt.remotePeerInfo = merged
                 self.attempts[peer.b58String] = attempt
             }
