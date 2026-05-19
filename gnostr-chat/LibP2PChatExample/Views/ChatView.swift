@@ -126,6 +126,7 @@ struct ChatView: View {
         VStack {
             let height2:CGFloat = 38
             let connectionState = p2pService.connectionState(for: chat.peer.peer)
+            let isPeerConnected = chat.peer.isActive
             let sendButtonColor: Color = {
                 switch connectionState {
                 case .connected:
@@ -133,7 +134,7 @@ struct ChatView: View {
                 case .dialing:
                     return .yellow
                 case .disconnected:
-                    return .gray
+                    return isPeerConnected ? .green : .gray
                 }
             }()
             HStack {
@@ -166,7 +167,7 @@ struct ChatView: View {
                                 .foregroundColor(text.isEmpty ? .gray : sendButtonColor)
                         )
                 }
-                .disabled(text.isEmpty || connectionState != .connected)
+                .disabled(text.isEmpty || (!isPeerConnected && connectionState != .dialing))
             }
             .frame(height: height)
         }
