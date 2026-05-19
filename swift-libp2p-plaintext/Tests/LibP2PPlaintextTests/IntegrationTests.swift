@@ -258,6 +258,7 @@ struct ExternalIntegrationTests {
 
 private func makeLocalEchoHost(port: Int) throws -> Application {
     let lib = try Application(.testing, peerID: PeerID(.Ed25519))
+    lib.environment.arguments = ["libp2p"]
     lib.security.use(.plaintextV2)
     lib.muxers.use(.yamux)
     lib.servers.use(.tcp(host: "127.0.0.1", port: port))
@@ -282,6 +283,7 @@ private func makeLocalEchoHost(port: Int) throws -> Application {
 
 private func makeLocalClient(port: Int, peerID: PeerID? = nil) throws -> Application {
     let lib = try Application(.testing, peerID: peerID ?? PeerID(.Ed25519))
+    lib.environment.arguments = ["libp2p"]
     lib.security.use(.plaintextV2)
     lib.muxers.use(.yamux)
     lib.servers.use(.tcp(host: "127.0.0.1", port: port))
