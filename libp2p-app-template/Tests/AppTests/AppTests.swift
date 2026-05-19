@@ -29,7 +29,7 @@ struct AppTests {
             route.description == "/echo/1.0.0"
         }))
         // Sleep for a bit
-        try await Task.sleep(for: .microseconds(50))
+        try await Task.sleep(nanoseconds: 50_000)
         
         // Shutdown the app
         try await app.asyncShutdown()
