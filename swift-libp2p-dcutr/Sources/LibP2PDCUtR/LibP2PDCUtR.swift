@@ -108,6 +108,13 @@ final class DCUtRCoordinator: @unchecked Sendable {
         }
     }
 
+    private func registerRelayConnection(_ connection: Connection, for peer: PeerID) {
+        var attempt = self.attempt(for: peer)
+        guard attempt.relayConnection == nil else { return }
+        attempt.relayConnection = connection
+        self.setAttempt(attempt, for: peer)
+    }
+
     private func localObservedAddresses() -> [Multiaddr] {
         self.application.peerInfo.addresses.filter { !($0.protocols().contains(.p2p_circuit)) }
     }
@@ -195,6 +202,7 @@ final class DCUtRCoordinator: @unchecked Sendable {
 
     private func onConnected(_ connection: Connection) {
         guard self.isRelayConnection(connection), let peer = connection.remotePeer else { return }
+        self.registerRelayConnection(connection, for: peer)
         self.refreshPeerInfo(for: peer)
         self.startPunchIfReady(for: peer)
     }
