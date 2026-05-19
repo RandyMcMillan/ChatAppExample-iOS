@@ -12,6 +12,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         .package(path: "../swift-libp2p"),
         .package(path: "../swift-libp2p-fluent"),
+        .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/fluent-kit.git", .upToNextMajor(from: "1.52.2")),
     ],
     targets: [
@@ -22,6 +23,7 @@ let package = Package(
             dependencies: [
                 .product(name: "LibP2P", package: "swift-libp2p"),
                 .product(name: "Fluent", package: "swift-libp2p-fluent"),
+                .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
             ],
             swiftSettings: swiftSettings),
         .testTarget(
