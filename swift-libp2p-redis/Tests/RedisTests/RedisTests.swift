@@ -303,7 +303,7 @@ extension RedisTests {
     }
 
     @Test func testCacheAsync() async throws {
-        let app = try await Application.make(peerID: .ephemeral())
+        let app = try await makeApp()
 
         app.redis.configuration = redisConfig
         app.caches.use(.redis)
