@@ -5,8 +5,15 @@
 //  Created by Brandon Toms on 5/31/22.
 //
 
+import Foundation
 import LibP2P
 import SwiftUI
+
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 class ViewModel: ObservableObject, ChatDelegate {
     @Published var isReady:Bool = false
@@ -21,6 +28,7 @@ class ViewModel: ObservableObject, ChatDelegate {
     }
 
     public private(set) var p2pService: LibP2PService!
+    private var lifecycleObserverTokens: [NSObjectProtocol] = []
 
     init() {
         // Dummy data
@@ -57,19 +65,7 @@ class ViewModel: ObservableObject, ChatDelegate {
             // `p2pService` will call our `on(message:)` and `on(nickname:)` methods
             self.p2pService.delegate = self
 
-            // Register to be notified when the user sends the app into the background so we can shut down libp2p and save our chats.
-            await NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: .main) { _ in
-                print("App dismissed, saving chats and shutting down libp2p")
-                self.saveChats()
-                self.p2pService.stop()
-            }
-
-            await NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main) { _ in
-                print("App became active, starting libp2p")
-                Task.detached(priority: .background) {
-                    await self.startP2PService()
-                }
-            }
+            self.installLifecycleObservers()
             
             // Let our UI know that the libp2p service has initialized (this enables the settings icon and start/stop toggle)
             DispatchQueue.main.async {
@@ -182,6 +178,52 @@ class ViewModel: ObservableObject, ChatDelegate {
         }
         // Save Chats
         self.saveChats()
+    }
+
+    private func installLifecycleObservers() {
+        let center = NotificationCenter.default
+        let willResignObserver = center.addObserver(
+            forName: Self.willResignActiveNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            print("App dismissed, saving chats and shutting down libp2p")
+            self.saveChats()
+            self.p2pService.stop()
+        }
+
+        let didBecomeActiveObserver = center.addObserver(
+            forName: Self.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            print("App became active, starting libp2p")
+            Task.detached(priority: .background) {
+                await self.startP2PService()
+            }
+        }
+
+        self.lifecycleObserverTokens = [willResignObserver, didBecomeActiveObserver]
+    }
+
+    private static var willResignActiveNotification: Notification.Name {
+        #if canImport(UIKit)
+        return UIApplication.willResignActiveNotification
+        #elseif canImport(AppKit)
+        return NSApplication.willResignActiveNotification
+        #else
+        return Notification.Name("AppWillResignActiveNotification")
+        #endif
+    }
+
+    private static var didBecomeActiveNotification: Notification.Name {
+        #if canImport(UIKit)
+        return UIApplication.didBecomeActiveNotification
+        #elseif canImport(AppKit)
+        return NSApplication.didBecomeActiveNotification
+        #else
+        return Notification.Name("AppDidBecomeActiveNotification")
+        #endif
     }
 
     /// Sends a single message to a Chat buddy
