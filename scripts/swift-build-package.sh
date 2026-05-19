@@ -4,6 +4,10 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 project_root="$(cd "${script_dir}/.." && pwd)"
 
+if [[ "${1:-}" == "build" ]]; then
+  shift
+fi
+
 package_name="${1:?usage: $(basename "$0") <package-dir> [swift build args...]}"
 shift
 
