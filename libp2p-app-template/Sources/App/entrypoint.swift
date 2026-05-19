@@ -10,6 +10,7 @@ enum Entrypoint {
         // Determine the environment based on the executable being ran (testing, development or production)
         var env = try Environment.detect()
         try ensureDevelopmentEnvironmentFileExists(for: env)
+        try ensurePeerIDStorageDirectoryExists()
 
         // Set up our logger
         try LoggingSystem.bootstrap(from: &env)
@@ -53,5 +54,10 @@ enum Entrypoint {
         guard !FileManager.default.fileExists(atPath: url.path) else { return }
 
         try "PEERID_PASSWORD=development\n".write(to: url, atomically: true, encoding: .utf8)
+    }
+
+    private static func ensurePeerIDStorageDirectoryExists() throws {
+        let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
     }
 }
