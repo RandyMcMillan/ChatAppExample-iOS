@@ -12,6 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Foundation
 import LibP2P
 import LibP2PNoise
 import LibP2PYAMUX
@@ -68,10 +69,26 @@ struct LibP2PPubSubTests {
 
 struct TestHelper {
     static var externalIntegrationTestsEnabled: Bool {
-        if let b = ProcessInfo.processInfo.environment["PerformExternalIntegrationTests"], b == "true" {
-            return true
+        guard ProcessInfo.processInfo.environment["PerformExternalIntegrationTests"] == "true" else {
+            return false
         }
-        return false
+        return hasCommand("swift-libp2p-pubsub")
+    }
+
+    private static func hasCommand(_ name: String) -> Bool {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = ["bash", "-lc", "command -v \(name) >/dev/null 2>&1"]
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = FileHandle.nullDevice
+
+        do {
+            try process.run()
+            process.waitUntilExit()
+            return process.terminationStatus == 0
+        } catch {
+            return false
+        }
     }
 }
 
