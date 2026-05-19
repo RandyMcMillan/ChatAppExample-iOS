@@ -141,9 +141,11 @@ enum AutoNATWire {
 
 public final class AutoNATCoordinator: @unchecked Sendable {
     struct PendingProbe {
+        let token: [UInt8]
         let peer: PeerID
         let startTime: DispatchTime
         let promise: EventLoopPromise<AutoNATStatus>
+        let addresses: [Multiaddr]
     }
 
     private let application: Application
@@ -178,12 +180,25 @@ public final class AutoNATCoordinator: @unchecked Sendable {
     public func probe(peer: PeerID) -> EventLoopFuture<AutoNATStatus> {
         let el = self.application.eventLoopGroup.any()
         let promise = el.makePromise(of: AutoNATStatus.self)
+        let token = Array(UUID().uuidString.utf8)
+        let addresses = self.candidateDialbackAddresses()
+        var shouldOpenStream = false
         self.queue.sync {
             if let existing = self.pending[peer.b58String] {
-                promise.completeWith(existing.promise.futureResult)
                 return
             }
-            self.pending[peer.b58String] = PendingProbe(peer: peer, startTime: .now(), promise: promise)
+            self.pending[peer.b58String] = PendingProbe(
+                token: token,
+                peer: peer,
+                startTime: .now(),
+                promise: promise,
+                addresses: addresses
+            )
+            shouldOpenStream = true
+        }
+
+        guard shouldOpenStream else {
+            return self.queue.sync { self.pending[peer.b58String]?.promise.futureResult ?? promise.futureResult }
         }
 
         do {
@@ -229,26 +244,22 @@ public final class AutoNATCoordinator: @unchecked Sendable {
         case .outbound:
             switch req.event {
             case .ready:
-                let request = AutoNATWire.DialRequest(
-                    token: Array(UUID().uuidString.utf8),
-                    addresses: self.candidateDialbackAddresses()
-                )
-                self.queue.sync {
-                    let promise = self.application.eventLoopGroup.any().makePromise(of: AutoNATStatus.self)
-                    self.pending[req.remotePeer?.b58String ?? ""] = PendingProbe(
-                        peer: req.remotePeer ?? self.application.peerID,
-                        startTime: .now(),
-                        promise: promise
-                    )
+                guard
+                    let peer = req.remotePeer,
+                    let pending = self.queue.sync(execute: { self.pending[peer.b58String] })
+                else {
+                    return .close
                 }
+                let request = AutoNATWire.DialRequest(token: pending.token, addresses: pending.addresses)
                 return .respond(try AutoNATWire.encode(request))
 
             case .data(let payload):
                 let response = try AutoNATWire.decodeResponse(payload)
                 let pending = self.queue.sync { self.pending.removeValue(forKey: req.remotePeer?.b58String ?? "") }
+                guard let pending, pending.token == response.token else { return .close }
                 let status: AutoNATStatus = response.status == .ok ? .publicReachable : .privateBehindNAT
                 self.setStatus(status)
-                pending?.promise.succeed(status)
+                pending.promise.succeed(status)
                 return .close
 
             default:
