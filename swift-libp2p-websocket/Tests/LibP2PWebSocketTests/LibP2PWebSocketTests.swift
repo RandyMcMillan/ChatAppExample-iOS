@@ -24,6 +24,7 @@ struct LibP2PWebSocketTests {
 
     @Test func testInternalWebSocketStartThenStop() throws {
         let host = Application(.testing)
+        host.environment.arguments = ["libp2p"]
         host.servers.use(.ws(host: "127.0.0.1", port: 10000))
         host.security.use(.noise)
         host.muxers.use(.mplex)
@@ -40,12 +41,14 @@ struct LibP2PWebSocketTests {
 
     @Test func testInternalWebSocketEcho() async throws {
         let host = try await Application.make(.testing, peerID: .ephemeral())
+        host.environment.arguments = ["libp2p"]
         host.servers.use(.ws(host: "127.0.0.1", port: 10000))
         host.security.use(.noise)
         host.muxers.use(.mplex)
         host.logger.logLevel = .trace
 
         let client = try await Application.make(.testing, peerID: .ephemeral())
+        client.environment.arguments = ["libp2p"]
         client.servers.use(.ws(host: "127.0.0.1", port: 10001))
         client.security.use(.noise)
         client.muxers.use(.mplex)
@@ -129,6 +132,7 @@ struct LibP2PWebSocketTests {
             return
         }
         let client = try await Application.make(.testing, peerID: .ephemeral())
+        client.environment.arguments = ["libp2p"]
         client.servers.use(.ws(host: "0.0.0.0", port: 10000))
         client.security.use(.noise)
         client.muxers.use(.mplex)
