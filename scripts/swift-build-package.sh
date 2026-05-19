@@ -11,8 +11,8 @@ if [[ "${1:-}" == "build" ]]; then
   shift
 fi
 
-export GIT_CONFIG_COUNT="${GIT_CONFIG_COUNT:-1}"
-export GIT_CONFIG_KEY_0="${GIT_CONFIG_KEY_0:-safe.bareRepository}"
-export GIT_CONFIG_VALUE_0="${GIT_CONFIG_VALUE_0:-all}"
+export GIT_CONFIG_COUNT=1
+export GIT_CONFIG_KEY_0=safe.bareRepository
+export GIT_CONFIG_VALUE_0=all
 
 exec swift build --package-path "${project_root}/${package_name}" "$@"
