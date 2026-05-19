@@ -26,6 +26,7 @@ struct LibP2PPubSubTests {
     @Test func testAppConfiguration_Floodsub() async throws {
         let app = try await Application.make(.testing, peerID: PeerID(.Ed25519))
         app.logger.logLevel = .trace
+        app.environment.arguments = []
 
         /// Configure our networking stack!
         app.servers.use(.tcp(host: "127.0.0.1", port: 10000))
@@ -47,6 +48,7 @@ struct LibP2PPubSubTests {
     @Test func testAppConfiguration_Gossipsub() async throws {
         let app = try await Application.make(.testing, peerID: PeerID(.Ed25519))
         app.logger.logLevel = .trace
+        app.environment.arguments = []
 
         /// Configure our networking stack!
         app.servers.use(.tcp(host: "127.0.0.1", port: 10000))
