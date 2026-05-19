@@ -923,6 +923,11 @@ open class BasePubSub: @unchecked Sendable {
                     self.seenCache.put(messageID: msgID)
                 }
 
+                if self.emitSelf, let handler = self.subscriptions[topic] {
+                    self._eventHandler?(.outbound(.message(self.peerID, [msgToSend])))
+                    let _ = handler.on?(.data(msgToSend))
+                }
+
                 /// For each peer subscribed to the topic, send the message their way...
                 for subscriber in subscribers {
                     self.logger.debug("Attempting to send message to \(subscriber.id)")
