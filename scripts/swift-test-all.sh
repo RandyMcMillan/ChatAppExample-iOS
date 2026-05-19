@@ -4,6 +4,16 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 project_root="$(cd "${script_dir}/.." && pwd)"
 
+if [[ -z "${BASH_VERSION:-}" ]]; then
+  echo "bash is required" >&2
+  exit 1
+fi
+
+if (( BASH_VERSINFO[0] < 3 )); then
+  echo "bash 3 or newer is required" >&2
+  exit 1
+fi
+
 usage() {
   cat <<EOF
 usage: $(basename "$0") [swift test args...]
@@ -27,17 +37,15 @@ export GIT_CONFIG_COUNT=1
 export GIT_CONFIG_KEY_0=safe.bareRepository
 export GIT_CONFIG_VALUE_0=all
 
-mapfile -t package_manifests < <(
-  find "${project_root}" \
-    -path '*/.build' -prune -o \
-    -path '*/.git' -prune -o \
-    -name Package.swift -print | sort
-)
-
-for package_manifest in "${package_manifests[@]}"; do
+while IFS= read -r package_manifest; do
   package_path="$(dirname "${package_manifest}")"
   package_name="$(basename "${package_path}")"
 
   echo "==> swift test --package-path ${package_name}"
   swift test --package-path "${package_path}" "$@"
-done
+done < <(
+  find "${project_root}" \
+    -path '*/.build' -prune -o \
+    -path '*/.git' -prune -o \
+    -name Package.swift -print | sort
+)
