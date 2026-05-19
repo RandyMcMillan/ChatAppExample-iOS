@@ -183,6 +183,42 @@ final class LibP2PPubSubGossipsubTests {
         try await app.asyncShutdown()
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func testLibP2PPubSub_GossipSub_DefaultProviderEmitsSelfForChatTopic() async throws {
+        let app = try await Application.make(.testing, peerID: PeerID(.Ed25519))
+        app.logger.logLevel = .trace
+        app.environment.arguments = [app.environment.arguments.first ?? "xctest"]
+        app.servers.use(.tcp(host: "127.0.0.1", port: 10000))
+        app.security.use(.noise)
+        app.muxers.use(.yamux)
+        app.pubsub.use(.gossipsub)
+
+        let received = AsyncSemaphore(value: 0)
+        let subscription = try app.pubsub.gossipsub.subscribe(
+            .init(
+                topic: "chat",
+                signaturePolicy: .strictSign,
+                validator: .acceptAll,
+                messageIDFunc: .hashSequenceNumberAndFromFields
+            )
+        )
+        subscription.on = { event -> EventLoopFuture<Void> in
+            switch event {
+            case .data(let message):
+                #expect(String(data: message.data, encoding: .utf8) == "hello chat")
+                received.signal()
+            case .newPeer, .error:
+                break
+            }
+            return app.eventLoopGroup.next().makeSucceededVoidFuture()
+        }
+
+        try await app.startup()
+        subscription.publish("hello chat".data(using: .utf8)!)
+        await received.wait()
+        try await app.asyncShutdown()
+    }
+
     /// **************************************
     ///     Testing Internal Gossipsub Subscriptions
     /// **************************************
