@@ -17,16 +17,13 @@ enum Entrypoint {
 
         // Create a persistent PeerID seeded from the development env password.
         let peerID: KeyPairFile = .persistent(
-            // Specify the PeerIDs key type (RSA, Secp256k1 or Ed25519)
             type: .Ed25519,
-            // Keep the template deterministic by seeding it from .env.development.
             encryptedWith: .envKey,
-            // Store the encrypted keys in a writable app support directory.
             storedAt: .filePath(FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!)
         )
 
         // Instantiate our libp2p app
-        let app = try await Application.make(env, peerID: peerID)
+        let app = try await makeApplication(env: env, peerID: peerID)
 
         // This attempts to install NIO as the Swift Concurrency global executor.
         // You can enable it if you'd like to reduce the amount of context switching between NIO and Swift Concurrency.
@@ -59,5 +56,17 @@ enum Entrypoint {
     private static func ensurePeerIDStorageDirectoryExists() throws {
         let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+    }
+
+    private static func makeApplication(env: Environment, peerID: KeyPairFile) async throws -> Application {
+        do {
+            return try await Application.make(env, peerID: peerID)
+        } catch KeyPairFile.Error.unableToReadKeyPairFile,
+            KeyPairFile.Error.unableToDecryptKeyFile {
+            let storageURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            let keyFilePath = storageURL.appendingPathComponent(".peer-id-ed25519.\(env.name)").path
+            try? FileManager.default.removeItem(atPath: keyFilePath)
+            return try await Application.make(env, peerID: peerID)
+        }
     }
 }
