@@ -36,6 +36,7 @@ final class DCUtRCoordinator: @unchecked Sendable {
     func install() {
         self.application.events.on(self, event: .connected(self.onConnected(_:)))
         self.application.events.on(self, event: .disconnected(self.onDisconnected(_:_:)))
+        self.application.events.on(self, event: .identifiedPeer(self.onIdentifiedPeer(_:)))
         self.application.group("libp2p") { libp2p in
             libp2p.group("dcutr", handlers: [.varIntLengthPrefixed]) { dcutr in
                 dcutr.on("1.0.0", handlers: [.varIntLengthPrefixed]) { req -> Response<ByteBuffer> in
@@ -61,6 +62,23 @@ final class DCUtRCoordinator: @unchecked Sendable {
 
     private func clearAttempt(for peer: PeerID) {
         _ = self.queue.sync { self.attempts.removeValue(forKey: peer.b58String) }
+    }
+
+    private func mergePeerInfo(_ lhs: PeerInfo?, with rhs: PeerInfo) -> PeerInfo {
+        guard let lhs else { return rhs }
+        let addresses = Array(Set(lhs.addresses).union(rhs.addresses))
+        return PeerInfo(peer: rhs.peer, addresses: addresses)
+    }
+
+    private func refreshPeerInfo(for peer: PeerID) {
+        self.application.peers.getPeerInfo(byID: peer.b58String, on: self.application.eventLoopGroup.any()).whenSuccess { peerInfo in
+            self.queue.sync {
+                let merged = self.mergePeerInfo(self.attempts[peer.b58String]?.remotePeerInfo, with: peerInfo)
+                var attempt = self.attempt(for: peer)
+                attempt.remotePeerInfo = merged
+                self.attempts[peer.b58String] = attempt
+            }
+        }
     }
 
     private func localObservedAddresses() -> [Multiaddr] {
@@ -150,7 +168,12 @@ final class DCUtRCoordinator: @unchecked Sendable {
 
     private func onConnected(_ connection: Connection) {
         guard self.isRelayConnection(connection), let peer = connection.remotePeer else { return }
+        self.refreshPeerInfo(for: peer)
         self.initiatePunch(for: peer, relayConnection: connection)
+    }
+
+    private func onIdentifiedPeer(_ identifiedPeer: IdentifiedPeer) {
+        self.refreshPeerInfo(for: identifiedPeer.peer)
     }
 
     private func onDisconnected(_ connection: Connection, _ peer: PeerID?) {
@@ -193,7 +216,7 @@ final class DCUtRCoordinator: @unchecked Sendable {
                 switch message.type {
                 case .connect:
                     var attempt = self.attempt(for: peer)
-                    attempt.remotePeerInfo = remoteInfo
+                    attempt.remotePeerInfo = self.mergePeerInfo(attempt.remotePeerInfo, with: remoteInfo)
                     attempt.connectReceivedAt = Date()
                     self.setAttempt(attempt, for: peer)
 
