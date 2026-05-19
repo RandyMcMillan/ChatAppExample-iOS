@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E10000000000000000000021 /* LibP2PRelay in Frameworks */ = {isa = PBXBuildFile; productRef = E10000000000000000000011 /* LibP2PRelay */; };
+		E10000000000000000000022 /* LibP2PAutoNAT in Frameworks */ = {isa = PBXBuildFile; productRef = E10000000000000000000012 /* LibP2PAutoNAT */; };
+		E10000000000000000000023 /* LibP2PDCUtR in Frameworks */ = {isa = PBXBuildFile; productRef = E10000000000000000000013 /* LibP2PDCUtR */; };
+		E10000000000000000000024 /* LibP2PKadDHT in Frameworks */ = {isa = PBXBuildFile; productRef = E10000000000000000000014 /* LibP2PKadDHT */; };
 		95394E6029F2F4F8009A74DF /* Routes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95394E5F29F2F4F8009A74DF /* Routes.swift */; };
 		95394E6829F45781009A74DF /* LibP2P in Frameworks */ = {isa = PBXBuildFile; productRef = 95394E6729F45781009A74DF /* LibP2P */; };
 		95D22A7329F5E87400DF98C7 /* LibP2PMDNS in Frameworks */ = {isa = PBXBuildFile; productRef = 95D22A7229F5E87400DF98C7 /* LibP2PMDNS */; };
@@ -55,6 +59,10 @@
 				CA3C5431286A2C4F001E1858 /* LibP2PMPLEX in Frameworks */,
 				95D22A7329F5E87400DF98C7 /* LibP2PMDNS in Frameworks */,
 				CA3C542E286A2C3C001E1858 /* LibP2PNoise in Frameworks */,
+				E10000000000000000000021 /* LibP2PRelay in Frameworks */,
+				E10000000000000000000022 /* LibP2PAutoNAT in Frameworks */,
+				E10000000000000000000023 /* LibP2PDCUtR in Frameworks */,
+				E10000000000000000000024 /* LibP2PKadDHT in Frameworks */,
 				95394E6829F45781009A74DF /* LibP2P in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -160,6 +168,10 @@
 			packageProductDependencies = (
 				CA3C542D286A2C3C001E1858 /* LibP2PNoise */,
 				CA3C5430286A2C4F001E1858 /* LibP2PMPLEX */,
+				E10000000000000000000011 /* LibP2PRelay */,
+				E10000000000000000000012 /* LibP2PAutoNAT */,
+				E10000000000000000000013 /* LibP2PDCUtR */,
+				E10000000000000000000014 /* LibP2PKadDHT */,
 				95394E6729F45781009A74DF /* LibP2P */,
 				95D22A7229F5E87400DF98C7 /* LibP2PMDNS */,
 			);
@@ -194,6 +206,10 @@
 			packageReferences = (
 				CA3C542C286A2C3C001E1858 /* XCRemoteSwiftPackageReference "swift-libp2p-noise" */,
 				CA3C542F286A2C4F001E1858 /* XCRemoteSwiftPackageReference "swift-libp2p-mplex" */,
+				E10000000000000000000001 /* XCRemoteSwiftPackageReference "swift-libp2p-relay" */,
+				E10000000000000000000002 /* XCRemoteSwiftPackageReference "swift-libp2p-autonat" */,
+				E10000000000000000000003 /* XCRemoteSwiftPackageReference "swift-libp2p-dcutr" */,
+				E10000000000000000000004 /* XCRemoteSwiftPackageReference "swift-libp2p-kad-dht" */,
 				95394E6629F45781009A74DF /* XCRemoteSwiftPackageReference "swift-libp2p" */,
 				95D22A7129F5E87400DF98C7 /* XCRemoteSwiftPackageReference "swift-libp2p-mdns" */,
 			);
@@ -477,6 +493,22 @@
 				minimumVersion = 0.1.3;
 			};
 		};
+		E10000000000000000000001 /* XCRemoteSwiftPackageReference "swift-libp2p-relay" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../swift-libp2p-relay";
+		};
+		E10000000000000000000002 /* XCRemoteSwiftPackageReference "swift-libp2p-autonat" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../swift-libp2p-autonat";
+		};
+		E10000000000000000000003 /* XCRemoteSwiftPackageReference "swift-libp2p-dcutr" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../swift-libp2p-dcutr";
+		};
+		E10000000000000000000004 /* XCRemoteSwiftPackageReference "swift-libp2p-kad-dht" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../swift-libp2p-kad-dht";
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -499,6 +531,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA3C542F286A2C4F001E1858 /* XCRemoteSwiftPackageReference "swift-libp2p-mplex" */;
 			productName = LibP2PMPLEX;
+		};
+		E10000000000000000000011 /* LibP2PRelay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E10000000000000000000001 /* XCRemoteSwiftPackageReference "swift-libp2p-relay" */;
+			productName = LibP2PRelay;
+		};
+		E10000000000000000000012 /* LibP2PAutoNAT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E10000000000000000000002 /* XCRemoteSwiftPackageReference "swift-libp2p-autonat" */;
+			productName = LibP2PAutoNAT;
+		};
+		E10000000000000000000013 /* LibP2PDCUtR */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E10000000000000000000003 /* XCRemoteSwiftPackageReference "swift-libp2p-dcutr" */;
+			productName = LibP2PDCUtR;
+		};
+		E10000000000000000000014 /* LibP2PKadDHT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E10000000000000000000004 /* XCRemoteSwiftPackageReference "swift-libp2p-kad-dht" */;
+			productName = LibP2PKadDHT;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
