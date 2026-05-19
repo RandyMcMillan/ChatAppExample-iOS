@@ -1,5 +1,4 @@
 import LibP2P
-%%IMPORT%%
 
 // configures your application
 public func configure(_ app: Application) async throws {
@@ -8,11 +7,9 @@ public func configure(_ app: Application) async throws {
     app.logger.logLevel = .notice
 
     // Install our modules on libp2p
-    %%INSTALLATION%%
-    
+
     // Configure the modules to be used
-    %%POST_INSTALLATION%%
-    
+
     // register routes
     try routes(app)
     
