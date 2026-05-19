@@ -30,6 +30,8 @@ swift build
 swift run
 ```
 
+The template stores its example PeerID without requiring a `.env.<environment>` file so it runs immediately after cloning. You can switch `App/entrypoint.swift` back to `.envKey` if you want password-backed key storage.
+
 Other useful commands
 ``` bash
 swift package reset   # resets the dependency cache
@@ -43,4 +45,3 @@ swift run App serve --hostname 127.0.0.1 --port 10333
 # runs the custom cowsay command 
 swift run App cowsay "Mmooo" --eyes "👀" --tongue "👅" 
 ```
-
