@@ -95,6 +95,7 @@ struct LibP2PIdentifyTests {
     @Test func testIDPushRecordDecoding() throws {
 
         let application = Application(.testing)
+        application.environment.arguments = ["libp2p"]
 
         try application.start()
 
@@ -486,6 +487,7 @@ extension LibP2PIdentifyTests {
         logLevel: Logger.Level = .notice
     ) throws -> Application {
         let lib = try Application(.testing, peerID: peerID ?? PeerID(.Ed25519))
+        lib.environment.arguments = ["libp2p"]
         lib.security.use(.noise)
         lib.muxers.use(.yamux)
         lib.servers.use(.tcp(host: "127.0.0.1", port: port))
@@ -514,6 +516,7 @@ extension LibP2PIdentifyTests {
         logLevel: Logger.Level = .notice
     ) throws -> Application {
         let lib = try Application(.testing, peerID: peerID ?? PeerID(.Ed25519))
+        lib.environment.arguments = ["libp2p"]
         lib.security.use(.noise)
         lib.muxers.use(.yamux)
         lib.servers.use(.tcp(host: "127.0.0.1", port: port))
