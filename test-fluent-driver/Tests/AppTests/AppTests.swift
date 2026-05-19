@@ -1,9 +1,9 @@
 import LibP2P
 import LibP2PTesting
-import Fluent
 import Testing
 import XCTFluent
 
+@testable import Fluent
 @testable import App
 
 @Suite("App Tests", .serialized)
@@ -18,7 +18,7 @@ struct AppTests {
         // Setup test database
 
         // Configure the modules to be used
-        app.databases.use(test.configuration, as: .test)
+        app.databases.use(test.configuration, as: .init(string: "test"))
         app.peerstore.use(.fluent)
         app.peerstore.prepareMigrations()
 
