@@ -34,7 +34,7 @@ public func configure(_ app: Application) async throws {
         }
     }
 
-    private func listenPort() -> Int {
+    fileprivate func listenPort() -> Int {
         if let value = ProcessInfo.processInfo.environment["P2P_LISTEN_PORT"],
            let port = Int(value),
            port > 0 {
