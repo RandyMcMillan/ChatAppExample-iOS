@@ -1,7 +1,6 @@
 import LibP2P
 import LibP2PTesting
 import Testing
-import XCTFluent
 
 @testable import Fluent
 @testable import App
@@ -9,16 +8,11 @@ import XCTFluent
 @Suite("App Tests", .serialized)
 struct AppTests {
 
-    let test = ArrayTestDatabase()
-
     private func configure(_ app: Application) async throws {
         // Set our log level
         app.logger.logLevel = .info
 
-        // Setup test database
-
         // Configure the modules to be used
-        app.databases.use(test.configuration, as: .init(string: "test"))
         app.peerstore.use(.fluent)
         app.peerstore.prepareMigrations()
 
