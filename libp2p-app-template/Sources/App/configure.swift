@@ -18,8 +18,8 @@ public func configure(_ app: Application) async throws {
     app.discovery.use(.mdns)
     app.discovery.use(.kadDHT)
     
-    // Lets start a TCP server on the localhost bound to port 10000
-    app.listen(.tcp(host: "127.0.0.1", port: 10000))
+    // Bind to all interfaces so discovery can reach peers on the local network.
+    app.listen(.tcp(host: "0.0.0.0", port: listenPort()))
     
     // Add a custom command
     app.asyncCommands.use(Cowsay(), as: "cowsay")
@@ -32,6 +32,15 @@ public func configure(_ app: Application) async throws {
             let fullAddress = try address.encapsulate(proto: .p2p, address: app.peerID.b58String)
             app.logger.notice("Libp2p listening at \(fullAddress)")
         }
+    }
+
+    private func listenPort() -> Int {
+        if let value = ProcessInfo.processInfo.environment["P2P_LISTEN_PORT"],
+           let port = Int(value),
+           port > 0 {
+            return port
+        }
+        return 10000
     }
 }
 
