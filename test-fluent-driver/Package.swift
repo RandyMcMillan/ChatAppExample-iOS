@@ -11,7 +11,8 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         .package(path: "../swift-libp2p"),
-        %%DEPENDENCY%%
+        .package(path: "../swift-libp2p-fluent"),
+        .package(url: "https://github.com/vapor/fluent-kit.git", .upToNextMajor(from: "1.52.2")),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -20,14 +21,15 @@ let package = Package(
             name: "App",
             dependencies: [
                 .product(name: "LibP2P", package: "swift-libp2p"),
-                %%TARGET_DEPENDENCY%%
+                .product(name: "Fluent", package: "swift-libp2p-fluent"),
             ],
             swiftSettings: swiftSettings),
         .testTarget(
             name: "AppTests",
             dependencies: [
                 .target(name: "App"),
-                .product(name: "LibP2PTesting", package: "swift-libp2p")
+                .product(name: "LibP2PTesting", package: "swift-libp2p"),
+                .product(name: "XCTFluent", package: "fluent-kit"),
             ],
             swiftSettings: swiftSettings),
     ]
