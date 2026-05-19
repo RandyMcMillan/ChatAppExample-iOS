@@ -4,3 +4,5 @@
 xcuserdata/
 .swiftpm/
 Package.resolved
+
+dump.rdb
