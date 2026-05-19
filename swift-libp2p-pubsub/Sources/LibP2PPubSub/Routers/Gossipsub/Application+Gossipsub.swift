@@ -18,7 +18,7 @@ extension Application.PubSubServices.Provider {
     public static var gossipsub: Self {
         .init {
             $0.pubsub.use { app -> GossipSub in
-                let gsub = try! GossipSub(group: app.eventLoopGroup, libp2p: app)
+                let gsub = try! GossipSub(group: app.eventLoopGroup, libp2p: app, emitSelf: true)
                 app.lifecycle.use(gsub)
                 return gsub
             }
