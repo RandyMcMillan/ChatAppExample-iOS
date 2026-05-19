@@ -22,7 +22,8 @@ extension LibP2PTests {
 
         @available(*, deprecated, message: "Transition to async tests")
         @Test func testLibP2PRoutes_Default_Identify_Routes() throws {
-            let app = try Application(.detect())
+            let app = Application(.testing)
+            app.environment.arguments = ["libp2p"]
 
             try app.start()
 
@@ -48,7 +49,8 @@ extension LibP2PTests {
         }
 
         @Test func testLibP2PRoutes_Additional_Routes_Async() async throws {
-            let app = try await Application.make(.detect(), peerID: .ephemeral)
+            let app = try await Application.make(.testing, peerID: .ephemeral)
+            app.environment.arguments = ["libp2p"]
 
             app.routes.group("api") { api in
                 // Ensure that we can register non-async routes

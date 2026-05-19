@@ -20,7 +20,8 @@ struct LibP2PTests {
 
     @available(*, deprecated, message: "Transition to async tests")
     @Test func testLibP2P() throws {
-        let app = try Application(.detect())
+        let app = Application(.testing)
+        app.environment.arguments = ["libp2p"]
         defer { app.shutdown() }
 
         // .detect() should result in .testing
@@ -36,7 +37,8 @@ struct LibP2PTests {
     @available(*, deprecated, message: "Transition to async tests")
     @Test func testLibP2P_CustomLogger() throws {
         let logger = Logger(label: "custom")
-        let app = try Application(.detect(), logger: logger)
+        let app = Application(.testing, logger: logger)
+        app.environment.arguments = ["libp2p"]
         defer { app.shutdown() }
 
         // .detect() should result in .testing
@@ -51,6 +53,7 @@ struct LibP2PTests {
     @available(*, deprecated, message: "Transition to async tests")
     @Test func testLibP2P_Development_Environment() throws {
         let app = Application(.development)
+        app.environment.arguments = ["libp2p"]
         defer { app.shutdown() }
 
         #expect(app.environment == Environment.development)
@@ -62,6 +65,7 @@ struct LibP2PTests {
 
     @Test func testLibP2P_Async() async throws {
         let app = try await Application.make(.testing, peerID: .ephemeral)
+        app.environment.arguments = ["libp2p"]
 
         #expect(app.environment == Environment.testing)
         #expect(app.logger.label.hasPrefix("libp2p.application"))
@@ -77,6 +81,7 @@ struct LibP2PTests {
     @Test func testLibP2P_Async_CustomLogger() async throws {
         let logger = Logger(label: "custom")
         let app = try await Application.make(.testing, peerID: .ephemeral, logger: logger)
+        app.environment.arguments = ["libp2p"]
 
         #expect(app.environment == Environment.testing)
         #expect(app.logger.label == "custom")
@@ -90,6 +95,7 @@ struct LibP2PTests {
 
     @Test func testLibP2P_Async_ListeningAddress() async throws {
         let app = try await Application.make(.testing, peerID: .ephemeral)
+        app.environment.arguments = ["libp2p"]
 
         #expect(app.environment == Environment.testing)
 
