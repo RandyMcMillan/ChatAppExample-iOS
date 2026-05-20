@@ -1,4 +1,5 @@
-# OpenSSL FIPS support
+OpenSSL FIPS support
+====================
 
 This release of OpenSSL includes a cryptographic module that is intended to be
 FIPS 140-2 validated. The module is implemented as an OpenSSL provider.
@@ -11,7 +12,8 @@ resp. `fips.dll` (on Windows). The FIPS provider does not get built and
 installed automatically. To enable it, you need to configure OpenSSL using
 the `enable-fips` option.
 
-# Installing the FIPS module
+Installing the FIPS module
+==========================
 
 If the FIPS provider is enabled, it gets installed automatically during the
 normal installation process. Simply follow the normal procedure (configure,
@@ -56,9 +58,10 @@ If you configured OpenSSL to be installed to a different location, the paths wil
 vary accordingly. In the rare case that you need to install the fipsmodule.cnf
 to non-standard location, you can execute the `openssl fipsinstall` command manually.
 
-# Using the FIPS Module in applications
+Using the FIPS Module in applications
+=====================================
 
 Documentation about using the FIPS module is available on the [fips_module(7)]
 manual page.
 
-[fips_module(7)]: https://www.openssl.org/docs/man3.0/man7/fips_module.html
+ [fips_module(7)]: https://www.openssl.org/docs/man3.0/man7/fips_module.html

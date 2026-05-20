@@ -1,6 +1,8 @@
-# Guidelines for test developers
+Guidelines for test developers
+==============================
 
-## How to add recipes
+How to add recipes
+------------------
 
 For any test that you want to perform, you write a script located in
 `test/recipes/`, named `{nn}-test_{name}.t`,
@@ -11,7 +13,8 @@ Please note that if a test involves a new testing executable, you will need to
 do some additions in test/build.info. Please refer to the section
 ["Changes to test/build.info"](README.md#changes-to-testbuildinfo) below.
 
-## Naming conventions
+Naming conventions
+------------------
 
 A test executable is named `test/{name}test.c`
 
@@ -36,7 +39,8 @@ The number `{nn}` is (somewhat loosely) grouped as follows:
     90-98  misc
     99     most time consuming tests [such as test_fuzz]
 
-## A recipe that just runs a test executable
+A recipe that just runs a test executable
+-----------------------------------------
 
 A script that just runs a program looks like this:
 
@@ -54,11 +58,12 @@ expects it to be located in `test/`
 For documentation on `OpenSSL::Test::Simple`,
 do `perldoc util/perl/OpenSSL/Test/Simple.pm`.
 
-## A recipe that runs a more complex test
+A recipe that runs a more complex test
+--------------------------------------
 
 For more complex tests, you will need to read up on Test::More and
-OpenSSL::Test. Test::More is normally preinstalled, do `man Test::More` for
-documentation. For OpenSSL::Test, do `perldoc util/perl/OpenSSL/Test.pm`.
+OpenSSL::Test.  Test::More is normally preinstalled, do `man Test::More` for
+documentation.  For OpenSSL::Test, do `perldoc util/perl/OpenSSL/Test.pm`.
 
 A script to start from could be this:
 
@@ -85,23 +90,25 @@ A script to start from could be this:
         # test feature 2
     }
 
-## Changes to test/build.info
+Changes to test/build.info
+--------------------------
 
 Whenever a new test involves a new test executable you need to do the
 following (at all times, replace {NAME} and {name} with the name of your
 test):
 
-- add `{name}` to the list of programs under `PROGRAMS_NO_INST`
+ * add `{name}` to the list of programs under `PROGRAMS_NO_INST`
 
-- create a three line description of how to build the test, you will have
-  to modify the include paths and source files if you don't want to use the
-  basic test framework:
+ * create a three line description of how to build the test, you will have
+   to modify the include paths and source files if you don't want to use the
+   basic test framework:
 
-      SOURCE[{name}]={name}.c
-      INCLUDE[{name}]=.. ../include ../apps/include
-      DEPEND[{name}]=../libcrypto libtestutil.a
+       SOURCE[{name}]={name}.c
+       INCLUDE[{name}]=.. ../include ../apps/include
+       DEPEND[{name}]=../libcrypto libtestutil.a
 
-## Generic form of C test executables
+Generic form of C test executables
+----------------------------------
 
     #include "testutil.h"
 
@@ -127,13 +134,13 @@ test):
     }
 
 You should use the `TEST_xxx` macros provided by `testutil.h` to test all failure
-conditions. These macros produce an error message in a standard format if the
-condition is not met (and nothing if the condition is met). Additional
+conditions.  These macros produce an error message in a standard format if the
+condition is not met (and nothing if the condition is met).  Additional
 information can be presented with the `TEST_info` macro that takes a `printf`
-format string and arguments. `TEST_error` is useful for complicated conditions,
-it also takes a `printf` format string and argument. In all cases the `TEST_xxx`
-macros are guaranteed to evaluate their arguments exactly once. This means
-that expressions with side effects are allowed as parameters. Thus,
+format string and arguments.  `TEST_error` is useful for complicated conditions,
+it also takes a `printf` format string and argument.  In all cases the `TEST_xxx`
+macros are guaranteed to evaluate their arguments exactly once.  This means
+that expressions with side effects are allowed as parameters.  Thus,
 
     if (!TEST_ptr(ptr = OPENSSL_malloc(..)))
 

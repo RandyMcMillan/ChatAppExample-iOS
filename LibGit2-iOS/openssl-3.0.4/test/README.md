@@ -1,4 +1,5 @@
-# Using OpenSSL Tests
+Using OpenSSL Tests
+===================
 
 After a successful build, and before installing, the libraries should be tested.
 Run:
@@ -12,9 +13,10 @@ Run:
 
 If some tests fail, take a look at the section Test Failures below.
 
-## Test Failures
+Test Failures
+-------------
 
-If some tests fail, look at the output. There may be reasons for the failure
+If some tests fail, look at the output.  There may be reasons for the failure
 that isn't a problem in OpenSSL itself (like an OS malfunction or a Perl issue).
 You may want increased verbosity, that can be accomplished like this:
 
@@ -54,7 +56,7 @@ You can find the list of available tests like this:
     $ nmake list-tests                               # Windows
 
 Have a look at the manual for the perl module Test::Harness to
-see what other HARNESS\_\* variables there are.
+see what other HARNESS_* variables there are.
 
 To report a bug please open an issue on GitHub, at
 <https://github.com/openssl/openssl/issues>.
@@ -62,10 +64,11 @@ To report a bug please open an issue on GitHub, at
 For more details on how the `make` variables `TESTS` can be used,
 see section Running Selected Tests below.
 
-## Running Selected Tests
+Running Selected Tests
+----------------------
 
 The `make` variable `TESTS` supports a versatile set of space separated tokens
-with which you can specify a set of tests to be performed. With a "current
+with which you can specify a set of tests to be performed.  With a "current
 set of tests" in mind, initially being empty, here are the possible tokens:
 
      alltests      The current set of tests becomes the whole set of available
@@ -87,7 +90,7 @@ set of tests" in mind, initially being empty, here are the possible tokens:
                    effectively making this token equivalent to
                    TESTS="alltests -xxx".
 
-Also, all tokens except for "alltests" may have wildcards, such as \*.
+Also, all tokens except for "alltests" may have wildcards, such as *.
 (on Unix and Windows, BSD style wildcards are supported, while on VMS,
 it's VMS style wildcards)
 
@@ -101,8 +104,8 @@ or, if you want to be explicit:
 
     $ make TESTS='alltests -test_fuzz*' test
 
-Run all tests that have a name starting with "test*ssl" but not those
-starting with "test_ssl*":
+Run all tests that have a name starting with "test_ssl" but not those
+starting with "test_ssl_":
 
     $ make TESTS='test_ssl* -test_ssl_*' test
 
@@ -127,7 +130,8 @@ random numbers is operating correctly (with a false positive rate of 0.01%):
 
     $ ./util/wrap.sh test/bntest -stochastic
 
-## Running Tests in Parallel
+Running Tests in Parallel
+-------------------------
 
 By default the test harness will execute the selected tests sequentially.
 Depending on the platform characteristics, running more than one test job in
@@ -137,7 +141,7 @@ positive integer value. This specifies the maximum number of test jobs to run in
 parallel.
 
 Depending on the Perl version different strategies could be adopted to select
-which test recipes can be run in parallel. In recent versions of Perl, unless
+which test recipes can be run in parallel.  In recent versions of Perl, unless
 specified otherwise, any task can be run in parallel. Consult the documentation
 for `TAP::Harness` to know more.
 
@@ -145,14 +149,15 @@ To run up to four tests in parallel at any given time:
 
     $ make HARNESS_JOBS=4 test
 
-## Randomisation of Test Ordering
+Randomisation of Test Ordering
+------------------------------
 
 By default, the test harness will execute tests in the order they were added.
 By setting the `OPENSSL_TEST_RAND_ORDER` environment variable to zero, the
-test ordering will be randomised. If a randomly ordered test fails, the
-seed value used will be reported. Setting the `OPENSSL_TEST_RAND_ORDER`
+test ordering will be randomised.  If a randomly ordered test fails, the
+seed value used will be reported.  Setting the `OPENSSL_TEST_RAND_ORDER`
 environment variable to this value will rerun the tests in the same
-order. This assures repeatability of randomly ordered test runs.
+order.  This assures repeatability of randomly ordered test runs.
 This repeatability is independent of the operating system, processor or
 platform used.
 

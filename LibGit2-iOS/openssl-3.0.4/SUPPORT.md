@@ -1,20 +1,23 @@
-# OpenSSL User Support resources
+OpenSSL User Support resources
+==============================
 
 See the <https://www.openssl.org/support/contracts.html> for details on how to
 obtain commercial technical support.
 
-## If you have general questions about using OpenSSL
+If you have general questions about using OpenSSL
+-------------------------------------------------
 
 In this case the [openssl-users] mailing list is the right place for you.
 The list is not only watched by the OpenSSL team members, but also by many
 other OpenSSL users. Here you will most likely get the answer to your questions.
 An overview over the [mailing lists](#mailing-lists) can be found below.
 
-## If you think you found a Bug
+If you think you found a Bug
+----------------------------
 
-_NOTE: this section assumes that you want to report it or figure it out and
-fix it. What's written here is not to be taken as a recipe for how to get a
-working production installation_
+*NOTE: this section assumes that you want to report it or figure it out and
+fix it.  What's written here is not to be taken as a recipe for how to get a
+working production installation*
 
 If you have any problems with OpenSSL then please take the following steps
 first:
@@ -57,21 +60,22 @@ pull request. The details are covered in the [Contributing][contributing] sectio
 Don't hesitate to open a pull request, even if it's only a small change
 like a grammatical or typographical error in the documentation.
 
-# Mailing Lists
+Mailing Lists
+=============
 
 The OpenSSL maintains a number of [mailing lists] for various purposes.
 The most important lists are:
 
-- [openssl-users] for general questions about using the OpenSSL software
-  and discussions between OpenSSL users.
+- [openssl-users]    for general questions about using the OpenSSL software
+                     and discussions between OpenSSL users.
 
 - [openssl-announce] for official announcements to the OpenSSL community.
 
-- [openssl-project] for discussion about the development roadmap
-  and governance.
+- [openssl-project]  for discussion about the development roadmap
+                     and governance.
 
-Only subscribers can post to [openssl-users] or [openssl-project]. The
-archives are made public, however. For more information, see the [mailing
+Only subscribers can post to [openssl-users] or [openssl-project].  The
+archives are made public, however.  For more information, see the [mailing
 lists] page.
 
 There was an [openssl-dev] list that has been discontinued since development
@@ -80,10 +84,10 @@ anymore, the searchable archive may still contain useful information.
 
 <!-- Links -->
 
-[mailing lists]: https://www.openssl.org/community/mailinglists.html
-[openssl-users]: https://mta.openssl.org/mailman/listinfo/openssl-users
-[openssl-announce]: https://mta.openssl.org/mailman/listinfo/openssl-announce
-[openssl-project]: https://mta.openssl.org/mailman/listinfo/openssl-project
-[openssl-dev]: https://mta.openssl.org/mailman/listinfo/openssl-dev
-[github-issues]: https://github.com/openssl/openssl/issues/new/choose
-[contributing]: https://github.com/openssl/openssl/blob/master/CONTRIBUTING.md
+[mailing lists]:     https://www.openssl.org/community/mailinglists.html
+[openssl-users]:     https://mta.openssl.org/mailman/listinfo/openssl-users
+[openssl-announce]:  https://mta.openssl.org/mailman/listinfo/openssl-announce
+[openssl-project]:   https://mta.openssl.org/mailman/listinfo/openssl-project
+[openssl-dev]:       https://mta.openssl.org/mailman/listinfo/openssl-dev
+[github-issues]:     https://github.com/openssl/openssl/issues/new/choose
+[contributing]:      https://github.com/openssl/openssl/blob/master/CONTRIBUTING.md

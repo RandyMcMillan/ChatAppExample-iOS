@@ -1,10 +1,12 @@
-# Design document for the unified scheme data
+Design document for the unified scheme data
+===========================================
 
-## How are things connected?
+How are things connected?
+-------------------------
 
 The unified scheme takes all its data from the `build.info` files seen
-throughout the source tree. These files hold the minimum information
-needed to build end product files from diverse sources. See the
+throughout the source tree.  These files hold the minimum information
+needed to build end product files from diverse sources.  See the
 section on `build.info` files below.
 
 From the information in `build.info` files, `Configure` builds up an
@@ -15,26 +17,27 @@ or may not be the same as the source tree).
 [`Configurations/common.tmpl`](common.tmpl) uses the data from `%unified_info` to
 generate the rules for building end product files as well as
 intermediary files with the help of a few functions found in the
-build-file templates. See the section on build-file templates further
+build-file templates.  See the section on build-file templates further
 down for more information.
 
-## build.info files
+build.info files
+----------------
 
 As mentioned earlier, `build.info` files are meant to hold the minimum
 information needed to build output files, and therefore only (with a
 few possible exceptions [1]) have information about end products (such
 as scripts, library files and programs) and source files (such as C
-files, C header files, assembler files, etc). Intermediate files such
+files, C header files, assembler files, etc).  Intermediate files such
 as object files are rarely directly referred to in `build.info` files (and
 when they are, it's always with the file name extension `.o`), they are
-inferred by `Configure`. By the same rule of minimalism, end product
+inferred by `Configure`.  By the same rule of minimalism, end product
 file name extensions (such as `.so`, `.a`, `.exe`, etc) are never mentioned
-in `build.info`. Their file name extensions will be inferred by the
+in `build.info`.  Their file name extensions will be inferred by the
 build-file templates, adapted for the platform they are meant for (see
 sections on `%unified_info` and build-file templates further down).
 
 The variables `PROGRAMS`, `LIBS`, `MODULES` and `SCRIPTS` are used to declare
-end products. There are variants for them with `_NO_INST` as suffix
+end products.  There are variants for them with `_NO_INST` as suffix
 (`PROGRAM_NO_INST` etc) to specify end products that shouldn't get installed.
 
 The variables `SOURCE`, `DEPEND`, `INCLUDE` and `DEFINE` are indexed by a
@@ -71,9 +74,9 @@ library, and that the library `libssl` depend on the library
 
 This is the `build.info` file in `apps/`, one may notice that all file
 paths mentioned are relative to the directory the `build.info` file is
-located in. This one tells us that there's a program to be built
+located in.  This one tells us that there's a program to be built
 called `apps/openss` (the file name extension will depend on the
-platform and is therefore not mentioned in the `build.info` file). It's
+platform and is therefore not mentioned in the `build.info` file).  It's
 built from one source file, `apps/openssl.c`, and building it requires
 the use of `.` and `include/` include directories (both are declared
 from the point of view of the `apps/` directory), and that the program
@@ -89,23 +92,23 @@ depends on the library `libssl` to function properly.
     DEPEND[../util/mkbuildinf.pl]=../util/Foo.pm
 
 This is the `build.info` file in `crypto/`, and it tells us a little more
-about what's needed to produce `libcrypto`. LIBS is used again to
-declare that `libcrypto` is to be produced. This declaration is
+about what's needed to produce `libcrypto`.  LIBS is used again to
+declare that `libcrypto` is to be produced.  This declaration is
 really unnecessary as it's already mentioned in the top `build.info`
-file, but can make the info file easier to understand. This is to
+file, but can make the info file easier to understand.  This is to
 show that duplicate information isn't an issue.
 
 This `build.info` file informs us that `libcrypto` is built from a few
 source files, `crypto/aes.c`, `crypto/evp.c` and `crypto/cversion.c`.
 It also shows us that building the object file inferred from
-`crypto/cversion.c` depends on `crypto/buildinf.h`. Finally, it
+`crypto/cversion.c` depends on `crypto/buildinf.h`.  Finally, it
 also shows the possibility to declare how some files are generated
 using some script, in this case a perl script, and how such scripts
 can be declared to depend on other files, in this case a perl module.
 
 Two things are worth an extra note:
 
-`DEPEND[cversion.o]` mentions an object file. DEPEND indexes is the
+`DEPEND[cversion.o]` mentions an object file.  DEPEND indexes is the
 only location where it's valid to mention them
 
     # ssl/build.info
@@ -132,8 +135,8 @@ called `engines/dasync` and `engines/ossltest` shall be built, that
 `engines/e_ossltest.c` and that the include directory `include/` may
 be used when building anything that will be part of these modules.
 Also, both modules depend on the library `libcrypto` to function
-properly. `ossltest` is explicitly linked with the static variant of
-the library `libcrypto`. Finally, only `dasync` is being installed, as
+properly.  `ossltest` is explicitly linked with the static variant of
+the library `libcrypto`.  Finally, only `dasync` is being installed, as
 `ossltest` is only for internal testing.
 
 When `Configure` digests these `build.info` files, the accumulated
@@ -175,7 +178,7 @@ A few notes worth mentioning:
 `MODULES` may be used to declare modules only.
 
 The indexes for `SOURCE` must only be end product files, such as
-libraries, programs or modules. The values of `SOURCE` variables must
+libraries, programs or modules.  The values of `SOURCE` variables must
 only be source files (possibly generated).
 
 `INCLUDE` and `DEPEND` shows a relationship between different files
@@ -192,7 +195,8 @@ files are to be found in the source tree, if they can be found there.
 source tree (such as `crypto/bildinf.h` in the example above) are
 generated and will be found in the build tree.
 
-## The `%unified_info` database
+The `%unified_info` database
+----------------------------
 
 The information in all the `build.info` get digested by `Configure` and
 collected into the `%unified_info` database, divided into the following
@@ -393,18 +397,19 @@ section above would be digested into a `%unified_info` table:
     );
 
 As can be seen, everything in `%unified_info` is fairly simple suggest
-of information. Still, it tells us that to build all programs, we
+of information.  Still, it tells us that to build all programs, we
 must build `apps/openssl`, and to build the latter, we will need to
 build all its sources (`apps/openssl.o` in this case) and all the
-other things it depends on (such as `libssl`). All those dependencies
+other things it depends on (such as `libssl`).  All those dependencies
 need to be built as well, using the same logic, so to build `libssl`,
 we need to build `ssl/tls.o` as well as `libcrypto`, and to build the
 latter...
 
-## Build-file templates
+Build-file templates
+--------------------
 
 Build-file templates are essentially build-files (such as `Makefile` on
-Unix) with perl code fragments mixed in. Those perl code fragment
+Unix) with perl code fragments mixed in.  Those perl code fragment
 will generate all the configuration dependent data, including all the
 rules needed to build end product files and intermediary files alike.
 At a minimum, there must be a perl code fragment that defines a set of

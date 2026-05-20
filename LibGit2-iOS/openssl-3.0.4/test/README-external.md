@@ -1,10 +1,12 @@
-# Running external test suites with OpenSSL
+Running external test suites with OpenSSL
+=========================================
 
 It is possible to integrate external test suites into OpenSSL's `make test`.
 This capability is considered a developer option and does not work on all
 platforms.
 
-# Python PYCA/Cryptography test suite
+Python PYCA/Cryptography test suite
+===================================
 
 This python test suite runs cryptographic tests with a local OpenSSL build as
 the implementation.
@@ -23,12 +25,14 @@ to be installed.
 
     $ make test VERBOSE=1 TESTS=test_external_pyca
 
-## Test failures and suppressions
+Test failures and suppressions
+------------------------------
 
 Some tests target older (<=1.0.2) versions so will not run. Other tests target
 other crypto implementations so are not relevant. Currently no tests fail.
 
-# krb5 test suite
+krb5 test suite
+===============
 
 Much like the PYCA/Cryptography test suite, this builds and runs the krb5
 tests against the local OpenSSL build.
@@ -54,13 +58,15 @@ explicitly run (with more debugging):
 
     $ VERBOSE=1 make TESTS=test_external_krb5 test
 
-## Test-failures suppressions
+Test-failures suppressions
+--------------------------
 
 krb5 will automatically adapt its test suite to account for the configuration
-of your system. Certain tests may require more installed packages to run. No
+of your system.  Certain tests may require more installed packages to run.  No
 tests are expected to fail.
 
-# GOST engine test suite
+GOST engine test suite
+===============
 
 Much like the PYCA/Cryptography test suite, this builds and runs the GOST engine
 tests against the local OpenSSL build.
@@ -81,28 +87,30 @@ explicitly run (with more debugging):
 
     $ make test VERBOSE=1 TESTS=test_external_gost_engine
 
-# Updating test suites
+Updating test suites
+====================
 
 To update the commit for any of the above test suites:
 
 - Make sure the submodules are cloned locally:
 
-  $ git submodule update --init --recursive
+    $ git submodule update --init --recursive
 
 - Enter subdirectory and pull from the repository (use a specific branch/tag if required):
 
-  $ cd `<submodule-dir>`
-  $ git pull origin master
+    $ cd `<submodule-dir>`
+    $ git pull origin master
 
 - Go to root directory, there should be a new git status:
 
-  $ cd ../
-  $ git status
-  ... # modified: `<submodule-dir>` (new commits)
-  ...
+    $ cd ../
+    $ git status
+      ...
+      #       modified:   `<submodule-dir>` (new commits)
+      ...
 
 - Add/commit/push the update
 
-  $ git add `<submodule-dir>`
-  $ git commit -m `"Updated <submodule> to latest commit"`
-  $ git push
+    $ git add `<submodule-dir>`
+    $ git commit -m `"Updated <submodule> to latest commit"`
+    $ git push

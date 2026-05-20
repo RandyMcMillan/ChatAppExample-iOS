@@ -1,6 +1,8 @@
-# Engines
+Engines
+=======
 
-## Deprecation Note
+Deprecation Note
+----------------
 
 The ENGINE API was introduced in OpenSSL version 0.9.6 as a low level
 interface for adding alternative implementations of cryptographic
@@ -14,14 +16,15 @@ Support for new hardware devices or new algorithms should be added
 via providers, and existing engines should be converted to providers
 as soon as possible.
 
-## Built-in ENGINE implementations
+Built-in ENGINE implementations
+-------------------------------
 
 There are currently built-in ENGINE implementations for the following
 crypto devices:
 
-- Microsoft CryptoAPI
-- VIA Padlock
-- nCipher CHIL
+  * Microsoft CryptoAPI
+  * VIA Padlock
+  * nCipher CHIL
 
 In addition, dynamic binding to external ENGINE implementations is now
 provided by a special ENGINE called "dynamic". See the "DYNAMIC ENGINE"
@@ -29,18 +32,20 @@ section below for details.
 
 At this stage, a number of things are still needed and are being worked on:
 
-1. Integration of EVP support.
-2. Configuration support.
-3. Documentation!
+  1. Integration of EVP support.
+  2. Configuration support.
+  3. Documentation!
 
-## Integration of EVP support
+Integration of EVP support
+--------------------------
 
 With respect to EVP, this relates to support for ciphers and digests in
 the ENGINE model so that alternative implementations of existing
 algorithms/modes (or previously unimplemented ones) can be provided by
 ENGINE implementations.
 
-## Configuration support
+Configuration support
+---------------------
 
 Configuration support currently exists in the ENGINE API itself, in the
 form of "control commands". These allow an application to expose to the
@@ -49,7 +54,7 @@ implementation supports, and for an application to directly feed string
 based input to those ENGINEs, in the form of name-value pairs. This is an
 extensible way for ENGINEs to define their own "configuration" mechanisms
 that are specific to a given ENGINE (eg. for a particular hardware
-device) but that should be consistent across _all_ OpenSSL-based
+device) but that should be consistent across *all* OpenSSL-based
 applications when they use that ENGINE. Work is in progress (or at least
 in planning) for supporting these control commands from the CONF (or
 NCONF) code so that applications using OpenSSL's existing configuration
@@ -61,7 +66,8 @@ ENGINEs), use the "engine" openssl utility with full verbosity, i.e.:
 
     openssl engine -vvvv
 
-## Documentation
+Documentation
+-------------
 
 Documentation? Volunteers welcome! The source code is reasonably well
 self-documenting, but some summaries and usage instructions are needed -
@@ -69,30 +75,32 @@ moreover, they are needed in the same POD format the existing OpenSSL
 documentation is provided in. Any complete or incomplete contributions
 would help make this happen.
 
-# STABILITY & BUG-REPORTS
+STABILITY & BUG-REPORTS
+=======================
 
 What already exists is fairly stable as far as it has been tested, but
 the test base has been a bit small most of the time. For the most part,
 the vendors of the devices these ENGINEs support have contributed to the
-development and/or testing of the implementations, and _usually_ (with no
+development and/or testing of the implementations, and *usually* (with no
 guarantees) have experience in using the ENGINE support to drive their
 devices from common OpenSSL-based applications. Bugs and/or inexplicable
 behaviour in using a specific ENGINE implementation should be sent to the
 author of that implementation (if it is mentioned in the corresponding C
 file), and in the case of implementations for commercial hardware
-devices, also through whatever vendor support channels are available. If
+devices, also through whatever vendor support channels are available.  If
 none of this is possible, or the problem seems to be something about the
 ENGINE API itself (ie. not necessarily specific to a particular ENGINE
 implementation) then you should mail complete details to the relevant
 OpenSSL mailing list. For a definition of "complete details", refer to
 the OpenSSL "README" file. As for which list to send it to:
 
-- openssl-users: if you are _using_ the ENGINE abstraction, either in an
-  pre-compiled application or in your own application code.
+  * openssl-users: if you are *using* the ENGINE abstraction, either in an
+    pre-compiled application or in your own application code.
 
-- openssl-dev: if you are discussing problems with OpenSSL source code.
+  * openssl-dev: if you are discussing problems with OpenSSL source code.
 
-# USAGE
+USAGE
+=====
 
 The default "openssl" ENGINE is always chosen when performing crypto
 operations unless you specify otherwise. You must actively tell the
@@ -110,7 +118,7 @@ can allow the user/admin (and thus the hardware vendor's support desk
 also) to provide any such input directly to the ENGINE implementation.
 This way, applications do not need to know anything specific to any
 device, they only need to provide the means to carry such user/admin
-input through to the ENGINE in question. Ie. this connects _you_ (and
+input through to the ENGINE in question. Ie. this connects *you* (and
 your helpdesk) to the specific ENGINE implementation (and device), and
 allows application authors to not get buried in hassle supporting
 arbitrary devices they know (and care) nothing about.
@@ -119,7 +127,8 @@ A new "openssl" utility, "openssl engine", has been added in that allows
 for testing and examination of ENGINE implementations. Basic usage
 instructions are available by specifying the "-?" command line switch.
 
-# DYNAMIC ENGINES
+DYNAMIC ENGINES
+===============
 
 The new "dynamic" ENGINE provides a low-overhead way to support ENGINE
 implementations that aren't pre-compiled and linked into OpenSSL-based
@@ -140,7 +149,8 @@ application based on 0.9.7 (or later) and the support you desire is only
 announced for versions later than the one you need, ask the vendor to
 backport their ENGINE to the version you need.
 
-## How does "dynamic" work?
+How does "dynamic" work?
+------------------------
 
 The dynamic ENGINE has a special flag in its implementation such that
 every time application code asks for the 'dynamic' ENGINE, it in fact
@@ -158,7 +168,7 @@ use the command-line;
 
     openssl engine -vvvv dynamic
 
-The "SO*PATH" control command should be used to identify the
+The "SO_PATH" control command should be used to identify the
 shared-library that contains the ENGINE implementation, and "NO_VCHECK"
 might possibly be useful if there is a minor version conflict and you
 (or a vendor helpdesk) is convinced you can safely ignore it.
@@ -170,7 +180,7 @@ loaded ENGINE to be discoverable by application code later on using the
 ENGINE's "id". For most applications, this isn't necessary - but some
 application authors may have nifty reasons for using it. The "LOAD"
 command is the only one that takes no parameters and is the command
-that uses the settings from any previous commands to actually \_load*
+that uses the settings from any previous commands to actually *load*
 the shared-library ENGINE implementation. If this command succeeds, the
 (copy of the) 'dynamic' ENGINE will magically morph into the ENGINE
 that has been loaded from the shared-library. As such, any control
@@ -207,14 +217,14 @@ Applications that support the ENGINE API and more specifically, the
 "control commands" mechanism, will provide some way for you to pass
 such commands through to ENGINEs. As such, you would select "dynamic"
 as the ENGINE to use, and the parameters/commands you pass would
-control the _actual_ ENGINE used. Each command is actually a name-value
+control the *actual* ENGINE used. Each command is actually a name-value
 pair and the value can sometimes be omitted (eg. the "LOAD" command).
 Whilst the syntax demonstrated in "openssl engine" uses a colon to
 separate the command name from the value, applications may provide
 their own syntax for making that separation (eg. a win32 registry
 key-value pair may be used by some applications). The reason for the
 "-pre" syntax in the "openssl engine" utility is that some commands
-might be issued to an ENGINE _after_ it has been initialised for use.
+might be issued to an ENGINE *after* it has been initialised for use.
 Eg. if an ENGINE implementation requires a smart-card to be inserted
 during initialisation (or a PIN to be typed, or whatever), there may be
 a control command you can issue afterwards to "forget" the smart-card
@@ -227,11 +237,12 @@ used instead. Applications may provide a different syntax for
 supporting this distinction, and some may simply not provide it at all
 ("-pre" is almost always what you're after, in reality).
 
-## How do I build a "dynamic" ENGINE?
+How do I build a "dynamic" ENGINE?
+----------------------------------
 
 This question is trickier - currently OpenSSL bundles various ENGINE
 implementations that are statically built in, and any application that
-calls the "ENGINE*load_builtin_engines()" function will automatically
+calls the "ENGINE_load_builtin_engines()" function will automatically
 have all such ENGINEs available (and occupying memory). Applications
 that don't call that function have no ENGINEs available like that and
 would have to use "dynamic" to load any such ENGINE - but on the other
@@ -241,7 +252,7 @@ The main advantage of not statically linking ENGINEs and only using
 "dynamic" for hardware support is that any installation using no
 "external" ENGINE suffers no unnecessary memory footprint from unused
 ENGINEs. Likewise, installations that do require an ENGINE incur the
-overheads from only \_that* ENGINE once it has been loaded.
+overheads from only *that* ENGINE once it has been loaded.
 
 Sounds good? Maybe, but currently building an ENGINE implementation as
 a shared-library that can be loaded by "dynamic" isn't automated in
@@ -259,46 +270,48 @@ This example will show building the "atalla" ENGINE in the
 crypto/engine/ directory as a shared-library for use via the "dynamic"
 ENGINE.
 
-1.  "cd" to the crypto/engine/ directory of a pre-compiled OpenSSL
-    source tree.
+  1. "cd" to the crypto/engine/ directory of a pre-compiled OpenSSL
+     source tree.
 
-2.  Recompile at least one source file so you can see all the compiler
-    flags (and syntax) being used to build normally. Eg;
+  2. Recompile at least one source file so you can see all the compiler
+     flags (and syntax) being used to build normally. Eg;
 
-        touch hw_atalla.c ; make
+         touch hw_atalla.c ; make
 
-    will rebuild "hw_atalla.o" using all such flags.
+     will rebuild "hw_atalla.o" using all such flags.
 
-3.  Manually enter the same compilation line to compile the
-    "hw_atalla.c" file but with the following two changes;
-    - add "-DENGINE_DYNAMIC_SUPPORT" to the command line switches,
-    - change the output file from "hw_atalla.o" to something new,
-      eg. "tmp_atalla.o"
+  3. Manually enter the same compilation line to compile the
+     "hw_atalla.c" file but with the following two changes;
+      * add "-DENGINE_DYNAMIC_SUPPORT" to the command line switches,
+      * change the output file from "hw_atalla.o" to something new,
+        eg. "tmp_atalla.o"
 
-4.  Link "tmp_atalla.o" into a shared-library using the top-level
-    OpenSSL libraries to resolve any dependencies. The syntax for doing
-    this depends heavily on your system/compiler and is a nightmare
-    known well to anyone who has worked with shared-library portability
-    before. 'gcc' on Linux, for example, would use the following syntax;
+  4. Link "tmp_atalla.o" into a shared-library using the top-level
+     OpenSSL libraries to resolve any dependencies. The syntax for doing
+     this depends heavily on your system/compiler and is a nightmare
+     known well to anyone who has worked with shared-library portability
+     before. 'gcc' on Linux, for example, would use the following syntax;
 
-        gcc -shared -o dyn_atalla.so tmp_atalla.o -L../.. -lcrypto
+         gcc -shared -o dyn_atalla.so tmp_atalla.o -L../.. -lcrypto
 
-5.  Test your shared library using "openssl engine" as explained in the
-    previous section. Eg. from the top-level directory, you might try
+  5. Test your shared library using "openssl engine" as explained in the
+     previous section. Eg. from the top-level directory, you might try
 
-        apps/openssl engine -vvvv dynamic \
-              -pre SO_PATH:./crypto/engine/dyn_atalla.so -pre LOAD
+         apps/openssl engine -vvvv dynamic \
+               -pre SO_PATH:./crypto/engine/dyn_atalla.so -pre LOAD
 
 If the shared-library loads successfully, you will see both "-pre"
 commands marked as "SUCCESS" and the list of control commands
 displayed (because of "-vvvv") will be the control commands for the
-_atalla_ ENGINE (ie. _not_ the 'dynamic' ENGINE). You can also add
+*atalla* ENGINE (ie. *not* the 'dynamic' ENGINE). You can also add
 the "-t" switch to the utility if you want it to try and initialise
 the atalla ENGINE for use to test any possible hardware/driver issues.
 
-# PROBLEMS
+PROBLEMS
+========
 
 It seems like the ENGINE part doesn't work too well with CryptoSwift on Win32.
 A quick test done right before the release showed that trying "openssl speed
 -engine cswift" generated errors. If the DSO gets enabled, an attempt is made
 to write at memory address 0x00000002.
+

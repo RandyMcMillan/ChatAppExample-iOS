@@ -1,4 +1,5 @@
-# Intro
+Intro
+=====
 
 This directory contains a few sets of files that are used for
 configuration in diverse ways:
@@ -13,14 +14,15 @@ configuration in diverse ways:
                 script.  See 'Configure helper scripts for more
                 information.
 
-# Configurations of OpenSSL target platforms
+Configurations of OpenSSL target platforms
+==========================================
 
 Configuration targets are a collection of facts that we know about
-different platforms and their capabilities. We organise them in a
+different platforms and their capabilities.  We organise them in a
 hash table, where each entry represent a specific target.
 
 Note that configuration target names must be unique across all config
-files. The Configure script does check that a config file doesn't
+files.  The Configure script does check that a config file doesn't
 have config targets that shadow config targets from other files.
 
 In each table entry, the following keys are significant:
@@ -235,29 +237,29 @@ In each table entry, the following keys are significant:
                                                 up of 'unsigned int's;
 
 [1] as part of the target configuration, one can have a key called
-`inherit_from` that indicates what other configurations to inherit
-data from. These are resolved recursively.
+  `inherit_from` that indicates what other configurations to inherit
+  data from.  These are resolved recursively.
 
-Inheritance works as a set of default values that can be overridden
-by corresponding key values in the inheriting configuration.
+  Inheritance works as a set of default values that can be overridden
+  by corresponding key values in the inheriting configuration.
 
-Note 1: any configuration table can be used as a template.
-Note 2: pure templates have the attribute `template => 1` and
-cannot be used as build targets.
+  Note 1: any configuration table can be used as a template.
+  Note 2: pure templates have the attribute `template => 1` and
+          cannot be used as build targets.
 
-If several configurations are given in the `inherit_from` array,
-the values of same attribute are concatenated with space
-separation. With this, it's possible to have several smaller
-templates for different configuration aspects that can be combined
-into a complete configuration.
+  If several configurations are given in the `inherit_from` array,
+  the values of same attribute are concatenated with space
+  separation.  With this, it's possible to have several smaller
+  templates for different configuration aspects that can be combined
+  into a complete configuration.
 
-Instead of a scalar value or an array, a value can be a code block
-of the form `sub { /* your code here */ }`. This code block will
-be called with the list of inherited values for that key as
-arguments. In fact, the concatenation of strings is really done
-by using `sub { join(" ",@_) }` on the list of inherited values.
+  Instead of a scalar value or an array, a value can be a code block
+  of the form `sub { /* your code here */ }`.  This code block will
+  be called with the list of inherited values for that key as
+  arguments.  In fact, the concatenation of strings is really done
+  by using `sub { join(" ",@_) }` on the list of inherited values.
 
-An example:
+  An example:
 
         "foo" => {
                 template => 1,
@@ -287,21 +289,21 @@ An example:
         }
 
 [2] OpenSSL is built with threading capabilities unless the user
-specifies `no-threads`. The value of the key `thread_scheme` may
-be `(unknown)`, in which case the user MUST give some compilation
-flags to `Configure`.
+  specifies `no-threads`.  The value of the key `thread_scheme` may
+  be `(unknown)`, in which case the user MUST give some compilation
+  flags to `Configure`.
 
 [3] OpenSSL has three types of things to link from object files or
-static libraries:
+  static libraries:
 
-- shared libraries; that would be libcrypto and libssl.
-- shared objects (sometimes called dynamic libraries); that would
-  be the modules.
-- applications; those are apps/openssl and all the test apps.
+  - shared libraries; that would be libcrypto and libssl.
+  - shared objects (sometimes called dynamic libraries);  that would
+    be the modules.
+  - applications; those are apps/openssl and all the test apps.
 
-Very roughly speaking, linking is done like this (words in braces
-represent the configuration settings documented at the beginning
-of this file):
+  Very roughly speaking, linking is done like this (words in braces
+  represent the configuration settings documented at the beginning
+  of this file):
 
     shared libraries:
         {ld} $(CFLAGS) {lflags} {shared_ldflag} -o libfoo.so \
@@ -316,11 +318,11 @@ of this file):
             app1.o utils.o -lssl -lcrypto {ex_libs}
 
 [4] There are variants of these attribute, prefixed with `lib_`,
-`dso_` or `bin_`. Those variants replace the unprefixed attribute
-when building library, DSO or program modules specifically.
+  `dso_` or `bin_`.  Those variants replace the unprefixed attribute
+  when building library, DSO or program modules specifically.
 
 Historically, the target configurations came in form of a string with
-values separated by colons. This use is deprecated. The string form
+values separated by colons.  This use is deprecated.  The string form
 looked like this:
 
     "target" => "{cc}:{cflags}:{unistd}:{thread_cflag}:{sys_id}:{lflags}:
@@ -331,10 +333,11 @@ looked like this:
                  {shared_cflag}:{shared_ldflag}:{shared_extension}:{ranlib}:
                  {arflags}:{multilib}"
 
-# Build info files
+Build info files
+================
 
 The `build.info` files that are spread over the source tree contain the
-minimum information needed to build and distribute OpenSSL. It uses a
+minimum information needed to build and distribute OpenSSL.  It uses a
 simple and yet fairly powerful language to determine what needs to be
 built, from what sources, and other relationships between files.
 
@@ -344,13 +347,13 @@ corresponding build directory for built files if the build tree
 differs from the source tree.
 
 When processed, every line is processed with the perl module
-Text::Template, using the delimiters `{-` and `-}`. The hashes
+Text::Template, using the delimiters `{-` and `-}`.  The hashes
 `%config` and `%target` are passed to the perl fragments, along with
 $sourcedir and $builddir, which are the locations of the source
 directory for the current `build.info` file and the corresponding build
 directory, all relative to the top of the build tree.
 
-`Configure` only knows inherently about the top `build.info` file. For
+`Configure` only knows inherently about the top `build.info` file.  For
 any other directory that has one, further directories to look into
 must be indicated like this:
 
@@ -364,8 +367,8 @@ variables:
     MODULES=libeng
     SCRIPTS=myhack
 
-Note that the files mentioned for PROGRAMS, LIBS and MODULES _must_ be
-without extensions. The build file templates will figure them out.
+Note that the files mentioned for PROGRAMS, LIBS and MODULES *must* be
+without extensions.  The build file templates will figure them out.
 
 For each thing to be built, it is then possible to say what sources
 they are built from:
@@ -380,7 +383,7 @@ It's also possible to tell some other dependencies:
     DEPEND[libbar]=libsomethingelse
 
 (it could be argued that 'libsomething' and 'libsomethingelse' are
-source as well. However, the files given through SOURCE are expected
+source as well.  However, the files given through SOURCE are expected
 to be located in the source tree while files given through DEPEND are
 expected to be located in the build tree)
 
@@ -390,7 +393,7 @@ It's also possible to depend on static libraries explicitly:
     DEPEND[libbar]=libsomethingelse.a
 
 This should be rarely used, and care should be taken to make sure it's
-only used when supported. For example, native Windows build doesn't
+only used when supported.  For example, native Windows build doesn't
 support building static libraries and DLLs at the same time, so using
 static libraries on Windows can only be done when configured
 `no-shared`.
@@ -417,7 +420,7 @@ others, that's done as follows:
 
 The value of each GENERATE line is a command line or part of it.
 Configure places no rules on the command line, except that the first
-item must be the generator file. It is, however, entirely up to the
+item must be the generator file.  It is, however, entirely up to the
 build file template to define exactly how those command lines should
 be handled, how the output is captured and so on.
 
@@ -428,7 +431,7 @@ This can be expressed using DEPEND like this:
     DEPEND[asm/something.pl]=../perlasm/Foo.pm
 
 There may also be cases where the exact file isn't easily specified,
-but an inclusion directory still needs to be specified. INCLUDE can
+but an inclusion directory still needs to be specified.  INCLUDE can
 be used in that case:
 
     INCLUDE[asm/something.pl]=../perlasm
@@ -447,7 +450,7 @@ information, looking like this:
     ENDIF
 
 The expression in square brackets is interpreted as a string in perl,
-and will be seen as true if perl thinks it is, otherwise false. For
+and will be seen as true if perl thinks it is, otherwise false.  For
 example, the above would have "something" used, since 1 is true.
 
 Together with the use of Text::Template, this can be used as
@@ -461,7 +464,8 @@ conditions based on something in the passed variables, for example:
       SOURCE[libfoo]=...
     ENDIF
 
-# Build-file programming with the "unified" build system
+Build-file programming with the "unified" build system
+======================================================
 
 "Build files" are called `Makefile` on Unix-like operating systems,
 `descrip.mms` for MMS on VMS, `makefile` for `nmake` on Windows, etc.
@@ -475,7 +479,7 @@ details).
 For any name given by `build_file`, the "unified" system expects a
 template file in `Configurations/` named like the build file, with
 `.tmpl` appended, or in case of possible ambiguity, a combination of
-the second `build_scheme` list item and the `build_file` name. For
+the second `build_scheme` list item and the `build_file` name.  For
 example, if `build_file` is set to `Makefile`, the template could be
 `Configurations/Makefile.tmpl` or `Configurations/unix-Makefile.tmpl`.
 In case both `Configurations/unix-Makefile.tmpl` and
@@ -631,25 +635,27 @@ the build file actions run with the build tree top as current working
 directory.
 
 Make sure to end the section with these functions with a string that
-you thing is appropriate for the resulting build file. If nothing
+you thing is appropriate for the resulting build file.  If nothing
 else, end it like this:
 
       "";       # Make sure no lingering values end up in the Makefile
     -}
 
-# Configure helper scripts
+Configure helper scripts
+========================
 
 Configure uses helper scripts in this directory:
 
-## Checker scripts
+Checker scripts
+---------------
 
 These scripts are per platform family, to check the integrity of the
-tools used for configuration and building. The checker script used is
+tools used for configuration and building.  The checker script used is
 either `{build_platform}-{build_file}-checker.pm` or
 `{build_platform}-checker.pm`, where `{build_platform}` is the second
 `build_scheme` list element from the configuration target data, and
 `{build_file}` is `build_file` from the same target data.
 
 If the check succeeds, the script is expected to end with a non-zero
-expression. If the check fails, the script can end with a zero, or
+expression.  If the check fails, the script can end with a zero, or
 with a `die`.

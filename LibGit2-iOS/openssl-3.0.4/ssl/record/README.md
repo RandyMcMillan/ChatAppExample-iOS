@@ -1,4 +1,5 @@
-# Record Layer Design
+Record Layer Design
+===================
 
 This file provides some guidance on the thinking behind the design of the
 record layer code to aid future maintenance.
@@ -6,10 +7,9 @@ record layer code to aid future maintenance.
 The record layer is divided into a number of components. At the time of writing
 there are four: SSL3_RECORD, SSL3_BUFFER, DLTS1_BITMAP and RECORD_LAYER. Each
 of these components is defined by:
-
-1. A struct definition of the same name as the component
-2. A set of source files that define the functions for that component
-3. A set of accessor macros
+1) A struct definition of the same name as the component
+2) A set of source files that define the functions for that component
+3) A set of accessor macros
 
 All struct definitions are in record.h. The functions and macros are either
 defined in record.h or record_local.h dependent on whether they are intended to
@@ -29,12 +29,12 @@ entirely private to the record layer and therefore should never be accessed
 directly by libssl.
 
 Any component can directly access its own members - they are private to that
-component, e.g. ssl3*buffer.c can access members of the SSL3_BUFFER struct
+component, e.g. ssl3_buffer.c can access members of the SSL3_BUFFER struct
 without using a macro. No component can directly access the members of another
 component, e.g. ssl3_buffer cannot reach inside the RECORD_LAYER component to
 directly access its members. Instead components use accessor macros, so if code
 in ssl3_buffer.c wants to access the members of the RECORD_LAYER it uses the
-RECORD_LAYER*\* macros.
+RECORD_LAYER_* macros.
 
 Conceptually it looks like this:
 

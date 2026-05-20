@@ -1,9 +1,10 @@
-# Sparse Arrays
+Sparse Arrays
+=============
 
 The `sparse_array.c` file contains an implementation of a sparse array that
 attempts to be both space and time efficient.
 
-The sparse array is represented using a tree structure. Each node in the
+The sparse array is represented using a tree structure.  Each node in the
 tree contains a block of pointers to either the user supplied leaf values or
 to another node.
 
@@ -26,7 +27,7 @@ These constants are inter-related:
 built in setting.
 
 As a space and performance optimisation, the height of the tree is usually
-less than the maximum possible height. Only sufficient height is allocated to
+less than the maximum possible height.  Only sufficient height is allocated to
 accommodate the largest index added to the data structure.
 
 The largest index used to add a value to the array determines the tree height:
@@ -43,7 +44,7 @@ The largest index used to add a value to the array determines the tree height:
 
 The tree height is dynamically increased as needed based on additions.
 
-An empty tree is represented by a NULL root pointer. Inserting a value at
+An empty tree is represented by a NULL root pointer.  Inserting a value at
 index 0 results in the allocation of a top level node full of null pointers
 except for the single pointer to the user's data (N = SA_BLOCK_MAX for
 brevity):
@@ -71,7 +72,7 @@ brevity):
     Index 0
 
 Inserting at element 2N+1 creates a new root node and pushes down the old root
-node. It then creates a second second level node to hold the pointer to the
+node.  It then creates a second second level node to hold the pointer to the
 user's new data:
 
         +----+
@@ -104,15 +105,15 @@ user's new data:
         +----+                         +----+
     Index 0                       Index 2N+1
 
-The nodes themselves are allocated in a sparse manner. Only nodes which exist
+The nodes themselves are allocated in a sparse manner.  Only nodes which exist
 along a path from the root of the tree to an added leaf will be allocated.
 The complexity is hidden and nodes are allocated on an as needed basis.
 Because the data is expected to be sparse this doesn't result in a large waste
 of space.
 
 Values can be removed from the sparse array by setting their index position to
-NULL. The data structure does not attempt to reclaim nodes or reduce the
-height of the tree on removal. For example, now setting index 0 to NULL would
+NULL.  The data structure does not attempt to reclaim nodes or reduce the
+height of the tree on removal.  For example, now setting index 0 to NULL would
 result in:
 
         +----+
@@ -146,7 +147,7 @@ result in:
                                   Index 2N+1
 
 Accesses to elements in the sparse array take O(log n) time where n is the
-largest element. The base of the logarithm is `SA_BLOCK_MAX`, so for moderately
+largest element.  The base of the logarithm is `SA_BLOCK_MAX`, so for moderately
 small indices (e.g. NIDs), single level (constant time) access is achievable.
 Space usage is O(minimum(m, n log(n)) where m is the number of elements in the
 array.

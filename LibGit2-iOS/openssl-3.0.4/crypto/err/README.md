@@ -1,4 +1,5 @@
-# Adding new libraries
+Adding new libraries
+====================
 
 When adding a new sub-library to OpenSSL, assign it a library number
 `ERR_LIB_XXX`, define a macro `XXXerr()` (both in `err.h`), add its

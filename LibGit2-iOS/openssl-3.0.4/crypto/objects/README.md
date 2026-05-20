@@ -1,4 +1,5 @@
-# objects.txt syntax
+objects.txt syntax
+==================
 
 To cover all the naming hacks that were previously in `objects.h` needed some
 kind of hacks in `objects.txt`.

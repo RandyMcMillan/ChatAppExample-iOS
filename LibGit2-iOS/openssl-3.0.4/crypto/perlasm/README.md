@@ -1,4 +1,5 @@
-# Perl scripts for assembler sources
+Perl scripts for assembler sources
+==================================
 
 The perl scripts in this directory are my 'hack' to generate
 multiple different assembler formats via the one original script.
@@ -13,7 +14,7 @@ The first thing we do is setup the file and type of assembler
 
     &asm_init($ARGV[0]);
 
-The first argument is the 'type'. Currently
+The first argument is the 'type'.  Currently
 `cpp`, `sol`, `a.out`, `elf` or `win32`.
 The second argument is the file name.
 
@@ -50,7 +51,7 @@ Functions of interest are:
     &set_label("loop")               Set a label at this point.
     &data_word(word)                 Put in a word of data.
 
-So how does this all hold together? Given
+So how does this all hold together?  Given
 
     int calc(int len, int *data)
     {

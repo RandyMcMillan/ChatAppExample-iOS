@@ -1,4 +1,5 @@
-# Notes on Valgrind
+Notes on Valgrind
+=================
 
 Valgrind is a test harness that includes many tools such as memcheck,
 which is commonly used to check for memory leaks, etc. The default tool
@@ -8,7 +9,8 @@ will focus on memcheck.
 Valgrind runs programs in a virtual machine, this means OpenSSL unit
 tests run under Valgrind will take longer than normal.
 
-## Requirements
+Requirements
+------------
 
 1. Platform supported by Valgrind
    See <http://valgrind.org/info/platforms.html>
@@ -17,7 +19,8 @@ tests run under Valgrind will take longer than normal.
 3. OpenSSL compiled
    See [INSTALL.md](INSTALL.md)
 
-## Running Tests
+Running Tests
+-------------
 
 Test behavior can be modified by adjusting environment variables.
 

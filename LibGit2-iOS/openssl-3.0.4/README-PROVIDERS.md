@@ -1,14 +1,16 @@
-# Providers
+Providers
+=========
 
-- [Standard Providers](#standard-providers)
-  - [The Default Provider](#the-default-provider)
-  - [The Legacy Provider](#the-legacy-provider)
-  - [The FIPS Provider](#the-fips-provider)
-  - [The Base Provider](#the-base-provider)
-  - [The Null Provider](#the-null-provider)
-- [Loading Providers](#loading-providers)
+ - [Standard Providers](#standard-providers)
+    - [The Default Provider](#the-default-provider)
+    - [The Legacy Provider](#the-legacy-provider)
+    - [The FIPS Provider](#the-fips-provider)
+    - [The Base Provider](#the-base-provider)
+    - [The Null Provider](#the-null-provider)
+ - [Loading Providers](#loading-providers)
 
-# Standard Providers
+Standard Providers
+==================
 
 Providers are containers for algorithm implementations. Whenever a cryptographic
 algorithm is used via the high level APIs a provider is selected. It is that
@@ -18,9 +20,10 @@ distribute their own providers which can be added to OpenSSL dynamically.
 Documentation about writing providers is available on the [provider(7)]
 manual page.
 
-[provider(7)]: https://www.openssl.org/docs/man3.0/man7/provider.html
+ [provider(7)]: https://www.openssl.org/docs/man3.0/man7/provider.html
 
-## The Default Provider
+The Default Provider
+--------------------
 
 The default provider collects together all of the standard built-in OpenSSL
 algorithm implementations. If an application doesn't specify anything else
@@ -34,7 +37,8 @@ providers then you must load it explicitly.
 This is a "built-in" provider which means that it is compiled and linked
 into the libcrypto library and does not exist as a separate standalone module.
 
-## The Legacy Provider
+The Legacy Provider
+-------------------
 
 The legacy provider is a collection of legacy algorithms that are either no
 longer in common use or considered insecure and strongly discouraged from use.
@@ -47,7 +51,8 @@ legacy provider explicitly.
 Algorithms in the legacy provider include MD2, MD4, MDC2, RMD160, CAST5,
 BF (Blowfish), IDEA, SEED, RC2, RC4, RC5 and DES (but not 3DES).
 
-## The FIPS Provider
+The FIPS Provider
+-----------------
 
 The FIPS provider contains a sub-set of the algorithm implementations available
 from the default provider, consisting of algorithms conforming to FIPS standards.
@@ -57,7 +62,8 @@ In some cases there may be minor behavioural differences between algorithm
 implementations in this provider compared to the equivalent algorithm in the
 default provider. This is typically in order to conform to FIPS standards.
 
-## The Base Provider
+The Base Provider
+-----------------
 
 The base provider contains a small sub-set of non-cryptographic algorithms
 available in the default provider. For example, it contains algorithms to
@@ -65,7 +71,8 @@ serialize and deserialize keys to files. If you do not load the default
 provider then you should always load this one instead (in particular, if
 you are using the FIPS provider).
 
-## The Null Provider
+The Null Provider
+-----------------
 
 The null provider is "built-in" to libcrypto and contains no algorithm
 implementations. In order to guarantee that the default provider is not
@@ -74,13 +81,14 @@ automatically loaded, the null provider can be loaded instead.
 This can be useful if you are using non-default library contexts and want
 to ensure that the default library context is never used unintentionally.
 
-# Loading Providers
+Loading Providers
+=================
 
 Providers to be loaded can be specified in the OpenSSL config file.
 See the [config(5)] manual page for information about how to configure
 providers via the config file, and how to automatically activate them.
 
-[config(5)]: https://www.openssl.org/docs/man3.0/man5/config.html
+ [config(5)]: https://www.openssl.org/docs/man3.0/man5/config.html
 
 The following is a minimal config file example to load and activate both
 the legacy and the default provider in the default library context.
