@@ -43,8 +43,10 @@
 #include <libp2p/security/tls.hpp>
 #include <libp2p/security/tls/ssl_context.hpp>
 #include <libp2p/transport/impl/upgrader_impl.hpp>
-#include <libp2p/transport/quic/transport.hpp>
 #include <libp2p/transport/tcp.hpp>
+#ifdef LIBP2P_ENABLE_QUIC
+#include <libp2p/transport/quic/transport.hpp>
+#endif
 
 // clang-format off
 /**
@@ -346,7 +348,11 @@ namespace libp2p::injector {
         di::bind<layer::LayerAdaptor *[]>().to<layer::WsAdaptor, layer::WssAdaptor>(),  // NOLINT
         di::bind<security::SecurityAdaptor *[]>().to<security::Plaintext, security::Secio, security::Noise, security::TlsAdaptor>(),  // NOLINT
         di::bind<muxer::MuxerAdaptor *[]>().to<muxer::Yamux, muxer::Mplex>(),  // NOLINT
+#ifdef LIBP2P_ENABLE_QUIC
         di::bind<transport::TransportAdaptor *[]>().to<transport::TcpTransport, transport::QuicTransport>(),  // NOLINT
+#else
+        di::bind<transport::TransportAdaptor *[]>().to<transport::TcpTransport>(),  // NOLINT
+#endif
 
         di::bind<peer::AddressRepository>.to<peer::InmemAddressRepository>(),
 
