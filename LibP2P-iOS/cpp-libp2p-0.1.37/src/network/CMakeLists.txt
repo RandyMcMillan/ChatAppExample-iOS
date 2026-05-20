@@ -12,7 +12,6 @@ libp2p_add_library(p2p_default_network
     )
 target_link_libraries(p2p_default_network
     p2p_network
-    p2p_quic
     p2p_tcp
     p2p_yamux
     p2p_mplex
@@ -35,3 +34,7 @@ target_link_libraries(p2p_default_network
     p2p_basic_scheduler
     p2p_asio_scheduler_backend
     )
+
+if (LIBP2P_ENABLE_QUIC)
+  target_link_libraries(p2p_default_network p2p_quic)
+endif ()
