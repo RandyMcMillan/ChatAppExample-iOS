@@ -373,6 +373,8 @@ if [ $VERIFY_ONLY -eq 1 ]; then
 	exit 0
 fi
 
+rm -rf "$PROJECT_ROOT/libgit2.xcframework" "$PROJECT_ROOT/Clibgit2.xcframework"
+
 for p in ${AVAILABLE_PLATFORMS[@]}; do
 	echo "Build libraries for $p"
 	build_libpcre $p
