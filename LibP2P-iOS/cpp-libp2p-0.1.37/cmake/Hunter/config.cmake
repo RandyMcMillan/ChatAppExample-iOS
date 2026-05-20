@@ -24,6 +24,14 @@ hunter_config(
 )
 
 hunter_config(
+    c-ares
+    VERSION 1.14.0-p0
+    CMAKE_ARGS
+      CMAKE_POLICY_VERSION_MINIMUM=3.5
+    KEEP_PACKAGE_SOURCES
+)
+
+hunter_config(
     soralog
     VERSION 0.2.5
     KEEP_PACKAGE_SOURCES
