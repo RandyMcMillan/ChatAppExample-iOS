@@ -181,7 +181,7 @@ package_framework() {
   if ((verbose)); then
     printf '==> xcodebuild -create-xcframework'
     printf ' %q' "${framework_args[@]}"
-    printf ' -output %q\n' "${framework_root}"
+    printf ' -output %q\n' "${framework_stage}"
   fi
 
   xcodebuild -create-xcframework "${framework_args[@]}" -output "${framework_stage}"
