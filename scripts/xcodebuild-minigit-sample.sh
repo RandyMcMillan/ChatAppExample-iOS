@@ -1,0 +1,215 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+project_root="$(cd "${script_dir}/.." && pwd)"
+sample_root="${project_root}/MiniGitSample"
+project_path="${sample_root}/MiniGitSample.xcodeproj"
+scheme_name="MiniGitSample"
+clibgit2_root="${project_root}/LibGit2-iOS"
+clibgit2_bundle="${clibgit2_root}/Clibgit2.xcframework"
+clibgit2_zip="${clibgit2_root}/Clibgit2.xcframework.zip"
+clibgit2_build_script="${project_root}/scripts/libgit2/build-libgit2-framework.sh"
+
+usage() {
+  cat <<EOF
+usage: $(basename "$0") [--rebuild-clibgit2] [--] [xcodebuild args...]
+
+Run xcodebuild for MiniGitSample with repo-local defaults:
+  -project ${project_path}
+  -scheme ${scheme_name}
+  -configuration Debug
+  -sdk iphonesimulator
+  -destination 'generic/platform=iOS Simulator'
+
+Before invoking xcodebuild, this script verifies that
+LibGit2-iOS/Clibgit2.xcframework contains the binary artifacts referenced by
+its Info.plist. If the bundle is missing or incomplete and
+LibGit2-iOS/Clibgit2.xcframework.zip exists, the script restores the bundle
+from that zip.
+
+options:
+  --rebuild-clibgit2  Rebuild Clibgit2.xcframework before running xcodebuild
+  -h, --help          Show this help text
+
+examples:
+  $(basename "$0")
+  $(basename "$0") build
+  $(basename "$0") -list
+  $(basename "$0") --rebuild-clibgit2 build
+  $(basename "$0") -- build -configuration Release
+EOF
+}
+
+log() {
+  printf '==> %s\n' "$*"
+}
+
+has_arg() {
+  local needle="$1"
+  shift
+  local arg
+
+  for arg in "$@"; do
+    if [[ "$arg" == "$needle" ]]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+append_default_option() {
+  local flag="$1"
+  local value="$2"
+  shift 2
+
+  if ! has_arg "$flag" "$@"; then
+    xcodebuild_args+=("$flag" "$value")
+  fi
+}
+
+append_default_setting() {
+  local setting="$1"
+  shift
+
+  if ! has_arg "$setting" "$@"; then
+    xcodebuild_args+=("$setting")
+  fi
+}
+
+collect_clibgit2_artifacts() {
+  local bundle="$1"
+  local plist="${bundle}/Info.plist"
+  local index=0
+  local identifier
+  local library_path
+
+  [[ -f "${plist}" ]] || return 1
+
+  while identifier=$(/usr/libexec/PlistBuddy -c "Print :AvailableLibraries:${index}:LibraryIdentifier" "${plist}" 2>/dev/null); do
+    library_path=$(/usr/libexec/PlistBuddy -c "Print :AvailableLibraries:${index}:LibraryPath" "${plist}" 2>/dev/null)
+    printf '%s\n' "${bundle}/${identifier}/${library_path}"
+    index=$((index + 1))
+  done
+
+  ((index > 0))
+}
+
+validate_clibgit2_bundle() {
+  local bundle="$1"
+  local artifact
+  local missing=0
+
+  [[ -d "${bundle}" ]] || return 1
+
+  while IFS= read -r artifact; do
+    if ! [[ -f "${artifact}" ]]; then
+      printf 'missing Clibgit2 artifact: %s\n' "${artifact}" >&2
+      missing=1
+    fi
+  done < <(collect_clibgit2_artifacts "${bundle}")
+
+  ((missing == 0))
+}
+
+restore_clibgit2_bundle() {
+  [[ -f "${clibgit2_zip}" ]] || return 1
+
+  local temp_dir
+  temp_dir="$(mktemp -d "${TMPDIR:-/tmp}/clibgit2.XXXXXX")"
+
+  cleanup() {
+    rm -rf "${temp_dir}"
+  }
+  trap cleanup RETURN
+
+  log "Restoring Clibgit2.xcframework from ${clibgit2_zip}"
+  ditto -x -k --sequesterRsrc --rsrc "${clibgit2_zip}" "${temp_dir}"
+
+  if ! validate_clibgit2_bundle "${temp_dir}/Clibgit2.xcframework"; then
+    printf 'restored Clibgit2.xcframework.zip is incomplete\n' >&2
+    return 1
+  fi
+
+  rm -rf "${clibgit2_bundle}"
+  mv "${temp_dir}/Clibgit2.xcframework" "${clibgit2_bundle}"
+}
+
+ensure_clibgit2_bundle() {
+  if ((rebuild_clibgit2)); then
+    log "Rebuilding Clibgit2.xcframework"
+    (cd "${project_root}" && "${clibgit2_build_script}")
+  fi
+
+  if validate_clibgit2_bundle "${clibgit2_bundle}"; then
+    return 0
+  fi
+
+  if [[ -f "${clibgit2_zip}" ]]; then
+    restore_clibgit2_bundle
+  fi
+
+  if validate_clibgit2_bundle "${clibgit2_bundle}"; then
+    return 0
+  fi
+
+  cat >&2 <<EOF
+Clibgit2.xcframework is missing required binary artifacts.
+
+Expected bundle:
+  ${clibgit2_bundle}
+
+Try one of:
+  $(basename "$0") --rebuild-clibgit2
+  (cd "${project_root}" && scripts/libgit2/build-libgit2-framework.sh)
+EOF
+  return 1
+}
+
+rebuild_clibgit2=0
+xcodebuild_args=()
+
+while (($#)); do
+  case "$1" in
+    -h|--help|help)
+      usage
+      exit 0
+      ;;
+    --rebuild-clibgit2)
+      rebuild_clibgit2=1
+      ;;
+    --)
+      shift
+      xcodebuild_args+=("$@")
+      break
+      ;;
+    *)
+      xcodebuild_args+=("$1")
+      ;;
+  esac
+  shift
+done
+
+export GIT_CONFIG_COUNT="${GIT_CONFIG_COUNT:-1}"
+export GIT_CONFIG_KEY_0="${GIT_CONFIG_KEY_0:-safe.bareRepository}"
+export GIT_CONFIG_VALUE_0="${GIT_CONFIG_VALUE_0:-all}"
+
+ensure_clibgit2_bundle
+
+append_default_option "-project" "${project_path}" "${xcodebuild_args[@]}"
+append_default_option "-scheme" "${scheme_name}" "${xcodebuild_args[@]}"
+
+if ! has_arg "-list" "${xcodebuild_args[@]}" &&
+   ! has_arg "-showBuildSettings" "${xcodebuild_args[@]}" &&
+   ! has_arg "-resolvePackageDependencies" "${xcodebuild_args[@]}" &&
+   ! has_arg "-version" "${xcodebuild_args[@]}" &&
+   ! has_arg "archive" "${xcodebuild_args[@]}"; then
+  append_default_option "-configuration" "Debug" "${xcodebuild_args[@]}"
+  append_default_option "-sdk" "iphonesimulator" "${xcodebuild_args[@]}"
+  append_default_option "-destination" "generic/platform=iOS Simulator" "${xcodebuild_args[@]}"
+  append_default_setting "CODE_SIGNING_ALLOWED=NO" "${xcodebuild_args[@]}"
+fi
+
+log "Running xcodebuild ${xcodebuild_args[*]}"
+exec xcodebuild "${xcodebuild_args[@]}"
