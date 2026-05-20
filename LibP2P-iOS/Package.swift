@@ -15,29 +15,9 @@ let package = Package(
         ),
     ],
     targets: [
-        .target(
+        .binaryTarget(
             name: "LibP2P",
-            path: "cpp-libp2p-0.1.37",
-            exclude: [
-                ".clang-format",
-                ".clang-tidy",
-                ".githooks",
-                ".github",
-                ".gitignore",
-                ".gitmodules",
-                ".lcovrc",
-                "CMakeLists.txt",
-                "LICENSE-APACHE",
-                "LICENSE-MIT",
-                "README.md",
-                "cmake",
-                "codecov.yml",
-                "docker-compose.yml",
-                "example",
-                "housekeeping",
-                "test",
-            ],
-            publicHeadersPath: "include"
+            path: "LibP2P.xcframework"
         ),
     ],
     cxxLanguageStandard: .cxx20

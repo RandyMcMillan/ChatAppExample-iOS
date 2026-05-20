@@ -1,7 +1,7 @@
 # LibP2P on iOS
 
-This package vendors the upstream `cpp-libp2p` source release `v0.1.37` as a
-local build tree.
+This package vendors the upstream `cpp-libp2p` source release `v0.1.37` and
+packages it as a local `LibP2P.xcframework`.
 
 The first step is to keep the source checked in under
 `LibP2P-iOS/cpp-libp2p-0.1.37/` so we can build a separate libp2p package
@@ -18,5 +18,4 @@ Upstream build notes:
 - Supported protocols include TCP, Plaintext, SECIO, MPlex, Yamux,
   Kademlia DHT, Gossipsub, and Identify
 
-The build integration still needs platform-specific dependency plumbing for
-Apple targets.
+The checked-in Swift package consumes `LibP2P.xcframework` directly.
