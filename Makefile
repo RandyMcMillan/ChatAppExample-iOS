@@ -17,12 +17,16 @@ help:
 list-scripts:
 	@printf '%s\n' $(SCRIPT_TARGETS)
 
-%:
-	@script="$(SCRIPT_ROOT)/$@.sh"; \
+define RUN_SCRIPT
+$1:
+	@script="$(SCRIPT_ROOT)/$1.sh"; \
 	if [ -x "$$script" ]; then \
 		exec "$$script" $(ARGS); \
 	else \
-		printf 'Unknown target: %s\n' "$@"; \
+		printf 'Unknown target: %s\n' "$1"; \
 		$(MAKE) --no-print-directory help; \
 		exit 1; \
 	fi
+endef
+
+$(foreach target,$(SCRIPT_TARGETS),$(eval $(call RUN_SCRIPT,$(target))))
