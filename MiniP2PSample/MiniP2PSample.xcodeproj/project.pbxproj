@@ -7,19 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4B6C6EB22FBE6982008C157D /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B1381C92EF6DCA100ECBFC1 /* GnostrGit */; };
-		4B6C6EB32FBE6982008C157D /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B1381CB2EF6DCA100ECBFC1 /* XGit */; };
-		4B6C6EB42FBE6982008C157D /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D12FBE03E00056F790 /* GnostrGit */; };
-		4B6C6EB52FBE6982008C157D /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D32FBE03E00056F790 /* XGit */; };
-		4B6C6EB62FBE6982008C157D /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D62FBE040B0056F790 /* GnostrGit */; };
-		4B6C6EB72FBE6982008C157D /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D82FBE040B0056F790 /* XGit */; };
 		4B6C6EB82FBE6B34008C157D /* LibP2P in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCC72FBE429400B507EE /* LibP2P */; };
-		4BA7DCB42FBE661F00B507EE /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7DB2FBE04A50056F790 /* GnostrGit */; };
-		4BA7DCB52FBE661F00B507EE /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7DD2FBE04A50056F790 /* XGit */; };
-		4BADD93F2FBE6F8C00CA0051 /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADD93E2FBE6F8C00CA0051 /* GnostrGit */; };
-		4BADD9412FBE6F8C00CA0051 /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADD9402FBE6F8C00CA0051 /* XGit */; };
-		4BADD9442FBE6FD500CA0051 /* LibP2P in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADD9432FBE6FD500CA0051 /* LibP2P */; };
-		4BADD9462FBE6FD500CA0051 /* LibP2PTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADD9452FBE6FD500CA0051 /* LibP2PTesting */; };
 		B701035627CD0B6900D43034 /* MiniP2PSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035527CD0B6900D43034 /* MiniP2PSampleApp.swift */; };
 		B701035827CD0B6900D43034 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035727CD0B6900D43034 /* ContentView.swift */; };
 		B701035A27CD0B6B00D43034 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B701035927CD0B6B00D43034 /* Assets.xcassets */; };
@@ -42,18 +30,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B6C6EB82FBE6B34008C157D /* LibP2P in Frameworks */,
-				4B6C6EB72FBE6982008C157D /* XGit in Frameworks */,
-				4B6C6EB62FBE6982008C157D /* GnostrGit in Frameworks */,
-				4B6C6EB52FBE6982008C157D /* XGit in Frameworks */,
-				4B6C6EB42FBE6982008C157D /* GnostrGit in Frameworks */,
-				4B6C6EB32FBE6982008C157D /* XGit in Frameworks */,
-				4BADD93F2FBE6F8C00CA0051 /* GnostrGit in Frameworks */,
-				4BADD9442FBE6FD500CA0051 /* LibP2P in Frameworks */,
-				4B6C6EB22FBE6982008C157D /* GnostrGit in Frameworks */,
-				4BA7DCB52FBE661F00B507EE /* XGit in Frameworks */,
-				4BADD9412FBE6F8C00CA0051 /* XGit in Frameworks */,
-				4BA7DCB42FBE661F00B507EE /* GnostrGit in Frameworks */,
-				4BADD9462FBE6FD500CA0051 /* LibP2PTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,21 +90,9 @@
 			);
 			name = MiniP2PSample;
 			packageProductDependencies = (
-				4B1381C92EF6DCA100ECBFC1 /* GnostrGit */,
-				4B1381CB2EF6DCA100ECBFC1 /* XGit */,
-				4B70D7D12FBE03E00056F790 /* GnostrGit */,
-				4B70D7D32FBE03E00056F790 /* XGit */,
-				4B70D7D62FBE040B0056F790 /* GnostrGit */,
-				4B70D7D82FBE040B0056F790 /* XGit */,
-				4B70D7DB2FBE04A50056F790 /* GnostrGit */,
-				4B70D7DD2FBE04A50056F790 /* XGit */,
 				4BA7DCC72FBE429400B507EE /* LibP2P */,
-				4BADD93E2FBE6F8C00CA0051 /* GnostrGit */,
-				4BADD9402FBE6F8C00CA0051 /* XGit */,
-				4BADD9432FBE6FD500CA0051 /* LibP2P */,
-				4BADD9452FBE6FD500CA0051 /* LibP2PTesting */,
 			);
-			productName = MiniGitSample;
+			productName = MiniP2PSample;
 			productReference = B701035227CD0B6900D43034 /* MiniP2PSample.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -157,8 +121,7 @@
 			);
 			mainGroup = B701034927CD0B6900D43034;
 			packageReferences = (
-				4BADD93D2FBE6F8C00CA0051 /* XCLocalSwiftPackageReference "../Git" */,
-				4BADD9422FBE6FD500CA0051 /* XCLocalSwiftPackageReference "../swift-libp2p" */,
+				4BADD9422FBE6FD500CA0051 /* XCLocalSwiftPackageReference "../LibP2P-iOS" */,
 			);
 			productRefGroup = B701035327CD0B6900D43034 /* Products */;
 			projectDirPath = "";
@@ -402,68 +365,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		4BADD93D2FBE6F8C00CA0051 /* XCLocalSwiftPackageReference "../Git" */ = {
+		4BADD9422FBE6FD500CA0051 /* XCLocalSwiftPackageReference "../LibP2P-iOS" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Git;
-		};
-		4BADD9422FBE6FD500CA0051 /* XCLocalSwiftPackageReference "../swift-libp2p" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../swift-libp2p";
+			relativePath = "../LibP2P-iOS";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		4B1381C92EF6DCA100ECBFC1 /* GnostrGit */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 4BADD9422FBE6FD500CA0051 /* XCLocalSwiftPackageReference "../LibP2P-iOS" */;
 			productName = GnostrGit;
-		};
-		4B1381CB2EF6DCA100ECBFC1 /* XGit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = XGit;
-		};
-		4B70D7D12FBE03E00056F790 /* GnostrGit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = GnostrGit;
-		};
-		4B70D7D32FBE03E00056F790 /* XGit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = XGit;
-		};
-		4B70D7D62FBE040B0056F790 /* GnostrGit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = GnostrGit;
-		};
-		4B70D7D82FBE040B0056F790 /* XGit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = XGit;
-		};
-		4B70D7DB2FBE04A50056F790 /* GnostrGit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = GnostrGit;
-		};
-		4B70D7DD2FBE04A50056F790 /* XGit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = XGit;
 		};
 		4BA7DCC72FBE429400B507EE /* LibP2P */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 4BADD9422FBE6FD500CA0051 /* XCLocalSwiftPackageReference "../LibP2P-iOS" */;
 			productName = LibP2P;
-		};
-		4BADD93E2FBE6F8C00CA0051 /* GnostrGit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = GnostrGit;
-		};
-		4BADD9402FBE6F8C00CA0051 /* XGit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = XGit;
-		};
-		4BADD9432FBE6FD500CA0051 /* LibP2P */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LibP2P;
-		};
-		4BADD9452FBE6FD500CA0051 /* LibP2PTesting */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LibP2PTesting;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
