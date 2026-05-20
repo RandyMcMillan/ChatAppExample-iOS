@@ -1,9 +1,11 @@
-# libssh2 security
+libssh2 security
+================
 
 This document is intended to provide guidance on how security vulnerabilities
 should be handled in the libssh2 project.
 
-## Publishing Information
+Publishing Information
+----------------------
 
 All known and public libssh2 vulnerabilities will be listed on [the libssh2
 web site](https://www.libssh2.org/).
@@ -12,7 +14,8 @@ Security vulnerabilities should not be entered in the project's public bug
 tracker unless the necessary configuration is in place to limit access to the
 issue to only the reporter and the project's security team.
 
-## Vulnerability Handling
+Vulnerability Handling
+----------------------
 
 The typical process for handling a new security vulnerability is as follows.
 
@@ -83,7 +86,8 @@ announcement.
 - The security web page on the web site should get the new vulnerability
   mentioned.
 
-## LIBSSH2-SECURITY (at haxx dot se)
+LIBSSH2-SECURITY (at haxx dot se)
+--------------------------------
 
 Who is on this list? There are a couple of criteria you must meet, and then we
 might ask you to join the list or you can ask to join it. It really isn't very

@@ -4,17 +4,18 @@ Source code: https://github.com/libssh2/libssh2
 
 Web site source code: https://github.com/libssh2/www
 
-# Installation instructions are in docs/INSTALL
-
+Installation instructions are in docs/INSTALL
+=======
 To build libssh2 you will need CMake v2.8 or later [1] and one of the
 following cryptography libraries:
 
-- OpenSSL
-- Libgcrypt
-- WinCNG
-- mbedTLS
+* OpenSSL
+* Libgcrypt
+* WinCNG
+* mbedTLS
 
-## Getting started
+Getting started
+---------------
 
 If you are happy with the default options, make a new build directory,
 change to it, configure the build environment and build the project:
@@ -27,135 +28,136 @@ change to it, configure the build environment and build the project:
 ```
 
 libssh2 will be built as a static library and will use any
-cryptography library available. The library binary will be put in
+cryptography library available.  The library binary will be put in
 `bin/src`, with the examples in `bin/example` and the tests in
 `bin/tests`.
 
-## Customising the build
+Customising the build
+---------------------
 
-Of course, you might want to customise the build options. You can
+Of course, you might want to customise the build options.  You can
 pass the options to CMake on the command line:
 
-cmake -D<option>=<value> ..
+  cmake -D<option>=<value> ..
 
 The following options are available:
 
-- `LINT=ON`
+ * `LINT=ON`
 
-  Enables running the source code linter when building. Can be `ON` or `OFF`.
+    Enables running the source code linter when building. Can be `ON` or `OFF`.
 
-- `BUILD_SHARED_LIBS=OFF`
 
-  Determines whether libssh2 is built as a static library or as a
-  shared library (.dll/.so). Can be `ON` or `OFF`.
+ * `BUILD_SHARED_LIBS=OFF`
 
-- `CRYPTO_BACKEND=`
+    Determines whether libssh2 is built as a static library or as a
+    shared library (.dll/.so).  Can be `ON` or `OFF`.
 
-  Chooses a specific cryptography library to use for cryptographic
-  operations. Can be `OpenSSL` (https://www.openssl.org),
-  `Libgcrypt` (https://www.gnupg.org/), `WinCNG` (Windows Vista+),
-  `mbedTLS` (https://tls.mbed.org/) or blank to use any library available.
+ * `CRYPTO_BACKEND=`
 
-  CMake will attempt to locate the libraries automatically. See [2]
-  for more information.
+    Chooses a specific cryptography library to use for cryptographic
+    operations.  Can be `OpenSSL` (https://www.openssl.org),
+    `Libgcrypt` (https://www.gnupg.org/), `WinCNG` (Windows Vista+),
+    `mbedTLS` (https://tls.mbed.org/) or blank to use any library available.
 
-- `ENABLE_ZLIB_COMPRESSION=OFF`
+    CMake will attempt to locate the libraries automatically.  See [2]
+    for more information.
 
-  Will use zlib (http://www.zlib.org) for payload compression. Can
-  be `ON` or `OFF`.
+ * `ENABLE_ZLIB_COMPRESSION=OFF`
 
-- `ENABLE_CRYPT_NONE=OFF`
+    Will use zlib (http://www.zlib.org) for payload compression.  Can
+    be `ON` or `OFF`.
 
-  The SSH2 Transport allows for unencrypted data transmission using
-  the "none" cipher. Because this is such a huge security hole, it
-  is typically disabled on SSH2 implementations and is disabled in
-  libssh2 by default as well.
+ * `ENABLE_CRYPT_NONE=OFF`
 
-  Enabling this option will allow for "none" as a negotiable method,
-  however it still requires that the method be advertized by the
-  remote end and that no more-preferable methods are available.
+    The SSH2 Transport allows for unencrypted data transmission using
+    the "none" cipher.  Because this is such a huge security hole, it
+    is typically disabled on SSH2 implementations and is disabled in
+    libssh2 by default as well.
 
-- `ENABLE_MAC_NONE=OFF`
+    Enabling this option will allow for "none" as a negotiable method,
+    however it still requires that the method be advertized by the
+    remote end and that no more-preferable methods are available.
 
-  The SSH2 Transport also allows implementations to forego a message
-  authentication code. While this is less of a security risk than
-  using a "none" cipher, it is still not recommended as disabling
-  MAC hashes removes a layer of security.
+ * `ENABLE_MAC_NONE=OFF`
 
-  Enabling this option will allow for "none" as a negotiable method,
-  however it still requires that the method be advertized by the
-  remote end and that no more-preferable methods are available.
+    The SSH2 Transport also allows implementations to forego a message
+    authentication code.  While this is less of a security risk than
+    using a "none" cipher, it is still not recommended as disabling
+    MAC hashes removes a layer of security.
 
-- `ENABLE_GEX_NEW=ON`
+    Enabling this option will allow for "none" as a negotiable method,
+    however it still requires that the method be advertized by the
+    remote end and that no more-preferable methods are available.
 
-  The diffie-hellman-group-exchange-sha1 (dh-gex) key exchange
-  method originally defined an exchange negotiation using packet
-  type 30 to request a generation pair based on a single target
-  value. Later refinement of dh-gex provided for range and target
-  values. By default libssh2 will use the newer range method.
+ * `ENABLE_GEX_NEW=ON`
 
-  If you experience trouble connecting to an old SSH server using
-  dh-gex, try this option to fallback on the older more reliable
-  method.
+    The diffie-hellman-group-exchange-sha1 (dh-gex) key exchange
+    method originally defined an exchange negotiation using packet
+    type 30 to request a generation pair based on a single target
+    value.  Later refinement of dh-gex provided for range and target
+    values.  By default libssh2 will use the newer range method.
 
-- `ENABLE_DEBUG_LOGGING=ON` in Debug, `=OFF` in Release
+    If you experience trouble connecting to an old SSH server using
+    dh-gex, try this option to fallback on the older more reliable
+    method.
 
-  Will enable the libssh2_trace() function for showing debug traces.
+ * `ENABLE_DEBUG_LOGGING=ON` in Debug, `=OFF` in Release
 
-- `CLEAR_MEMORY=ON`
+    Will enable the libssh2_trace() function for showing debug traces.
 
-  Securely zero memory before freeing it (if the backend supports this).
+ * `CLEAR_MEMORY=ON`
 
-## Build tools
+    Securely zero memory before freeing it (if the backend supports this).
+
+Build tools
+-----------
 
 The previous examples used CMake to start the build using:
 
-cmake --build .
+  cmake --build .
 
 Alternatively, once CMake has configured your project, you can just
 use your own build tool, e.g GNU make, Visual Studio, etc., from that
 point onwards.
 
-## Tests
+Tests
+-----
 
 To test the build, run the appropriate test target for your build
-system. For example:
+system.  For example:
 
 ```
   cmake --build . --target test
 ```
-
 or
-
 ```
   cmake --build . --target RUN_TESTS
 ```
 
-## How do I use libssh2 in my project if my project doesn't use CMake?
+How do I use libssh2 in my project if my project doesn't use CMake?
+-------------------------------------------------------------------
 
 If you are not using CMake for your own project, install libssh2
-
 ```
   cmake <libssh2 source location>
   cmake --build .
   cmake --build . --target install
 ```
-
 or
-
 ```
   cmake --build . --target INSTALL
 ```
 
 and then specify the install location to your project in the normal
-way for your build environment. If you don't like the default install
+way for your build environment.  If you don't like the default install
 location, add `-DCMAKE_INSTALL_PREFIX=<chosen prefix>` when initially
 configuring the project.
 
-## How can I use libssh2 in my project if it also uses CMake?
+How can I use libssh2 in my project if it also uses CMake?
+----------------------------------------------------------
 
 If your own project also uses CMake, you don't need to worry about
-setting it up with libssh2's location. Just add just the following
+setting it up with libssh2's location.  Just add just the following
 lines and CMake will find libssh2 on your system, set up the necessary
 paths and link the library with your binary.
 
@@ -163,8 +165,8 @@ paths and link the library with your binary.
     target_link_libraries(my_project_target Libssh2::libssh2)
 
 Of course, you still have to make libssh2 available on your system
-first. You can install it in the traditional way shown above, but you
-don't have to. Instead you can just build it, which will export its
+first.  You can install it in the traditional way shown above, but you
+don't have to.  Instead you can just build it, which will export its
 location to the user package registry [3] where `find_package` will
 find it.
 
