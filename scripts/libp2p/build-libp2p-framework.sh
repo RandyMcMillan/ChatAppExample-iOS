@@ -8,6 +8,7 @@ source_root="${package_root}/cpp-libp2p-0.1.37"
 build_root="${package_root}/build"
 install_root="${package_root}/install"
 framework_root="${package_root}/LibP2P.xcframework"
+framework_stage="${package_root}/.LibP2P.xcframework.stage"
 framework_zip="${package_root}/LibP2P.xcframework.zip"
 modulemap_source="${package_root}/LibP2P_modulemap"
 
@@ -70,7 +71,7 @@ base_cmake_args=(
   -DLIBP2P_ENABLE_QUIC=OFF
 )
 
-rm -rf "${build_root}" "${install_root}" "${framework_root}" "${framework_zip}"
+rm -rf "${build_root}" "${install_root}" "${framework_stage}" "${framework_zip}"
 
 setup_variables() {
   PLATFORM="$1"
@@ -183,9 +184,12 @@ package_framework() {
     printf ' -output %q\n' "${framework_root}"
   fi
 
-  xcodebuild -create-xcframework "${framework_args[@]}" -output "${framework_root}"
+  xcodebuild -create-xcframework "${framework_args[@]}" -output "${framework_stage}"
+  mkdir -p "${framework_root}"
+  rsync -a --delete "${framework_stage}/" "${framework_root}/"
   mkdir -p "${framework_root}/Headers"
   cp "${modulemap_source}" "${framework_root}/Headers/module.modulemap"
+  rm -rf "${framework_stage}"
   (cd "${package_root}" && zip -qr "${framework_zip}" "${framework_root##*/}")
 }
 
