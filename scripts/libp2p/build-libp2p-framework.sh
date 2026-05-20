@@ -8,7 +8,7 @@ source_root="${package_root}/cpp-libp2p-0.1.37"
 build_root="${package_root}/build"
 install_root="${package_root}/install"
 framework_root="${package_root}/LibP2P.xcframework"
-framework_stage="${package_root}/.LibP2P.xcframework.stage"
+framework_stage="${package_root}/LibP2P.stage.xcframework"
 framework_zip="${package_root}/LibP2P.xcframework.zip"
 modulemap_source="${package_root}/LibP2P_modulemap"
 
