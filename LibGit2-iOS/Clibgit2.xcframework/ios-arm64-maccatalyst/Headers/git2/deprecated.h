@@ -285,6 +285,29 @@ typedef int (*git_commit_signing_cb)(
  */
 /**@{*/
 
+#ifndef GIT2_CONFIGMAP_COMPAT_DEFINED
+#define GIT2_CONFIGMAP_COMPAT_DEFINED
+typedef enum {
+	GIT_CONFIGMAP_FALSE = 0,
+	GIT_CONFIGMAP_TRUE = 1,
+	GIT_CONFIGMAP_INT32 = 2,
+	GIT_CONFIGMAP_STRING = 3,
+} git_configmap_t;
+
+typedef struct git_configmap {
+	git_configmap_t type;
+	const char *str;
+	int value;
+} git_configmap;
+
+typedef struct git_config_entry git_config_entry;
+GIT_EXTERN(int) git_config_set_string(git_config *cfg, const char *name, const char *value);
+GIT_EXTERN(void) git_config_free(git_config *cfg);
+GIT_EXTERN(int) git_config_open_default(git_config **out);
+GIT_EXTERN(int) git_config__lookup_entry(git_config_entry **out, git_config *cfg, const char *name, bool now);
+GIT_EXTERN(int) git_repository_config__weakptr(git_config **out, git_repository *repo);
+#endif
+
 #define GIT_CVAR_FALSE  GIT_CONFIGMAP_FALSE
 #define GIT_CVAR_TRUE   GIT_CONFIGMAP_TRUE
 #define GIT_CVAR_INT32  GIT_CONFIGMAP_INT32
