@@ -155,7 +155,10 @@ ensure_clibgit2_bundle() {
   fi
 
   if [[ -f "${clibgit2_zip}" ]]; then
-    restore_clibgit2_bundle
+    if ! restore_clibgit2_bundle; then
+      log "Restoring Clibgit2.xcframework failed; rebuilding from source"
+      (cd "${project_root}" && "${clibgit2_build_script}")
+    fi
   fi
 
   if validate_clibgit2_bundle "${clibgit2_bundle}"; then
