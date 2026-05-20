@@ -18,20 +18,20 @@ let package = Package(
             name: "GnostrGit",
             targets: ["GnostrGit"]),
     ],
-    dependencies: [
-        .package(path: "../LibGit2-iOS"),
-    ],
+    dependencies: [],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "XGit",
-            dependencies: [
-                .product(name: "Clibgit2", package: "LibGit2-iOS"),
-            ],
+            dependencies: [],
             exclude: ["internal"],
             cxxSettings: [
-                .unsafeFlags(["-I", "../LibGit2-iOS/Clibgit2.xcframework/ios-arm64-maccatalyst/Headers"]),
+                .unsafeFlags(["-I", "/opt/homebrew/opt/libgit2/include"]),
+            ],
+            linkerSettings: [
+                .unsafeFlags(["-L", "/opt/homebrew/opt/libgit2/lib"]),
+                .linkedLibrary("git2"),
             ]),
         .target(
             name: "GnostrGit",
