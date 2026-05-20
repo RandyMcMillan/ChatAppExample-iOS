@@ -6,4 +6,7 @@
 
 add_subdirectory(impl)
 add_subdirectory(tcp)
-add_subdirectory(quic)
+
+if (LIBP2P_ENABLE_QUIC)
+  add_subdirectory(quic)
+endif ()
