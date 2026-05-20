@@ -56,6 +56,10 @@ final class P2PService: ObservableObject {
         state.rawValue.capitalized
     }
 
+    var isRunning: Bool {
+        state == .running
+    }
+
     var peerIDString: String {
         peerID.b58String
     }
@@ -107,6 +111,9 @@ final class P2PService: ObservableObject {
         guard let app else { return }
 
         state = .stopping
+        self.app = nil
+        self.runTask = nil
+
         Task.detached(priority: .background) { [weak self] in
             do {
                 try await app.asyncShutdown()
@@ -127,7 +134,9 @@ final class P2PService: ObservableObject {
 
     func restart() {
         stop()
-        start()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.start()
+        }
     }
 
     private static func makeApplication(peerID: PeerID) -> Application {
@@ -207,13 +216,13 @@ struct ContentView: View {
             Text("State: \(service.stateLabel)")
 
             HStack {
-                Button(service.state == .running ? "Restart node" : "Start node") {
-                    service.restart()
+                Button("Start node") {
+                    service.start()
                 }
                 Button("Stop node") {
                     service.stop()
                 }
-                .disabled(service.state == .stopped)
+                .disabled(!service.isRunning)
             }
 
             if let lastError = service.lastError {

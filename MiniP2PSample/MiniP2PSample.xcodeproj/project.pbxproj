@@ -408,6 +408,30 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Git;
 		};
+		4BA7DCC12FBE429400B507EE /* XCLocalSwiftPackageReference "../LibP2P-iOS" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../LibP2P-iOS;
+		};
+		4BA7DCC22FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-noise" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../swift-libp2p-noise;
+		};
+		4BA7DCC32FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-yamux" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../swift-libp2p-yamux;
+		};
+		4BA7DCC42FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-dcutr" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../swift-libp2p-dcutr;
+		};
+		4BA7DCC52FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-mdns" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../swift-libp2p-mdns;
+		};
+		4BA7DCC62FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-kad-dht" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../swift-libp2p-kad-dht;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -442,6 +466,30 @@
 		4B70D7DD2FBE04A50056F790 /* XGit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = XGit;
+		};
+		4BA7DCC72FBE429400B507EE /* LibP2P */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LibP2P;
+		};
+		4BA7DCC82FBE429400B507EE /* LibP2PNoise */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LibP2PNoise;
+		};
+		4BA7DCC92FBE429400B507EE /* LibP2PYAMUX */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LibP2PYAMUX;
+		};
+		4BA7DCCA2FBE429400B507EE /* LibP2PDCUtR */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LibP2PDCUtR;
+		};
+		4BA7DCCB2FBE429400B507EE /* LibP2PMDNS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LibP2PMDNS;
+		};
+		4BA7DCCC2FBE429400B507EE /* LibP2PKadDHT */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LibP2PKadDHT;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
