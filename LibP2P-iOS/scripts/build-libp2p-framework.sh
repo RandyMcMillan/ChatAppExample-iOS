@@ -2,7 +2,7 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-project_root="$(cd "${script_dir}/../.." && pwd)"
+project_root="$(cd "${script_dir}/.." && pwd)"
 source_root="${project_root}/cpp-libp2p-0.1.37"
 build_root="${project_root}/build"
 
