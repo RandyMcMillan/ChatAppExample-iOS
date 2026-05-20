@@ -11,14 +11,18 @@ export PROJECT_ROOT=$REPO_ROOT/LibGit2-iOS
 export INSTALL_ROOT=$PROJECT_ROOT/install
 export VERIFY_ROOT=$PROJECT_ROOT/verification
 FORCE=0
+VERIFY_ONLY=0
 
 while [ $# -gt 0 ]; do
 	case "$1" in
 		--force|-f)
 			FORCE=1
 			;;
+		--verify)
+			VERIFY_ONLY=1
+			;;
 		*)
-			echo "Usage: $0 [--force|-f]"
+			echo "Usage: $0 [--force|-f] [--verify]"
 			exit 1
 			;;
 	esac
@@ -101,6 +105,17 @@ function verify_libssh2_signature() {
 	gpg --homedir "$gnupghome" --batch --import "$VERIFY_ROOT/$keyfile" >/dev/null 2>/dev/null
 	gpg --homedir "$gnupghome" --batch --verify "$VERIFY_ROOT/$sigfile" "$PROJECT_ROOT/$archive" >/dev/null 2>/dev/null
 	rm -rf "$gnupghome"
+}
+
+function verify_downloads() {
+	ensure_tarball openssl-3.0.4.tar.gz https://www.openssl.org/source/openssl-3.0.4.tar.gz
+	verify_sha256 openssl-3.0.4.tar.gz.sha256 openssl-3.0.4.tar.gz
+
+	ensure_tarball libssh2-1.10.0.tar.gz https://www.libssh2.org/download/libssh2-1.10.0.tar.gz
+	verify_libssh2_signature libssh2-1.10.0.tar.gz libssh2-1.10.0.tar.gz.asc libssh2-1.10.0.pub
+
+	ensure_zip_source v1.3.1.zip https://github.com/libgit2/libgit2/archive/refs/tags/v1.3.1.zip
+	verify_sha256 v1.3.1.zip.sha256 v1.3.1.zip
 }
 
 # List of platforms-architecture that we support
