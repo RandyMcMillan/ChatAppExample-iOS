@@ -192,7 +192,7 @@ build_xcframework() {
   rm -rf "${xcframework_root}" "${xcframework_zip}"
   run_cmd xcodebuild -create-xcframework "${framework_args[@]}" -output "${xcframework_root}"
   copy_modulemap
-  run_cmd zip -r "${xcframework_zip}" "${xcframework_root##*/}"
+  (cd "${project_root}" && run_cmd zip -r "${xcframework_zip##*/}" "${xcframework_root##*/}")
 }
 
 if (( ! PACKAGE_ONLY )); then
