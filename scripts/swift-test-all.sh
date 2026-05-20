@@ -42,6 +42,10 @@ while IFS= read -r package_manifest; do
   package_name="$(basename "${package_path}")"
 
   case "${package_name}" in
+    LibGit2-iOS)
+      echo "==> skip swift test --package-path ${package_name} (binary target only)"
+      continue
+      ;;
     swift-libp2p-redis)
       "${script_dir}/redis-server.sh" \
         "${project_root}/swift-libp2p-redis/.github/redis1.conf" \
