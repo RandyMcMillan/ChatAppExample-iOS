@@ -20,13 +20,7 @@ list-scripts:
 define RUN_SCRIPT
 $1:
 	@script="$(SCRIPT_ROOT)/$1.sh"; \
-	if [ -x "$$script" ]; then \
-		exec "$$script" $(ARGS); \
-	else \
-		printf 'Unknown target: %s\n' "$1"; \
-		$(MAKE) --no-print-directory help; \
-		exit 1; \
-	fi
+	exec bash "$$$$script" $(ARGS)
 endef
 
 $(foreach target,$(SCRIPT_TARGETS),$(eval $(call RUN_SCRIPT,$(target))))
