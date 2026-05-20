@@ -372,11 +372,6 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4B1381C92EF6DCA100ECBFC1 /* GnostrGit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4BADD9422FBE6FD500CA0051 /* XCLocalSwiftPackageReference "../LibP2P-iOS" */;
-			productName = GnostrGit;
-		};
 		4BA7DCC72FBE429400B507EE /* LibP2P */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4BADD9422FBE6FD500CA0051 /* XCLocalSwiftPackageReference "../LibP2P-iOS" */;
