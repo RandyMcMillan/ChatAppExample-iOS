@@ -10,9 +10,16 @@ import GnostrGit
 
 let documentURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 
-let localRepoLocation = documentURL.appendingPathComponent("MiniGit-SampleApp")
-
 let remoteRepoLocation = "https://github.com/randymcmillan/ChatAppExample-iOS.git"
+
+func repoLocation(for remoteURL: String) -> URL {
+    let repoFolderName = URL(string: remoteURL)?
+        .deletingPathExtension()
+        .lastPathComponent ?? "MiniGit-SampleApp"
+    return documentURL.appendingPathComponent(repoFolderName)
+}
+
+let localRepoLocation = repoLocation(for: remoteRepoLocation)
 
 // Do not do this in a real application, put the credentials somewhere safe
 // And possibly encrypt them or keychain them by subclassing CredentialsManager
@@ -31,7 +38,6 @@ func addCredential() {
         print("Fail to add credential:", error)
     }
 }
-
 let repository = GitRepository(localRepoLocation, credentialManager)
 
 struct ContentView: View {
@@ -42,7 +48,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Text("On Mac Catalyst, you should be able to find the cloned repo in `~/Documents/`.").italic()
+            Text("On Mac Catalyst, you should be able to find the cloned repo in `~/Documents/\(localRepoLocation.lastPathComponent)/`.").italic()
 
             Button("Clone remote Git repo") {
                 repo.clone(remoteRepoLocation)
