@@ -13,14 +13,13 @@
 		4B6C6EB52FBE6982008C157D /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D32FBE03E00056F790 /* XGit */; };
 		4B6C6EB62FBE6982008C157D /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D62FBE040B0056F790 /* GnostrGit */; };
 		4B6C6EB72FBE6982008C157D /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D82FBE040B0056F790 /* XGit */; };
+		4B6C6EB82FBE6B34008C157D /* LibP2P in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCC72FBE429400B507EE /* LibP2P */; };
 		4BA7DCB42FBE661F00B507EE /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7DB2FBE04A50056F790 /* GnostrGit */; };
 		4BA7DCB52FBE661F00B507EE /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7DD2FBE04A50056F790 /* XGit */; };
-		4BA7DCCD2FBE429400B507EE /* LibP2P in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCC72FBE429400B507EE /* LibP2P */; };
-		4BA7DCCE2FBE429400B507EE /* LibP2PNoise in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCC82FBE429400B507EE /* LibP2PNoise */; };
-		4BA7DCCF2FBE429400B507EE /* LibP2PYAMUX in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCC92FBE429400B507EE /* LibP2PYAMUX */; };
-		4BA7DCD02FBE429400B507EE /* LibP2PDCUtR in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCA2FBE429400B507EE /* LibP2PDCUtR */; };
-		4BA7DCD12FBE429400B507EE /* LibP2PMDNS in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCB2FBE429400B507EE /* LibP2PMDNS */; };
-		4BA7DCD22FBE429400B507EE /* LibP2PKadDHT in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCC2FBE429400B507EE /* LibP2PKadDHT */; };
+		4BADD93F2FBE6F8C00CA0051 /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADD93E2FBE6F8C00CA0051 /* GnostrGit */; };
+		4BADD9412FBE6F8C00CA0051 /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADD9402FBE6F8C00CA0051 /* XGit */; };
+		4BADD9442FBE6FD500CA0051 /* LibP2P in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADD9432FBE6FD500CA0051 /* LibP2P */; };
+		4BADD9462FBE6FD500CA0051 /* LibP2PTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 4BADD9452FBE6FD500CA0051 /* LibP2PTesting */; };
 		B701035627CD0B6900D43034 /* MiniP2PSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035527CD0B6900D43034 /* MiniP2PSampleApp.swift */; };
 		B701035827CD0B6900D43034 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035727CD0B6900D43034 /* ContentView.swift */; };
 		B701035A27CD0B6B00D43034 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B701035927CD0B6B00D43034 /* Assets.xcassets */; };
@@ -42,14 +41,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B6C6EB82FBE6B34008C157D /* LibP2P in Frameworks */,
 				4B6C6EB72FBE6982008C157D /* XGit in Frameworks */,
 				4B6C6EB62FBE6982008C157D /* GnostrGit in Frameworks */,
 				4B6C6EB52FBE6982008C157D /* XGit in Frameworks */,
 				4B6C6EB42FBE6982008C157D /* GnostrGit in Frameworks */,
 				4B6C6EB32FBE6982008C157D /* XGit in Frameworks */,
+				4BADD93F2FBE6F8C00CA0051 /* GnostrGit in Frameworks */,
+				4BADD9442FBE6FD500CA0051 /* LibP2P in Frameworks */,
 				4B6C6EB22FBE6982008C157D /* GnostrGit in Frameworks */,
 				4BA7DCB52FBE661F00B507EE /* XGit in Frameworks */,
+				4BADD9412FBE6F8C00CA0051 /* XGit in Frameworks */,
 				4BA7DCB42FBE661F00B507EE /* GnostrGit in Frameworks */,
+				4BADD9462FBE6FD500CA0051 /* LibP2PTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,11 +123,10 @@
 				4B70D7DB2FBE04A50056F790 /* GnostrGit */,
 				4B70D7DD2FBE04A50056F790 /* XGit */,
 				4BA7DCC72FBE429400B507EE /* LibP2P */,
-				4BA7DCC82FBE429400B507EE /* LibP2PNoise */,
-				4BA7DCC92FBE429400B507EE /* LibP2PYAMUX */,
-				4BA7DCCA2FBE429400B507EE /* LibP2PDCUtR */,
-				4BA7DCCB2FBE429400B507EE /* LibP2PMDNS */,
-				4BA7DCCC2FBE429400B507EE /* LibP2PKadDHT */,
+				4BADD93E2FBE6F8C00CA0051 /* GnostrGit */,
+				4BADD9402FBE6F8C00CA0051 /* XGit */,
+				4BADD9432FBE6FD500CA0051 /* LibP2P */,
+				4BADD9452FBE6FD500CA0051 /* LibP2PTesting */,
 			);
 			productName = MiniGitSample;
 			productReference = B701035227CD0B6900D43034 /* MiniP2PSample.app */;
@@ -154,13 +157,8 @@
 			);
 			mainGroup = B701034927CD0B6900D43034;
 			packageReferences = (
-				4B70D7DA2FBE04A50056F790 /* XCLocalSwiftPackageReference "../Git" */,
-				4BA7DCC12FBE429400B507EE /* XCLocalSwiftPackageReference "../LibP2P-iOS" */,
-				4BA7DCC22FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-noise" */,
-				4BA7DCC32FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-yamux" */,
-				4BA7DCC42FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-dcutr" */,
-				4BA7DCC52FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-mdns" */,
-				4BA7DCC62FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-kad-dht" */,
+				4BADD93D2FBE6F8C00CA0051 /* XCLocalSwiftPackageReference "../Git" */,
+				4BADD9422FBE6FD500CA0051 /* XCLocalSwiftPackageReference "../swift-libp2p" */,
 			);
 			productRefGroup = B701035327CD0B6900D43034 /* Products */;
 			projectDirPath = "";
@@ -404,33 +402,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		4B70D7DA2FBE04A50056F790 /* XCLocalSwiftPackageReference "../Git" */ = {
+		4BADD93D2FBE6F8C00CA0051 /* XCLocalSwiftPackageReference "../Git" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Git;
 		};
-		4BA7DCC12FBE429400B507EE /* XCLocalSwiftPackageReference "../LibP2P-iOS" */ = {
+		4BADD9422FBE6FD500CA0051 /* XCLocalSwiftPackageReference "../swift-libp2p" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../LibP2P-iOS;
-		};
-		4BA7DCC22FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-noise" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../swift-libp2p-noise;
-		};
-		4BA7DCC32FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-yamux" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../swift-libp2p-yamux;
-		};
-		4BA7DCC42FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-dcutr" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../swift-libp2p-dcutr;
-		};
-		4BA7DCC52FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-mdns" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../swift-libp2p-mdns;
-		};
-		4BA7DCC62FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-kad-dht" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../swift-libp2p-kad-dht;
+			relativePath = "../swift-libp2p";
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -471,25 +449,21 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = LibP2P;
 		};
-		4BA7DCC82FBE429400B507EE /* LibP2PNoise */ = {
+		4BADD93E2FBE6F8C00CA0051 /* GnostrGit */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = LibP2PNoise;
+			productName = GnostrGit;
 		};
-		4BA7DCC92FBE429400B507EE /* LibP2PYAMUX */ = {
+		4BADD9402FBE6F8C00CA0051 /* XGit */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = LibP2PYAMUX;
+			productName = XGit;
 		};
-		4BA7DCCA2FBE429400B507EE /* LibP2PDCUtR */ = {
+		4BADD9432FBE6FD500CA0051 /* LibP2P */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = LibP2PDCUtR;
+			productName = LibP2P;
 		};
-		4BA7DCCB2FBE429400B507EE /* LibP2PMDNS */ = {
+		4BADD9452FBE6FD500CA0051 /* LibP2PTesting */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = LibP2PMDNS;
-		};
-		4BA7DCCC2FBE429400B507EE /* LibP2PKadDHT */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LibP2PKadDHT;
+			productName = LibP2PTesting;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
