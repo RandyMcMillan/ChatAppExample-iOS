@@ -29,7 +29,10 @@ let package = Package(
             dependencies: [
                 .product(name: "Clibgit2", package: "LibGit2-iOS"),
             ],
-            exclude: ["internal"]),
+            exclude: ["internal"],
+            cxxSettings: [
+                .unsafeFlags(["-I", "../LibGit2-iOS/Clibgit2.xcframework/ios-arm64-maccatalyst/Headers"]),
+            ]),
         .target(
             name: "GnostrGit",
             dependencies: ["XGit"],
