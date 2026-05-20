@@ -133,8 +133,6 @@ build_platform() {
   cmake_args+=("${base_cmake_args[@]}")
   cmake_args+=("${PLATFORM_CMAKE_ARGS[@]}")
 
-  rm -rf "${platform_build_root}" "${platform_install_root}"
-
   if ((verbose)); then
     printf '==> cmake'
     printf ' %q' "${cmake_args[@]}"
