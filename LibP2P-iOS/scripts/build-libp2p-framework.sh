@@ -43,7 +43,6 @@ done
 cmake_args=(
   -S "${source_root}"
   -B "${build_root}"
-  -DPACKAGE_MANAGER=hunter
   -DTESTING=OFF
   -DEXAMPLES=OFF
   -DCLANG_FORMAT=OFF
