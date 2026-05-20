@@ -58,6 +58,8 @@ cmake_args=(
   -DLIBP2P_ENABLE_QUIC=OFF
 )
 
+rm -rf "${build_root}"
+
 if ((verbose)); then
   printf '==> cmake %q ' "${cmake_args[@]}"
   printf '\n'
