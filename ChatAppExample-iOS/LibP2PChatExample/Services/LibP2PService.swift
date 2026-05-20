@@ -9,7 +9,11 @@ import Foundation
 import LibP2P
 import LibP2PNoise
 import LibP2PMPLEX
+import LibP2PRelay
+import LibP2PAutoNAT
+import LibP2PDCUtR
 import LibP2PMDNS
+import LibP2PKadDHT
 
 /// Any class that conforms to the ChatDelegate can register themselves on the LibP2PService to get notified of Chat events
 protocol ChatDelegate {
@@ -85,7 +89,11 @@ class LibP2PService {
         app.connectionManager.setIdleTimeout(.seconds(30))
         app.security.use(.noise)
         app.muxers.use(.mplex)
+        app.relay.use(.relay)
+        app.autonat.use(.autonat)
+        app.dcutr.use(.dcutr)
         app.discovery.use(.mdns)
+        app.discovery.use(.kadDHT)
         app.servers.use(.tcp(host: "0.0.0.0", port: Self.listenPort))
         try! routes(app)
         return app
