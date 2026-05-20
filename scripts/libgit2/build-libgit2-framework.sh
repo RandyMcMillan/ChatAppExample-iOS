@@ -373,8 +373,6 @@ if [ $VERIFY_ONLY -eq 1 ]; then
 	exit 0
 fi
 
-rm -rf "$PROJECT_ROOT/libgit2.xcframework" "$PROJECT_ROOT/Clibgit2.xcframework"
-
 for p in ${AVAILABLE_PLATFORMS[@]}; do
 	echo "Build libraries for $p"
 	build_libpcre $p
@@ -399,6 +397,7 @@ build_xcframework libgit2 ${XCFRAMEWORK_PLATFORMS[@]}
 run_cmd zip -r libgit2.xcframework.zip libgit2.xcframework
 
 # Build Clibgit2 XCFramework for use with SwiftGit2
-mv libgit2.xcframework Clibgit2.xcframework
+mkdir -p Clibgit2.xcframework
+run_cmd rsync -a --delete libgit2.xcframework/ Clibgit2.xcframework/
 copy_modulemap
 run_cmd zip -r Clibgit2.xcframework.zip Clibgit2.xcframework
