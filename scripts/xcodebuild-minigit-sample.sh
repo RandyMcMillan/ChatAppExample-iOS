@@ -12,7 +12,7 @@ clibgit2_build_script="${project_root}/scripts/libgit2/build-libgit2-framework.s
 
 usage() {
   cat <<EOF
-usage: $(basename "$0") [--rebuild-clibgit2] [--] [xcodebuild args...]
+usage: $(basename "$0") [--rebuild-clibgit2] [--verbose] [--] [xcodebuild args...]
 
 Run xcodebuild for MiniGitSample with repo-local defaults:
   -project ${project_path}
@@ -28,6 +28,7 @@ it from source.
 
 options:
   --rebuild-clibgit2  Rebuild Clibgit2.xcframework before running xcodebuild
+  --verbose           Pass verbose output through to the Clibgit2 rebuild
   -h, --help          Show this help text
 
 examples:
@@ -122,7 +123,11 @@ validate_clibgit2_bundle() {
 ensure_clibgit2_bundle() {
   if ((rebuild_clibgit2)); then
     log "Rebuilding Clibgit2.xcframework"
-    (cd "${project_root}" && "${clibgit2_build_script}")
+    if ((clibgit2_verbose)); then
+      (cd "${project_root}" && "${clibgit2_build_script}" --verbose)
+    else
+      (cd "${project_root}" && "${clibgit2_build_script}")
+    fi
   fi
 
   if validate_clibgit2_bundle "${clibgit2_bundle}"; then
@@ -130,7 +135,11 @@ ensure_clibgit2_bundle() {
   fi
 
   log "Clibgit2.xcframework is missing or incomplete; rebuilding from source"
-  (cd "${project_root}" && "${clibgit2_build_script}")
+  if ((clibgit2_verbose)); then
+    (cd "${project_root}" && "${clibgit2_build_script}" --verbose)
+  else
+    (cd "${project_root}" && "${clibgit2_build_script}")
+  fi
 
   if validate_clibgit2_bundle "${clibgit2_bundle}"; then
     return 0
@@ -150,6 +159,7 @@ EOF
 }
 
 rebuild_clibgit2=0
+clibgit2_verbose=0
 xcodebuild_args=()
 
 while (($#)); do
@@ -160,6 +170,9 @@ while (($#)); do
       ;;
     --rebuild-clibgit2)
       rebuild_clibgit2=1
+      ;;
+    --verbose|-v)
+      clibgit2_verbose=1
       ;;
     --)
       shift
