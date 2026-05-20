@@ -12,7 +12,7 @@ let documentURL = try! FileManager.default.url(for: .documentDirectory, in: .use
 
 let localRepoLocation = documentURL.appendingPathComponent("MiniGit-SampleApp")
 
-let remoteRepoLocation = "https://github.com/randymcmillan/MiniGit-SampleApp.git"
+let remoteRepoLocation = "https://github.com/randymcmillan/ChatAppExample-iOS.git"
 
 // Do not do this in a real application, put the credentials somewhere safe
 // And possibly encrypt them or keychain them by subclassing CredentialsManager
