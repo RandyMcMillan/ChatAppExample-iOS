@@ -9,10 +9,12 @@
 /* Begin PBXBuildFile section */
 		4B1381CA2EF6DCA100ECBFC1 /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B1381C92EF6DCA100ECBFC1 /* GnostrGit */; };
 		4B1381CC2EF6DCA100ECBFC1 /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B1381CB2EF6DCA100ECBFC1 /* XGit */; };
-		4BC67A1B2FBB44F4001BF583 /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4BC67A1A2FBB44F4001BF583 /* GnostrGit */; };
-		4BC67A1D2FBB44F4001BF583 /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4BC67A1C2FBB44F4001BF583 /* XGit */; };
-		4BD3D54E2FBD32C800D4BFE2 /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4BD3D54D2FBD32C800D4BFE2 /* GnostrGit */; };
-		4BD3D5502FBD32C800D4BFE2 /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4BD3D54F2FBD32C800D4BFE2 /* XGit */; };
+		4B70D7D22FBE03E00056F790 /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D12FBE03E00056F790 /* GnostrGit */; };
+		4B70D7D42FBE03E00056F790 /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D32FBE03E00056F790 /* XGit */; };
+		4B70D7D72FBE040B0056F790 /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D62FBE040B0056F790 /* GnostrGit */; };
+		4B70D7D92FBE040B0056F790 /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D82FBE040B0056F790 /* XGit */; };
+		4B70D7DC2FBE04A50056F790 /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7DB2FBE04A50056F790 /* GnostrGit */; };
+		4B70D7DE2FBE04A50056F790 /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7DD2FBE04A50056F790 /* XGit */; };
 		B701035627CD0B6900D43034 /* MiniGitSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035527CD0B6900D43034 /* MiniGitSampleApp.swift */; };
 		B701035827CD0B6900D43034 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035727CD0B6900D43034 /* ContentView.swift */; };
 		B701035A27CD0B6B00D43034 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B701035927CD0B6B00D43034 /* Assets.xcassets */; };
@@ -34,11 +36,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BD3D5502FBD32C800D4BFE2 /* XGit in Frameworks */,
-				4BC67A1D2FBB44F4001BF583 /* XGit in Frameworks */,
-				4BD3D54E2FBD32C800D4BFE2 /* GnostrGit in Frameworks */,
+				4B70D7DE2FBE04A50056F790 /* XGit in Frameworks */,
+				4B70D7DC2FBE04A50056F790 /* GnostrGit in Frameworks */,
+				4B70D7D92FBE040B0056F790 /* XGit in Frameworks */,
+				4B70D7D42FBE03E00056F790 /* XGit in Frameworks */,
+				4B70D7D72FBE040B0056F790 /* GnostrGit in Frameworks */,
 				4B1381CC2EF6DCA100ECBFC1 /* XGit in Frameworks */,
-				4BC67A1B2FBB44F4001BF583 /* GnostrGit in Frameworks */,
+				4B70D7D22FBE03E00056F790 /* GnostrGit in Frameworks */,
 				4B1381CA2EF6DCA100ECBFC1 /* GnostrGit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -102,10 +106,12 @@
 			packageProductDependencies = (
 				4B1381C92EF6DCA100ECBFC1 /* GnostrGit */,
 				4B1381CB2EF6DCA100ECBFC1 /* XGit */,
-				4BC67A1A2FBB44F4001BF583 /* GnostrGit */,
-				4BC67A1C2FBB44F4001BF583 /* XGit */,
-				4BD3D54D2FBD32C800D4BFE2 /* GnostrGit */,
-				4BD3D54F2FBD32C800D4BFE2 /* XGit */,
+				4B70D7D12FBE03E00056F790 /* GnostrGit */,
+				4B70D7D32FBE03E00056F790 /* XGit */,
+				4B70D7D62FBE040B0056F790 /* GnostrGit */,
+				4B70D7D82FBE040B0056F790 /* XGit */,
+				4B70D7DB2FBE04A50056F790 /* GnostrGit */,
+				4B70D7DD2FBE04A50056F790 /* XGit */,
 			);
 			productName = MiniGitSample;
 			productReference = B701035227CD0B6900D43034 /* MiniGitSample.app */;
@@ -136,7 +142,7 @@
 			);
 			mainGroup = B701034927CD0B6900D43034;
 			packageReferences = (
-				4BD3D54C2FBD32C800D4BFE2 /* XCLocalSwiftPackageReference "../Git" */,
+				4B70D7DA2FBE04A50056F790 /* XCLocalSwiftPackageReference "../Git" */,
 			);
 			productRefGroup = B701035327CD0B6900D43034 /* Products */;
 			projectDirPath = "";
@@ -376,7 +382,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		4BD3D54C2FBD32C800D4BFE2 /* XCLocalSwiftPackageReference "../Git" */ = {
+		4B70D7DA2FBE04A50056F790 /* XCLocalSwiftPackageReference "../Git" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Git;
 		};
@@ -391,19 +397,27 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = XGit;
 		};
-		4BC67A1A2FBB44F4001BF583 /* GnostrGit */ = {
+		4B70D7D12FBE03E00056F790 /* GnostrGit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = GnostrGit;
 		};
-		4BC67A1C2FBB44F4001BF583 /* XGit */ = {
+		4B70D7D32FBE03E00056F790 /* XGit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = XGit;
 		};
-		4BD3D54D2FBD32C800D4BFE2 /* GnostrGit */ = {
+		4B70D7D62FBE040B0056F790 /* GnostrGit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = GnostrGit;
 		};
-		4BD3D54F2FBD32C800D4BFE2 /* XGit */ = {
+		4B70D7D82FBE040B0056F790 /* XGit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = XGit;
+		};
+		4B70D7DB2FBE04A50056F790 /* GnostrGit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GnostrGit;
+		};
+		4B70D7DD2FBE04A50056F790 /* XGit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = XGit;
 		};
