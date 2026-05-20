@@ -3,12 +3,13 @@ SHELL := /bin/sh
 SCRIPT_ROOT := scripts
 SCRIPT_FILES := $(shell find $(SCRIPT_ROOT) -type f -name '*.sh' | sort)
 SCRIPT_TARGETS := $(patsubst $(SCRIPT_ROOT)/%.sh,%,$(SCRIPT_FILES))
+SCRIPT_VERBOSE := $(if $(findstring --verbose,$(MAKEFLAGS)),--verbose,)
 
 .DEFAULT_GOAL := help
 .PHONY: help list-scripts $(SCRIPT_TARGETS)
 
 help:
-	@printf '%s\n' 'Usage: make <script-target> [ARGS="..."]'
+	@printf '%s\n' 'Usage: make <script-target> [ARGS="..."] [--verbose]'
 	@printf '\n%s\n' 'Available targets:'
 	@for t in $(SCRIPT_TARGETS); do printf '  %-36s ./scripts/%s.sh\n' "$$t" "$$t"; done
 	@printf '  %-36s %s\n' help "Show this help"
@@ -20,7 +21,7 @@ list-scripts:
 define RUN_SCRIPT
 $1:
 	@script="$(SCRIPT_ROOT)/$1.sh"; \
-	exec bash "$$$$script" $(ARGS)
+	exec bash "$$$$script" $(ARGS) $(SCRIPT_VERBOSE)
 endef
 
 $(foreach target,$(SCRIPT_TARGETS),$(eval $(call RUN_SCRIPT,$(target))))
