@@ -7,10 +7,10 @@ Similar to our [LLVM-On-iOS project](https://github.com/light-tech/LLVM-On-iOS) 
 If you want to build the frameworks on your own machine, simply execute the script
 
 ```shell
-build-libgit2-framework.sh
+./scripts/libgit2/build-libgit2-framework.sh
 ```
 
-at the root of this repository. But see [here](https://github.com/light-tech/LLVM-On-iOS#the-tools-we-needs) first for the tools preparation.
+from the root of this repository. But see [here](https://github.com/light-tech/LLVM-On-iOS#the-tools-we-needs) first for the tools preparation.
 
 Our releases are built with [GitHub Actions](https://github.com/light-tech/LibGit2-On-iOS/actions).
 
