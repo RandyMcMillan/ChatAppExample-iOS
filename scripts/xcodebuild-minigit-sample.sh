@@ -62,20 +62,28 @@ has_arg() {
 append_default_option() {
   local flag="$1"
   local value="$2"
-  shift 2
 
-  if ! has_arg "$flag" "$@"; then
+  if ! xcodebuild_has_arg "$flag"; then
     xcodebuild_args+=("$flag" "$value")
   fi
 }
 
 append_default_setting() {
   local setting="$1"
-  shift
 
-  if ! has_arg "$setting" "$@"; then
+  if ! xcodebuild_has_arg "$setting"; then
     xcodebuild_args+=("$setting")
   fi
+}
+
+xcodebuild_has_arg() {
+  local needle="$1"
+
+  if ((${#xcodebuild_args[@]} == 0)); then
+    return 1
+  fi
+
+  has_arg "$needle" "${xcodebuild_args[@]}"
 }
 
 collect_clibgit2_artifacts() {
@@ -197,18 +205,18 @@ export GIT_CONFIG_VALUE_0="${GIT_CONFIG_VALUE_0:-all}"
 
 ensure_clibgit2_bundle
 
-append_default_option "-project" "${project_path}" "${xcodebuild_args[@]}"
-append_default_option "-scheme" "${scheme_name}" "${xcodebuild_args[@]}"
+append_default_option "-project" "${project_path}"
+append_default_option "-scheme" "${scheme_name}"
 
-if ! has_arg "-list" "${xcodebuild_args[@]}" &&
-   ! has_arg "-showBuildSettings" "${xcodebuild_args[@]}" &&
-   ! has_arg "-resolvePackageDependencies" "${xcodebuild_args[@]}" &&
-   ! has_arg "-version" "${xcodebuild_args[@]}" &&
-   ! has_arg "archive" "${xcodebuild_args[@]}"; then
-  append_default_option "-configuration" "Debug" "${xcodebuild_args[@]}"
-  append_default_option "-sdk" "iphonesimulator" "${xcodebuild_args[@]}"
-  append_default_option "-destination" "generic/platform=iOS Simulator" "${xcodebuild_args[@]}"
-  append_default_setting "CODE_SIGNING_ALLOWED=NO" "${xcodebuild_args[@]}"
+if ! xcodebuild_has_arg "-list" &&
+   ! xcodebuild_has_arg "-showBuildSettings" &&
+   ! xcodebuild_has_arg "-resolvePackageDependencies" &&
+   ! xcodebuild_has_arg "-version" &&
+   ! xcodebuild_has_arg "archive"; then
+  append_default_option "-configuration" "Debug"
+  append_default_option "-sdk" "iphonesimulator"
+  append_default_option "-destination" "generic/platform=iOS Simulator"
+  append_default_setting "CODE_SIGNING_ALLOWED=NO"
 fi
 
 log "Running xcodebuild ${xcodebuild_args[*]}"
