@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4B70D7DC2FBE04A50056F790 /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7DB2FBE04A50056F790 /* GnostrGit */; settings = {ATTRIBUTES = (Weak, ); }; };
-		4B70D7DE2FBE04A50056F790 /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7DD2FBE04A50056F790 /* XGit */; settings = {ATTRIBUTES = (Weak, ); }; };
+		4B3365C72FBE18FE00C399AA /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D62FBE040B0056F790 /* GnostrGit */; settings = {ATTRIBUTES = (Weak, ); }; };
+		4B3365C82FBE18FE00C399AA /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D82FBE040B0056F790 /* XGit */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B701035627CD0B6900D43034 /* MiniGitSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035527CD0B6900D43034 /* MiniGitSampleApp.swift */; };
 		B701035827CD0B6900D43034 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035727CD0B6900D43034 /* ContentView.swift */; };
 		B701035A27CD0B6B00D43034 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B701035927CD0B6B00D43034 /* Assets.xcassets */; };
@@ -30,8 +30,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B70D7DE2FBE04A50056F790 /* XGit in Frameworks */,
-				4B70D7DC2FBE04A50056F790 /* GnostrGit in Frameworks */,
+				4B3365C82FBE18FE00C399AA /* XGit in Frameworks */,
+				4B3365C72FBE18FE00C399AA /* GnostrGit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
