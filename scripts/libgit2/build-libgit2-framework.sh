@@ -12,6 +12,7 @@ export INSTALL_ROOT=$PROJECT_ROOT/install
 export VERIFY_ROOT=$PROJECT_ROOT/verification
 FORCE=0
 VERIFY_ONLY=0
+VERBOSE=0
 
 while [ $# -gt 0 ]; do
 	case "$1" in
@@ -21,13 +22,34 @@ while [ $# -gt 0 ]; do
 		--verify)
 			VERIFY_ONLY=1
 			;;
+		--verbose|-v)
+			VERBOSE=1
+			;;
 		*)
-			echo "Usage: $0 [--force|-f] [--verify]"
+			echo "Usage: $0 [--force|-f] [--verify] [--verbose|-v]"
 			exit 1
 			;;
 	esac
 	shift
 done
+
+function run_cmd() {
+	if [ $VERBOSE -eq 1 ]; then
+		"$@"
+	else
+		"$@" >/dev/null 2>/dev/null
+	fi
+}
+
+function download_file() {
+	local output_file=$1
+	local url=$2
+	if [ $VERBOSE -eq 1 ]; then
+		curl -fL -o "$output_file" "$url"
+	else
+		curl -fL -s -o "$output_file" "$url"
+	fi
+}
 
 function reset_source_tree() {
 	local source_dir=$1
@@ -42,10 +64,10 @@ function ensure_tarball() {
 	if [ $FORCE -eq 1 ]; then
 		local tmp_tarball="$PROJECT_ROOT/$tarball.tmp"
 		rm -f "$tmp_tarball"
-		(cd "$PROJECT_ROOT" && curl -fL -s -o "$tarball.tmp" "$url") && mv "$tmp_tarball" "$PROJECT_ROOT/$tarball"
+		(cd "$PROJECT_ROOT" && download_file "$tarball.tmp" "$url") && mv "$tmp_tarball" "$PROJECT_ROOT/$tarball"
 		return
 	fi
-	test -f "$PROJECT_ROOT/$tarball" || (cd "$PROJECT_ROOT" && curl -LO -s "$url")
+	test -f "$PROJECT_ROOT/$tarball" || (cd "$PROJECT_ROOT" && download_file "$tarball" "$url")
 }
 
 function ensure_zip_source() {
@@ -54,10 +76,10 @@ function ensure_zip_source() {
 	if [ $FORCE -eq 1 ]; then
 		local tmp_zipfile="$PROJECT_ROOT/$zipfile.tmp"
 		rm -f "$tmp_zipfile"
-		(cd "$PROJECT_ROOT" && curl -fL -s -o "$zipfile.tmp" "$url") && mv "$tmp_zipfile" "$PROJECT_ROOT/$zipfile"
+		(cd "$PROJECT_ROOT" && download_file "$zipfile.tmp" "$url") && mv "$tmp_zipfile" "$PROJECT_ROOT/$zipfile"
 		return
 	fi
-	test -f "$PROJECT_ROOT/$zipfile" || (cd "$PROJECT_ROOT" && curl -LO -s "$url")
+	test -f "$PROJECT_ROOT/$zipfile" || (cd "$PROJECT_ROOT" && download_file "$zipfile" "$url")
 }
 
 function ensure_unpacked_tarball() {
@@ -93,7 +115,7 @@ function ensure_libgit2_bundled_pcre() {
 function verify_sha256() {
 	local checksum_file=$1
 	local archive=$2
-	cd "$PROJECT_ROOT" && shasum -a 256 -c "$VERIFY_ROOT/$checksum_file"
+	cd "$PROJECT_ROOT" && run_cmd shasum -a 256 -c "$VERIFY_ROOT/$checksum_file"
 }
 
 function verify_libssh2_signature() {
@@ -102,8 +124,8 @@ function verify_libssh2_signature() {
 	local keyfile=$3
 	local gnupghome
 	gnupghome=$(mktemp -d)
-	gpg --homedir "$gnupghome" --batch --import "$VERIFY_ROOT/$keyfile" >/dev/null 2>/dev/null
-	gpg --homedir "$gnupghome" --batch --verify "$VERIFY_ROOT/$sigfile" "$PROJECT_ROOT/$archive" >/dev/null 2>/dev/null
+	run_cmd gpg --homedir "$gnupghome" --batch --import "$VERIFY_ROOT/$keyfile"
+	run_cmd gpg --homedir "$gnupghome" --batch --verify "$VERIFY_ROOT/$sigfile" "$PROJECT_ROOT/$archive"
 	rm -rf "$gnupghome"
 }
 
@@ -200,7 +222,7 @@ function build_libpcre() {
 
 	reset_source_tree pcre-8.45
 	if [ ! -d pcre-8.45 ]; then
-		git clone https://github.com/light-tech/PCRE.git pcre-8.45
+		run_cmd git clone https://github.com/light-tech/PCRE.git pcre-8.45
 	fi
 	cd pcre-8.45
 
@@ -210,9 +232,9 @@ function build_libpcre() {
 		-DPCRE_BUILD_TESTS=NO \
 		-DPCRE_SUPPORT_LIBBZ2=NO)
 
-	cmake "${CMAKE_ARGS[@]}" .. >/dev/null 2>/dev/null
+	run_cmd cmake "${CMAKE_ARGS[@]}" ..
 
-	cmake --build . --target install >/dev/null 2>/dev/null
+	run_cmd cmake --build . --target install
 }
 
 ### Build openssl for a given platform
@@ -247,12 +269,12 @@ function build_openssl() {
 	esac
 
 	# See https://wiki.openssl.org/index.php/Compilation_and_Installation
-	./Configure --prefix=$INSTALL_ROOT/$PLATFORM \
+	run_cmd ./Configure --prefix=$INSTALL_ROOT/$PLATFORM \
 		--openssldir=$INSTALL_ROOT/$PLATFORM \
-		$TARGET_OS no-shared no-dso no-hw no-engine >/dev/null 2>/dev/null
+		$TARGET_OS no-shared no-dso no-hw no-engine
 
-	make >/dev/null 2>/dev/null
-	make install_sw install_ssldirs >/dev/null 2>/dev/null
+	run_cmd make
+	run_cmd make install_sw install_ssldirs
 	export -n CFLAGS
 }
 
@@ -273,9 +295,9 @@ function build_libssh2() {
 		-DBUILD_EXAMPLES=OFF \
 		-DBUILD_TESTING=OFF)
 
-	cmake "${CMAKE_ARGS[@]}" .. >/dev/null 2>/dev/null
+	run_cmd cmake "${CMAKE_ARGS[@]}" ..
 
-	cmake --build . --target install >/dev/null 2>/dev/null
+	run_cmd cmake --build . --target install
 }
 
 ### Build libgit2 for a single platform (given as the first and only argument)
@@ -307,9 +329,9 @@ function build_libgit2() {
         -DLIBSSH2_LIBRARIES=$INSTALL_ROOT/$PLATFORM/lib/libssh2.a \
         -DCMAKE_PREFIX_PATH=$INSTALL_ROOT/$PLATFORM)
 
-    cmake "${CMAKE_ARGS[@]}" .. #>/dev/null 2>/dev/null
+    run_cmd cmake "${CMAKE_ARGS[@]}" ..
 
-    cmake --build . --target install #>/dev/null 2>/dev/null
+    run_cmd cmake --build . --target install
 }
 
 ### Create xcframework for a given library
@@ -326,7 +348,7 @@ function build_xcframework() {
 	done
 
 	cd $PROJECT_ROOT
-	xcodebuild -create-xcframework ${FRAMEWORKS_ARGS[@]} -output $FWNAME.xcframework
+		run_cmd xcodebuild -create-xcframework ${FRAMEWORKS_ARGS[@]} -output $FWNAME.xcframework
 }
 
 ### Copy SwiftGit2's module.modulemap to libgit2.xcframework/*/Headers
@@ -336,7 +358,7 @@ function copy_modulemap() {
     local FWDIRS=$(find Clibgit2.xcframework -mindepth 1 -maxdepth 1 -type d)
     for d in ${FWDIRS[@]}; do
         echo $d
-        cp Clibgit2_modulemap $d/Headers/module.modulemap
+        run_cmd cp Clibgit2_modulemap $d/Headers/module.modulemap
     done
 }
 
@@ -356,21 +378,21 @@ for p in ${AVAILABLE_PLATFORMS[@]}; do
 
 	# Merge all static libs as libgit2.a since xcodebuild doesn't allow specifying multiple .a
 	cd $INSTALL_ROOT/$p
-	libtool -static -o libgit2.a lib/*.a
+	run_cmd libtool -static -o libgit2.a lib/*.a
 done
 
 # Merge the libgit2.a for iphonesimulator & iphonesimulator-arm64 as well as maccatalyst & maccatalyst-arm64 using lipo
 for p in ${LIPO_PLATFORMS[@]}; do
     cd $INSTALL_ROOT/$p
-    lipo libgit2.a ../$p-arm64/libgit2.a -output libgit2_all_archs.a -create
+    run_cmd lipo libgit2.a ../$p-arm64/libgit2.a -output libgit2_all_archs.a -create
     test -f libgit2_all_archs.a && rm libgit2.a && mv libgit2_all_archs.a libgit2.a
 done
 
 # Build raw libgit2 XCFramework for Objective-C usage
 build_xcframework libgit2 ${XCFRAMEWORK_PLATFORMS[@]}
-zip -r libgit2.xcframework.zip -i libgit2.xcframework/
+run_cmd zip -r libgit2.xcframework.zip -i libgit2.xcframework/
 
 # Build Clibgit2 XCFramework for use with SwiftGit2
 mv libgit2.xcframework Clibgit2.xcframework
 copy_modulemap
-zip -r Clibgit2.xcframework.zip -i Clibgit2.xcframework/
+run_cmd zip -r Clibgit2.xcframework.zip -i Clibgit2.xcframework/
