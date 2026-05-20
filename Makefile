@@ -1,6 +1,6 @@
 SHELL := /bin/sh
 
-SCRIPT_ROOT := scripts
+SCRIPT_ROOT := ./scripts
 SCRIPT_FILES := $(shell find $(SCRIPT_ROOT) -type f -name '*.sh' | sort)
 SCRIPT_TARGETS := $(patsubst $(SCRIPT_ROOT)/%.sh,%,$(SCRIPT_FILES))
 SCRIPT_VERBOSE := $(if $(VERBOSE),--verbose,)
