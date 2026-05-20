@@ -47,7 +47,7 @@ If you use the core module XGit by itself only, then you must add the `libgit2.x
 
 When building for real iPhone, disable Bitcode.
 
-See [our sample app](https://github.com/light-tech/MiniGit-SampleApp) for a starting point.
+See `../Examples/MiniGitSample` for the sample app.
 
 # Design
 
