@@ -338,6 +338,11 @@ function copy_modulemap() {
 
 ### Build libgit2 and Clibgit2 frameworks for all available platforms
 
+if [ $VERIFY_ONLY -eq 1 ]; then
+	verify_downloads
+	exit 0
+fi
+
 for p in ${AVAILABLE_PLATFORMS[@]}; do
 	echo "Build libraries for $p"
 	build_libpcre $p
