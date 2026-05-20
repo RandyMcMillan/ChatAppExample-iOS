@@ -60,6 +60,7 @@ option(UBSAN "Enable UB sanitizer" OFF)
 option(EXPOSE_MOCKS "Make mocks header files visible for child projects" ON)
 option(METRICS_ENABLED "Enable libp2p metrics" OFF)
 option(SQLITE_ENABLED "Enable sqlite based libp2p storage" OFF)
+option(LIBP2P_ENABLE_QUIC "Enable QUIC transport" ON)
 
 include(cmake/print.cmake)
 print("C flags: ${CMAKE_C_FLAGS}")
@@ -78,6 +79,10 @@ include(cmake/san.cmake)
 
 if (METRICS_ENABLED)
   add_compile_definitions("LIBP2P_METRICS_ENABLED")
+endif ()
+
+if (LIBP2P_ENABLE_QUIC)
+  add_compile_definitions("LIBP2P_ENABLE_QUIC")
 endif ()
 
 if(SQLITE_ENABLED)
