@@ -11,7 +11,11 @@ import Combine
 import LibP2P
 import LibP2PNoise
 import LibP2PMPLEX
+import LibP2PRelay
+import LibP2PAutoNAT
+import LibP2PDCUtR
 import LibP2PMDNS
+import LibP2PKadDHT
 #if os(iOS)
 import UIKit
 #endif
@@ -158,7 +162,11 @@ class LibP2PService: ObservableObject {
         app.connectionManager.setIdleTimeout(.seconds(300))
         app.security.use(.noise)
         app.muxers.use(.mplex)
+        app.relay.use(.relay)
+        app.autonat.use(.autonat)
+        app.dcutr.use(.dcutr)
         app.discovery.use(.mdns)
+        app.discovery.use(.kadDHT)
         app.servers.use(.tcp(host: "0.0.0.0", port: Self.listenPort))
         try! routes(app)
         return app
