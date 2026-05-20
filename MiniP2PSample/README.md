@@ -1,7 +1,7 @@
 # MiniP2P Sample Application
 
 This sample launches a deterministic libp2p node in SwiftUI using the local
-`LibP2P-iOS` binary package plus the companion transport and discovery modules.
+`LibP2P-iOS` binary package.
 
 Each runtime profile gets its own default port so iPhone, iPad, macOS, and Mac
 Catalyst can run side by side:

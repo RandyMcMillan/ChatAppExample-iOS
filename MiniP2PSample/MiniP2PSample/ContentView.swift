@@ -8,11 +8,6 @@
 import Crypto
 import Foundation
 import LibP2P
-import LibP2PDCUtR
-import LibP2PKadDHT
-import LibP2PMDNS
-import LibP2PNoise
-import LibP2PYAMUX
 import SwiftUI
 #if os(iOS)
 import UIKit
@@ -142,12 +137,6 @@ final class P2PService: ObservableObject {
     private static func makeApplication(peerID: PeerID) -> Application {
         let app = Application(.testing, peerID: peerID)
         app.logger.logLevel = .notice
-        app.connectionManager.setIdleTimeout(.seconds(300))
-        app.security.use(.noise)
-        app.muxers.use(.yamux)
-        app.dcutr.use(.dcutr)
-        app.discovery.use(.mdns)
-        app.discovery.use(.kadDHT)
         app.listen(.tcp(host: "0.0.0.0", port: Self.listenPort))
         return app
     }
