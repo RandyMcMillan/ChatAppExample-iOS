@@ -32,6 +32,14 @@ hunter_config(
 )
 
 hunter_config(
+    yaml-cpp
+    VERSION 0.6.2-0f9a586-p1
+    CMAKE_ARGS
+      CMAKE_POLICY_VERSION_MINIMUM=3.5
+    KEEP_PACKAGE_SOURCES
+)
+
+hunter_config(
     soralog
     VERSION 0.2.5
     KEEP_PACKAGE_SOURCES
