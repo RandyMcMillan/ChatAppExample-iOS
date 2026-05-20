@@ -247,6 +247,9 @@ function build_openssl() {
 	verify_sha256 openssl-3.0.4.tar.gz.sha256 openssl-3.0.4.tar.gz
 	ensure_unpacked_tarball openssl-3.0.4 openssl-3.0.4.tar.gz https://www.openssl.org/source/openssl-3.0.4.tar.gz
 	cd openssl-3.0.4
+	if [ -f Makefile ]; then
+		run_cmd make distclean
+	fi
 
 	case $PLATFORM in
 		"iphoneos")
