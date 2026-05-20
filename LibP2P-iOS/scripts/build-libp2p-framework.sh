@@ -43,6 +43,7 @@ done
 cmake_args=(
   -S "${source_root}"
   -B "${build_root}"
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   -DTESTING=OFF
   -DEXAMPLES=OFF
   -DCLANG_FORMAT=OFF
