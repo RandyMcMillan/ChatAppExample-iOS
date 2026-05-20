@@ -8,6 +8,7 @@
 export REPO_ROOT=`pwd`
 export PATH=$PATH:$REPO_ROOT/tools/bin
 export PROJECT_ROOT=$REPO_ROOT/LibGit2-iOS
+export BUILD_ROOT=$PROJECT_ROOT/build
 export INSTALL_ROOT=$PROJECT_ROOT/install
 export VERIFY_ROOT=$PROJECT_ROOT/verification
 FORCE=0
@@ -225,17 +226,17 @@ function build_libpcre() {
 	if [ ! -d pcre-8.45 ]; then
 		run_cmd git clone https://github.com/light-tech/PCRE.git pcre-8.45
 	fi
-	cd pcre-8.45
+	local build_dir="$BUILD_ROOT/$PLATFORM/pcre-8.45"
+	mkdir -p "$build_dir"
 
-	rm -rf build && mkdir build && cd build
 	CMAKE_ARGS+=(-DPCRE_BUILD_PCRECPP=NO \
 		-DPCRE_BUILD_PCREGREP=NO \
 		-DPCRE_BUILD_TESTS=NO \
 		-DPCRE_SUPPORT_LIBBZ2=NO)
 
-	run_cmd cmake "${CMAKE_ARGS[@]}" ..
+	run_cmd cmake -S "$PROJECT_ROOT/pcre-8.45" -B "$build_dir" "${CMAKE_ARGS[@]}"
 
-	run_cmd cmake --build . --target install
+	run_cmd cmake --build "$build_dir" --target install
 }
 
 ### Build openssl for a given platform
@@ -290,18 +291,17 @@ function build_libssh2() {
 	ensure_tarball libssh2-1.10.0.tar.gz https://www.libssh2.org/download/libssh2-1.10.0.tar.gz
 	verify_libssh2_signature libssh2-1.10.0.tar.gz libssh2-1.10.0.tar.gz.asc libssh2-1.10.0.pub
 	ensure_unpacked_tarball libssh2-1.10.0 libssh2-1.10.0.tar.gz https://www.libssh2.org/download/libssh2-1.10.0.tar.gz
-	cd libssh2-1.10.0
-
-	rm -rf build && mkdir build && cd build
+	local build_dir="$BUILD_ROOT/$PLATFORM/libssh2-1.10.0"
+	mkdir -p "$build_dir"
 
 	CMAKE_ARGS+=(-DCRYPTO_BACKEND=OpenSSL \
 		-DOPENSSL_ROOT_DIR=$INSTALL_ROOT/$PLATFORM \
 		-DBUILD_EXAMPLES=OFF \
 		-DBUILD_TESTING=OFF)
 
-	run_cmd cmake "${CMAKE_ARGS[@]}" ..
+	run_cmd cmake -S "$PROJECT_ROOT/libssh2-1.10.0" -B "$build_dir" "${CMAKE_ARGS[@]}"
 
-	run_cmd cmake --build . --target install
+	run_cmd cmake --build "$build_dir" --target install
 }
 
 ### Build libgit2 for a single platform (given as the first and only argument)
@@ -315,9 +315,8 @@ function build_libgit2() {
     verify_sha256 v1.3.1.zip.sha256 v1.3.1.zip
     ensure_unpacked_zip libgit2-1.3.1 v1.3.1.zip https://github.com/libgit2/libgit2/archive/refs/tags/v1.3.1.zip
     ensure_libgit2_bundled_pcre
-    cd libgit2-1.3.1
-
-    rm -rf build && mkdir build && cd build
+    local build_dir="$BUILD_ROOT/$PLATFORM/libgit2-1.3.1"
+    mkdir -p "$build_dir"
 
     CMAKE_ARGS+=(-DBUILD_CLAR=NO)
 
@@ -333,9 +332,9 @@ function build_libgit2() {
         -DLIBSSH2_LIBRARIES=$INSTALL_ROOT/$PLATFORM/lib/libssh2.a \
         -DCMAKE_PREFIX_PATH=$INSTALL_ROOT/$PLATFORM)
 
-    run_cmd cmake "${CMAKE_ARGS[@]}" ..
+    run_cmd cmake -S "$PROJECT_ROOT/libgit2-1.3.1" -B "$build_dir" "${CMAKE_ARGS[@]}"
 
-    run_cmd cmake --build . --target install
+    run_cmd cmake --build "$build_dir" --target install
 }
 
 ### Create xcframework for a given library
@@ -344,6 +343,7 @@ function build_xcframework() {
 	shift
 	local PLATFORMS=( "$@" )
 	local FRAMEWORKS_ARGS=()
+	local STAGE_FRAMEWORK="$PROJECT_ROOT/$FWNAME.stage.xcframework"
 
 	echo "Building" $FWNAME "XCFramework containing" ${PLATFORMS[@]}
 
@@ -352,7 +352,11 @@ function build_xcframework() {
 	done
 
 	cd $PROJECT_ROOT
-	run_cmd xcodebuild -create-xcframework ${FRAMEWORKS_ARGS[@]} -output $FWNAME.xcframework
+	rm -rf "$STAGE_FRAMEWORK"
+	run_cmd xcodebuild -create-xcframework ${FRAMEWORKS_ARGS[@]} -output "$STAGE_FRAMEWORK"
+	mkdir -p "$FWNAME.xcframework"
+	run_cmd cp -R "$STAGE_FRAMEWORK/." "$FWNAME.xcframework/"
+	rm -rf "$STAGE_FRAMEWORK"
 }
 
 ### Copy SwiftGit2's module.modulemap to libgit2.xcframework/*/Headers
