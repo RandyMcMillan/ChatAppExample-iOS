@@ -8,7 +8,6 @@ project_path="${sample_root}/MiniGitSample.xcodeproj"
 scheme_name="MiniGitSample"
 clibgit2_root="${project_root}/LibGit2-iOS"
 clibgit2_bundle="${clibgit2_root}/Clibgit2.xcframework"
-clibgit2_zip="${clibgit2_root}/Clibgit2.xcframework.zip"
 clibgit2_build_script="${project_root}/scripts/libgit2/build-libgit2-framework.sh"
 
 usage() {
@@ -24,9 +23,8 @@ Run xcodebuild for MiniGitSample with repo-local defaults:
 
 Before invoking xcodebuild, this script verifies that
 LibGit2-iOS/Clibgit2.xcframework contains the binary artifacts referenced by
-its Info.plist. If the bundle is missing or incomplete and
-LibGit2-iOS/Clibgit2.xcframework.zip exists, the script restores the bundle
-from that zip.
+its Info.plist. If the bundle is missing or incomplete, the script rebuilds
+it from source.
 
 options:
   --rebuild-clibgit2  Rebuild Clibgit2.xcframework before running xcodebuild
@@ -121,29 +119,6 @@ validate_clibgit2_bundle() {
   ((missing == 0))
 }
 
-restore_clibgit2_bundle() {
-  [[ -f "${clibgit2_zip}" ]] || return 1
-
-  local temp_dir
-  temp_dir="$(mktemp -d "${TMPDIR:-/tmp}/clibgit2.XXXXXX")"
-
-  cleanup() {
-    rm -rf "${temp_dir}"
-  }
-  trap cleanup RETURN
-
-  log "Restoring Clibgit2.xcframework from ${clibgit2_zip}"
-  ditto -x -k --sequesterRsrc --rsrc "${clibgit2_zip}" "${temp_dir}"
-
-  if ! validate_clibgit2_bundle "${temp_dir}/Clibgit2.xcframework"; then
-    printf 'restored Clibgit2.xcframework.zip is incomplete\n' >&2
-    return 1
-  fi
-
-  rm -rf "${clibgit2_bundle}"
-  mv "${temp_dir}/Clibgit2.xcframework" "${clibgit2_bundle}"
-}
-
 ensure_clibgit2_bundle() {
   if ((rebuild_clibgit2)); then
     log "Rebuilding Clibgit2.xcframework"
@@ -154,12 +129,8 @@ ensure_clibgit2_bundle() {
     return 0
   fi
 
-  if [[ -f "${clibgit2_zip}" ]]; then
-    if ! restore_clibgit2_bundle; then
-      log "Restoring Clibgit2.xcframework failed; rebuilding from source"
-      (cd "${project_root}" && "${clibgit2_build_script}")
-    fi
-  fi
+  log "Clibgit2.xcframework is missing or incomplete; rebuilding from source"
+  (cd "${project_root}" && "${clibgit2_build_script}")
 
   if validate_clibgit2_bundle "${clibgit2_bundle}"; then
     return 0
