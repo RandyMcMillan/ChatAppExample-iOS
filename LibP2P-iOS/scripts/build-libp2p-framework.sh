@@ -146,10 +146,10 @@ build_platform() {
   fi
 
   if ((verbose)); then
-    cmake --build "${platform_build_root}"
+    cmake --build "${platform_build_root}" --parallel 1
     cmake --install "${platform_build_root}"
   else
-    cmake --build "${platform_build_root}" >/dev/null
+    cmake --build "${platform_build_root}" --parallel 1 >/dev/null
     cmake --install "${platform_build_root}" >/dev/null
   fi
 
