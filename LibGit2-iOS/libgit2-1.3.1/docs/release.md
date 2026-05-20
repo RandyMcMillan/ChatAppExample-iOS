@@ -7,9 +7,9 @@ We have three kinds of releases: "full" releases, maintenance releases and secur
 We aim to release once every six months. We start the process by opening an issue. This is accompanied with a feature freeze. From now until the release, only bug fixes are to be merged. Use the following as a base for the issue
 
     Release v0.X
-
+    
     Let's release v0.X, codenamed: <something witty>
-
+    
     - [ ] Bump the versions in the headers (`include/git2/version.h`)
     - [ ] Bump the versions in the clib manifest (`package.json`)
     - [ ] Make a release candidate
@@ -51,9 +51,9 @@ As a rule of thumb, it's a good idea to produce a maintenance release for the cu
 Start by opening an issue. Use the following as a base.
 
     Release v0.X.Y
-
+    
     Enough fixes have accumulated, let's release v0.X.Y
-
+    
     - [ ] Select the changes we want to backport
     - [ ] Update maint/v0.X
     - [ ] Tag
@@ -68,7 +68,7 @@ Here we do not use release candidates as the changes are supposed to be small an
 
 This is the same as a maintenance release, except that the fix itself will most likely be developed in a private repository and will only be visible to a select group of people until the release.
 
-We have committed to providing security fixes for the latest two released versions. E.g. if the latest version is v0.28.x, then we will provide security fixes for both v0.28.x and v0.27.y.
+We have committed to providing security fixes for the latest two released versions.  E.g. if the latest version is v0.28.x, then we will provide security fixes for both v0.28.x and v0.27.y.
 
 ## Updating documentation
 

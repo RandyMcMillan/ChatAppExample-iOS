@@ -19,7 +19,7 @@ automated fuzz testing. libFuzzer only works with clang.
    and [`leak`/`address,leak`](https://clang.llvm.org/docs/LeakSanitizer.html).
 3. Create the cmake build environment and configure the build with the
    sanitizer chosen: `CC=/usr/bin/clang-6.0 CFLAGS="-fsanitize=address" cmake
--DBUILD_CLAR=OFF -DBUILD_FUZZERS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo ..`.
+   -DBUILD_CLAR=OFF -DBUILD_FUZZERS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo ..`.
    Note that building the fuzzer targets is incompatible with the
    tests and examples.
 4. Build libgit2: `cmake --build .`
@@ -28,9 +28,9 @@ automated fuzz testing. libFuzzer only works with clang.
 ## Run the fuzz targets
 
 1. `ASAN_SYMBOLIZER_PATH=/usr/bin/llvm-symbolize
-LSAN_OPTIONS=allocator_may_return_null=1
-ASAN_OPTIONS=allocator_may_return_null=1 ./build/fuzzers/packfile_fuzzer
-fuzzers/corpora/packfile/`
+   LSAN_OPTIONS=allocator_may_return_null=1
+   ASAN_OPTIONS=allocator_may_return_null=1 ./build/fuzzers/packfile_fuzzer
+   fuzzers/corpora/packfile/`
 
 The `LSAN_OPTIONS` and `ASAN_OPTIONS` are there to allow `malloc(3)` to return
 `NULL`, which is expected if a huge chunk of memory is allocated. The
@@ -46,13 +46,13 @@ be overridden by setting the `LLVM_PROFILE_FILE="yourfile.profraw"` environment
 variable).
 
 1. `llvm-profdata-6.0 merge -sparse default.profraw -o
-fuzz_packfile_raw.profdata` transforms the data from a sparse representation
+   fuzz_packfile_raw.profdata` transforms the data from a sparse representation
    into a format that can be used by the other tools.
 2. `llvm-cov-6.0 report ./build/fuzz/fuzz_packfile_raw
--instr-profile=fuzz_packfile_raw.profdata` shows a high-level per-file
+   -instr-profile=fuzz_packfile_raw.profdata` shows a high-level per-file
    coverage report.
 3. `llvm-cov-6.0 show ./build/fuzz/fuzz_packfile_raw
--instr-profile=fuzz_packfile_raw.profdata [source file]` shows a line-by-line
+   -instr-profile=fuzz_packfile_raw.profdata [source file]` shows a line-by-line
    coverage analysis of all the codebase (or a single source file).
 
 ## Standalone mode
@@ -67,6 +67,6 @@ sanitizers. You might need a recent version of clang to get full support.
 
 ## References
 
-- [libFuzzer](https://llvm.org/docs/LibFuzzer.html) documentation.
-- [Source-based Code
+* [libFuzzer](https://llvm.org/docs/LibFuzzer.html) documentation.
+* [Source-based Code
   Coverage](https://clang.llvm.org/docs/SourceBasedCodeCoverage.html).

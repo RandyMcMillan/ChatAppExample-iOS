@@ -1,25 +1,29 @@
-# Writing Clar tests for libgit2
+Writing Clar tests for libgit2
+==============================
 
 For information on the Clar testing framework and a detailed introduction
 please visit:
 
 https://github.com/vmg/clar
 
-- Write your modules and tests. Use good, meaningful names.
 
-- Make sure you actually build the tests by setting:
+* Write your modules and tests. Use good, meaningful names.
 
-                              cmake -DBUILD_CLAR=ON build/
+* Make sure you actually build the tests by setting:
 
-- Test:
+        cmake -DBUILD_CLAR=ON build/
 
-                              ./build/libgit2_clar
+* Test:
 
-- Make sure everything is fine.
+        ./build/libgit2_clar
 
-- Send your pull request. That's it.
+* Make sure everything is fine.
 
-## Memory leak checks
+* Send your pull request. That's it.
+
+
+Memory leak checks
+------------------
 
 These are automatically run as part of CI, but if you want to check locally:
 

@@ -1,8 +1,9 @@
-# libgit2 examples
+libgit2 examples
+================
 
 These examples are a mixture of basic emulation of core Git command line
 functions and simple snippets demonstrating libgit2 API usage (for use
-with Docurium). As a whole, they are not vetted carefully for bugs, error
+with Docurium).  As a whole, they are not vetted carefully for bugs, error
 handling, and cross-platform compatibility in the same manner as the rest
 of the code in libgit2, so copy with caution.
 

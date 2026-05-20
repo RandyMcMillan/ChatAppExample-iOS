@@ -1,4 +1,5 @@
-# Threading in libgit2
+Threading in libgit2
+==================
 
 Unless otherwise specified, libgit2 objects cannot be safely accessed by
 multiple threads simultaneously.
@@ -8,7 +9,8 @@ dependencies link to (more on this later). For libgit2 itself,
 provided you take the following into consideration you won't run into
 issues:
 
-## Sharing objects
+Sharing objects
+---------------
 
 Use an object from a single thread at a time. Most data structures do
 not guard against concurrent access themselves. This is because they
@@ -19,7 +21,8 @@ There are some objects which are read-only/immutable and are thus safe
 to share across threads, such as references and configuration
 snapshots.
 
-## Error messages
+Error messages
+--------------
 
 The error message is thread-local. The `git_error_last()` call must
 happen on the same thread as the error in order to get the
@@ -29,9 +32,11 @@ on macOS (where code is executed on an arbitrary thread), the code
 must make sure to retrieve the error code on the thread where the error
 happened.
 
-# Threading and cryptographic libraries
+Threading and cryptographic libraries
+=======================================
 
-## On Windows
+On Windows
+----------
 
 When built as a native Windows DLL, libgit2 uses WinCNG and WinHTTP,
 both of which are thread-safe. You do not need to do anything special.
@@ -41,7 +46,8 @@ steps necessary. If you are using a MinGW or similar environment where
 libssh2 uses OpenSSL or libgcrypt, then the general case affects
 you.
 
-## On macOS
+On macOS
+-----------
 
 By default we make use of CommonCrypto and SecureTransport for cryptographic
 support. These are thread-safe and you do not need to do anything special.
@@ -49,11 +55,12 @@ support. These are thread-safe and you do not need to do anything special.
 Note that libssh2 may still use OpenSSL itself. In that case, the
 general case still affects you if you use ssh.
 
-## General Case
+General Case
+------------
 
 libgit2 will default to OpenSSL for HTTPS transport (except on Windows and
-macOS, as mentioned above). On any system, mbedTLS _may_ be optionally
-enabled as the security provider. OpenSSL is thread-safe starting at
+macOS, as mentioned above).  On any system, mbedTLS _may_ be optionally
+enabled as the security provider.  OpenSSL is thread-safe starting at
 version 1.1.0. If your copy of libgit2 is linked against that version,
 you do not need to take any further steps.
 
@@ -72,7 +79,7 @@ platform-native mutex mechanisms to perform the locking, which you can use
 if you do not want to use OpenSSL outside of libgit2, or you
 know that libgit2 will outlive the rest of the operations. It is then not
 safe to use OpenSSL multi-threaded after libgit2's shutdown function
-has been called. Note `git_openssl_set_locking()` only works if
+has been called.  Note `git_openssl_set_locking()` only works if
 libgit2 uses OpenSSL directly - if OpenSSL is only used as a dependency
 of libssh2 as described above, `git_openssl_set_locking()` is a no-op.
 
