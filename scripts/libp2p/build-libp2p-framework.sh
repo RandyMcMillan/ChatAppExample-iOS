@@ -71,7 +71,7 @@ base_cmake_args=(
   -DLIBP2P_ENABLE_QUIC=OFF
 )
 
-rm -rf "${build_root}" "${install_root}" "${framework_stage}" "${framework_zip}"
+rm -rf "${framework_stage}" "${framework_zip}"
 
 setup_variables() {
   PLATFORM="$1"
