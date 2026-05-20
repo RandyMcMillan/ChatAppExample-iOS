@@ -186,7 +186,7 @@ package_framework() {
 
   xcodebuild -create-xcframework "${framework_args[@]}" -output "${framework_stage}"
   mkdir -p "${framework_root}"
-  rsync -a --delete "${framework_stage}/" "${framework_root}/"
+  cp -R "${framework_stage}/." "${framework_root}/"
   mkdir -p "${framework_root}/Headers"
   cp "${modulemap_source}" "${framework_root}/Headers/module.modulemap"
   rm -rf "${framework_stage}"
