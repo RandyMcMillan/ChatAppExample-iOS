@@ -398,6 +398,6 @@ run_cmd zip -r libgit2.xcframework.zip libgit2.xcframework
 
 # Build Clibgit2 XCFramework for use with SwiftGit2
 mkdir -p Clibgit2.xcframework
-run_cmd rsync -a --delete libgit2.xcframework/ Clibgit2.xcframework/
+run_cmd rsync -a libgit2.xcframework/ Clibgit2.xcframework/
 copy_modulemap
 run_cmd zip -r Clibgit2.xcframework.zip Clibgit2.xcframework
