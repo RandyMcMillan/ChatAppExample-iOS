@@ -1,0 +1,6 @@
+.build/
+.swiftpm/
+build/
+install/
+cpp-libp2p-0.1.37/build/
+cpp-libp2p-0.1.37/out/
