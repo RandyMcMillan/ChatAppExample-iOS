@@ -66,6 +66,7 @@ final class P2PService: ObservableObject {
     @Published private(set) var listenAddresses: [String] = []
     @Published private(set) var state: State = .stopped
     @Published private(set) var lastError: String?
+    @Published private(set) var activityLog: [String] = []
 
     private var app: Application?
     private var runTask: Task<Void, Never>?
@@ -96,11 +97,16 @@ final class P2PService: ObservableObject {
         peerID.b58String
     }
 
+    func clearActivityLog() {
+        activityLog.removeAll()
+    }
+
     func start() {
         guard runTask == nil else { return }
 
         lastError = nil
         state = .starting
+        log("Starting node")
 
         let app = Self.makeApplication(peerID: peerID)
         self.app = app
@@ -116,18 +122,24 @@ final class P2PService: ObservableObject {
 
             Task { @MainActor in
                 self.listenAddresses = addresses
+                if !addresses.isEmpty {
+                    self.log("Listening on: \(addresses.joined(separator: ", "))")
+                }
                 if self.state == .starting {
                     self.state = .running
+                    self.log("Node is running")
                 }
             }
         }
 
         runTask = Task.detached(priority: .background) { [weak self, app] in
             do {
+                self?.log("Executing libp2p application")
                 try await app.execute()
             } catch {
                 await MainActor.run {
                     self?.lastError = error.localizedDescription
+                    self?.log("Error: \(error.localizedDescription)")
                 }
             }
 
@@ -135,6 +147,7 @@ final class P2PService: ObservableObject {
                 self?.state = .stopped
                 self?.runTask = nil
                 self?.app = nil
+                self?.log("Node stopped")
             }
         }
     }
@@ -143,6 +156,7 @@ final class P2PService: ObservableObject {
         guard let app else { return }
 
         state = .stopping
+        log("Stopping node")
         self.app = nil
         self.runTask = nil
 
@@ -152,6 +166,7 @@ final class P2PService: ObservableObject {
             } catch {
                 await MainActor.run {
                     self?.lastError = error.localizedDescription
+                    self?.log("Error: \(error.localizedDescription)")
                 }
             }
 
@@ -160,6 +175,7 @@ final class P2PService: ObservableObject {
                 self?.state = .stopped
                 self?.runTask = nil
                 self?.app = nil
+                self?.log("Node stopped")
             }
         }
     }
@@ -224,6 +240,17 @@ final class P2PService: ObservableObject {
         let privateKey = try! Curve25519.Signing.PrivateKey(rawRepresentation: seed)
         return try! PeerID(marshaledPrivateKey: privateKey.marshal())
     }
+
+    private func log(_ message: String) {
+        let formatter = Self.timestampFormatter
+        activityLog.append("[\(formatter.string(from: Date()))] \(message)")
+    }
+
+    private static let timestampFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss"
+        return formatter
+    }()
 }
 
 struct ContentView: View {
@@ -311,6 +338,25 @@ struct ContentView: View {
                 if let lastError = p2p.lastError {
                     Text("Last error: \(lastError)")
                         .foregroundStyle(.red)
+                }
+
+                HStack {
+                    Text("Network activity").font(.headline)
+                    Spacer()
+                    Button("Clear") {
+                        p2p.clearActivityLog()
+                    }
+                }
+
+                if p2p.activityLog.isEmpty {
+                    Text("No activity yet")
+                        .foregroundStyle(.secondary)
+                } else {
+                    List(p2p.activityLog, id: \.self) { entry in
+                        Text(entry)
+                            .font(.caption.monospaced())
+                    }
+                    .frame(minHeight: 180)
                 }
 
                 Text("Listening addresses").font(.subheadline.bold())
