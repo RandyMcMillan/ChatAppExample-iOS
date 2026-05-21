@@ -35,8 +35,16 @@ let package = Package(
                 .product(name: "LibP2PDCUtR", package: "swift-libp2p-dcutr"),
                 .product(name: "LibP2PMDNS", package: "swift-libp2p-mdns"),
                 .product(name: "LibP2PKadDHT", package: "swift-libp2p-kad-dht"),
-                .product(name: "GnostrGit", package: "GnostrGit"),
-                .product(name: "XGit", package: "GnostrGit"),
+                .product(
+                    name: "GnostrGit",
+                    package: "GnostrGit",
+                    condition: .when(platforms: [.iOS, .macCatalyst])
+                ),
+                .product(
+                    name: "XGit",
+                    package: "GnostrGit",
+                    condition: .when(platforms: [.iOS, .macCatalyst])
+                ),
             ]
         ),
     ]

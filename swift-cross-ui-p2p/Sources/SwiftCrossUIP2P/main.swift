@@ -7,8 +7,11 @@ import LibP2PKadDHT
 import LibP2PMDNS
 import LibP2PNoise
 import LibP2PYAMUX
-import GnostrGit
 import SwiftCrossUI
+
+#if os(iOS) || targetEnvironment(macCatalyst)
+    import GnostrGit
+#endif
 
 #if os(iOS)
     import UIKit
@@ -250,13 +253,31 @@ final class P2PDemoViewModel {
         let selectedCommitOID = gitSelectedCommitOID
         gitIsLoading = true
         gitLastError = nil
-
-        gitRefreshTask = Task.detached(priority: .background) { [path, selectedCommitOID] in
-            let snapshot = Self.loadGitSnapshot(path: path, selectedCommitOID: selectedCommitOID)
-            await MainActor.run { [weak self] in
-                self?.applyGitSnapshot(snapshot)
+        #if os(iOS) || targetEnvironment(macCatalyst)
+            gitRefreshTask = Task.detached(priority: .background) { [path, selectedCommitOID] in
+                let snapshot = Self.loadGitSnapshot(path: path, selectedCommitOID: selectedCommitOID)
+                await MainActor.run { [weak self] in
+                    self?.applyGitSnapshot(snapshot)
+                }
             }
-        }
+        #else
+            applyGitSnapshot(
+                GitRepoSnapshot(
+                    path: path,
+                    exists: false,
+                    currentBranch: "",
+                    repositoryState: "Unavailable",
+                    remotes: [],
+                    commits: [],
+                    stagedChanges: [],
+                    unstagedChanges: [],
+                    selectedCommit: nil,
+                    selectedCommitDiff: [],
+                    refreshedAt: Self.timestampFormatter.string(from: Date()),
+                    error: "Git repo viewer is available on iOS and Mac Catalyst."
+                )
+            )
+        #endif
     }
 
     func selectGitCommit(_ oid: String) {
@@ -310,6 +331,7 @@ final class P2PDemoViewModel {
         }
     }
 
+    #if os(iOS) || targetEnvironment(macCatalyst)
     private static func loadGitSnapshot(path: String, selectedCommitOID: String?) -> GitRepoSnapshot {
         let url = URL(fileURLWithPath: path, isDirectory: true)
         let credentialsURL = FileManager.default.temporaryDirectory
@@ -414,6 +436,20 @@ final class P2PDemoViewModel {
         }
         return cwd.path
     }
+    #else
+    private static func defaultRepositoryPath() -> String {
+        let cwd = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+        let candidates = [cwd, cwd.deletingLastPathComponent()]
+        for candidate in candidates {
+            if FileManager.default.fileExists(
+                atPath: candidate.appendingPathComponent(".git").path
+            ) {
+                return candidate.path
+            }
+        }
+        return cwd.path
+    }
+    #endif
 
     private static func makeApplication(peerID: PeerID) -> Application {
         let app = Application(.testing, peerID: peerID)
