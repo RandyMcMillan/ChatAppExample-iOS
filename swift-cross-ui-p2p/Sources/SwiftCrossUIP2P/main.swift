@@ -19,8 +19,7 @@ struct SwiftCrossUIP2PApp: App {
 
     var body: some Scene {
         WindowGroup("SwiftCrossUI P2P") {
-            ContentView()
-                .environment(viewModel)
+            ContentView(model: viewModel)
         }
         .defaultSize(width: 980, height: 760)
     }
@@ -47,7 +46,7 @@ final class P2PDemoViewModel {
         let addresses: [String]
     }
 
-    var selectedDemo: Demo = .overview
+    var selectedDemo: Demo? = .overview
     var state: State = .stopped
     var listenAddresses: [String] = []
     var discoveredPeers: [PeerSummary] = []
@@ -263,7 +262,11 @@ final class P2PDemoViewModel {
 }
 
 struct ContentView: View {
-    @Environment(P2PDemoViewModel.self) var model
+    @State var model: P2PDemoViewModel
+
+    init(model: P2PDemoViewModel) {
+        _model = State(initialValue: model)
+    }
 
     var body: some View {
         ScrollView {
@@ -281,7 +284,8 @@ struct ContentView: View {
     var header: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("SwiftCrossUI P2P")
-                .font(.largeTitle.bold())
+                .font(.largeTitle)
+                .fontWeight(.bold)
             Text("Cross-platform kitchen sink for libp2p demos")
             Text("Peer ID: \(model.peerIDString)")
                 .font(.caption.monospaced())
@@ -303,13 +307,19 @@ struct ContentView: View {
     var demoPicker: some View {
         HStack {
             Text("Demo")
-            Picker(of: P2PDemoViewModel.Demo.allCases, selection: model.$selectedDemo)
+            Picker(
+                of: P2PDemoViewModel.Demo.allCases,
+                selection: Binding(
+                    get: { model.selectedDemo },
+                    set: { model.selectedDemo = $0 }
+                )
+            )
         }
     }
 
     @ViewBuilder
     var selectedDemo: some View {
-        switch model.selectedDemo {
+        switch model.selectedDemo ?? .overview {
             case .overview:
                 overviewPanel
             case .discovery:
@@ -339,7 +349,7 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Discovery").font(.headline)
             Text("Peers discovered via mDNS and DHT.")
-            ForEach(model.discoveredPeers) { peer in
+            ForEach(model.discoveredPeers, id: \.id) { peer in
                 VStack(alignment: .leading, spacing: 4) {
                     Text(peer.peerID).font(.caption.monospaced())
                     ForEach(peer.addresses, id: \.self) { address in
@@ -366,7 +376,13 @@ struct ContentView: View {
             moduleRow(name: "KadDHT", detail: "Distributed peer discovery")
             moduleRow(name: "DCUtR", detail: "Hole punching support")
             HStack {
-                TextField("Message", text: $model.draftMessage)
+                TextField(
+                    "Message",
+                    text: Binding(
+                        get: { model.draftMessage },
+                        set: { model.draftMessage = $0 }
+                    )
+                )
                 Button("Queue ping") { model.sendLocalPing() }
             }
         }
@@ -376,7 +392,8 @@ struct ContentView: View {
     func moduleRow(name: String, detail: String) -> some View {
         HStack(alignment: .top, spacing: 10) {
             Text(name)
-                .font(.body.bold())
+                .font(.body)
+                .fontWeight(.bold)
                 .frame(width: 90, alignment: .leading)
             Text(detail)
         }
