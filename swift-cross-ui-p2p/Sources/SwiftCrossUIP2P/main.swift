@@ -23,6 +23,7 @@ struct SwiftCrossUIP2PApp: App {
     }
 }
 
+@MainActor
 @ObservableObject
 final class P2PDemoViewModel {
     enum State: String {
@@ -84,10 +85,12 @@ final class P2PDemoViewModel {
         self.app = app
 
         app.discovery.onPeerDiscovered(app) { [weak self] peer in
+            let peerID = peer.peer.b58String
+            let addresses = peer.addresses.map(\.description)
             Task { @MainActor in
                 self?.recordDiscoveredPeer(
-                    peerID: peer.peer.b58String,
-                    addresses: peer.addresses.map(\.description)
+                    peerID: peerID,
+                    addresses: addresses
                 )
             }
         }
@@ -113,17 +116,17 @@ final class P2PDemoViewModel {
             }
         }
 
-        runTask = Task.detached(priority: .background) { [weak self, app] in
+        runTask = Task { [app] in
             do {
                 try await app.execute()
             } catch {
-                await MainActor.run {
+                await MainActor.run { [weak self] in
                     self?.lastError = error.localizedDescription
                     self?.log("Error: \(error.localizedDescription)")
                 }
             }
 
-            await MainActor.run {
+            await MainActor.run { [weak self] in
                 self?.state = .stopped
                 self?.runTask = nil
                 self?.app = nil
@@ -141,17 +144,17 @@ final class P2PDemoViewModel {
         self.app = nil
         self.runTask = nil
 
-        Task.detached(priority: .background) { [weak self] in
+        Task { [app] in
             do {
                 try await app.asyncShutdown()
             } catch {
-                await MainActor.run {
+                await MainActor.run { [weak self] in
                     self?.lastError = error.localizedDescription
                     self?.log("Error: \(error.localizedDescription)")
                 }
             }
 
-            await MainActor.run {
+            await MainActor.run { [weak self] in
                 self?.listenAddresses = []
                 self?.state = .stopped
                 self?.log("Node stopped")
