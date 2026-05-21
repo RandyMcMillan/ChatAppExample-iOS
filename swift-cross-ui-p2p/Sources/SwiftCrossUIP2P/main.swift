@@ -17,60 +17,63 @@ import SwiftCrossUI
     import UIKit
 #endif
 
+struct GitLineSnapshot: Identifiable, Hashable, Sendable {
+    var id: String { "\(kind)|\(text)" }
+    let kind: String
+    let text: String
+}
+
+struct GitHunkSnapshot: Identifiable, Hashable, Sendable {
+    var id: String { header }
+    let header: String
+    let lines: [GitLineSnapshot]
+}
+
+struct GitFileSnapshot: Identifiable, Hashable, Sendable {
+    var id: String { path }
+    let path: String
+    let hunks: [GitHunkSnapshot]
+}
+
+struct GitCommitSnapshot: Identifiable, Hashable, Sendable {
+    var id: String { oid }
+    let oid: String
+    let shortOID: String
+    let summary: String
+    let author: String
+    let time: String
+    let refs: [String]
+}
+
+struct GitRemoteSnapshot: Identifiable, Hashable, Sendable {
+    var id: String { name }
+    let name: String
+    let url: String
+}
+
+struct GitRepoSnapshot: Hashable, Sendable {
+    let path: String
+    let exists: Bool
+    let currentBranch: String
+    let repositoryState: String
+    let remotes: [GitRemoteSnapshot]
+    let commits: [GitCommitSnapshot]
+    let stagedChanges: [GitFileSnapshot]
+    let unstagedChanges: [GitFileSnapshot]
+    let selectedCommit: GitCommitSnapshot?
+    let selectedCommitDiff: [GitFileSnapshot]
+    let refreshedAt: String
+    let error: String?
+}
+
 @main
 struct SwiftCrossUIP2PApp: App {
+    @State var model = P2PDemoViewModel()
+
     var body: some Scene {
         WindowGroup("SwiftCrossUI P2P") {
             ContentView()
-        }
-
-        struct GitLineSnapshot: Identifiable, Hashable, Sendable {
-            var id: String { "\(kind)|\(text)" }
-            let kind: String
-            let text: String
-        }
-
-        struct GitHunkSnapshot: Identifiable, Hashable, Sendable {
-            var id: String { header }
-            let header: String
-            let lines: [GitLineSnapshot]
-        }
-
-        struct GitFileSnapshot: Identifiable, Hashable, Sendable {
-            var id: String { path }
-            let path: String
-            let hunks: [GitHunkSnapshot]
-        }
-
-        struct GitCommitSnapshot: Identifiable, Hashable, Sendable {
-            var id: String { oid }
-            let oid: String
-            let shortOID: String
-            let summary: String
-            let author: String
-            let time: String
-            let refs: [String]
-        }
-
-        struct GitRemoteSnapshot: Identifiable, Hashable, Sendable {
-            var id: String { name }
-            let name: String
-            let url: String
-        }
-
-        struct GitRepoSnapshot: Hashable, Sendable {
-            let path: String
-            let exists: Bool
-            let currentBranch: String
-            let repositoryState: String
-            let remotes: [GitRemoteSnapshot]
-            let commits: [GitCommitSnapshot]
-            let stagedChanges: [GitFileSnapshot]
-            let unstagedChanges: [GitFileSnapshot]
-            let selectedCommit: GitCommitSnapshot?
-            let selectedCommitDiff: [GitFileSnapshot]
-            let refreshedAt: String
-            let error: String?
+                .environment(model)
         }
         .defaultSize(width: 980, height: 760)
     }
