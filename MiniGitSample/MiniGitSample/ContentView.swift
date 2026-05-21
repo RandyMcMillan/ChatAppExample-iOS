@@ -62,6 +62,14 @@ struct RepoAnnouncement: Codable, Identifiable, Hashable {
     let timestamp: TimeInterval
 }
 
+struct PeerSummary: Identifiable, Hashable {
+    let peerID: String
+    let addresses: [String]
+    let protocols: [String]
+
+    var id: String { peerID }
+}
+
 @MainActor
 final class P2PService: ObservableObject {
     private enum RuntimeProfile: String {
@@ -84,9 +92,11 @@ final class P2PService: ObservableObject {
     @Published private(set) var lastError: String?
     @Published private(set) var activityLog: [String] = []
     @Published private(set) var repoAnnouncements: [RepoAnnouncement] = []
+    @Published private(set) var peers: [PeerSummary] = []
 
     private var app: Application?
     private var runTask: Task<Void, Never>?
+    private var peerRefreshTask: Task<Void, Never>?
     private var announcementSubscription: PubSub.SubscriptionHandler?
 
     let peerID: PeerID
@@ -150,6 +160,37 @@ final class P2PService: ObservableObject {
         broadcastCurrentRepo()
     }
 
+    func refreshPeers() {
+        guard let app else { return }
+
+        let app = app
+        Task.detached(priority: .background) { [weak self] in
+            guard let self else { return }
+            do {
+                let peerIDs = try await app.peers.getPeerIDs(supportingProtocol: Self.gossipsubProtocol).get()
+                let rows = try await peerIDs
+                    .sorted(by: { $0.b58String < $1.b58String })
+                    .asyncMap { peerID async throws -> PeerSummary in
+                        let addresses = try await app.peers.getAddresses(forPeer: peerID).get()
+                        let protocols = try await app.peers.getProtocols(forPeer: peerID).get()
+                        return PeerSummary(
+                            peerID: peerID.b58String,
+                            addresses: addresses.map(\.description),
+                            protocols: protocols.map(\.stringValue)
+                        )
+                    }
+
+                await MainActor.run {
+                    self.peers = rows
+                }
+            } catch {
+                await MainActor.run {
+                    self.log("Peer refresh failed: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
     func start() {
         guard runTask == nil else { return }
 
@@ -160,6 +201,7 @@ final class P2PService: ObservableObject {
         let app = Self.makeApplication(peerID: peerID)
         self.app = app
         self.configurePubSub(app)
+        self.startPeerRefreshLoop()
 
         app.eventLoopGroup.next().scheduleTask(in: .milliseconds(100)) { [weak self, weak app] in
             guard let self, let app else { return }
@@ -212,6 +254,8 @@ final class P2PService: ObservableObject {
         log("Stopping node")
         self.app = nil
         self.runTask = nil
+        self.peerRefreshTask?.cancel()
+        self.peerRefreshTask = nil
 
         Task.detached(priority: .background) { [weak self] in
             do {
@@ -225,6 +269,7 @@ final class P2PService: ObservableObject {
 
             await MainActor.run {
                 self?.listenAddresses = []
+                self?.peers = []
                 self?.state = .stopped
                 self?.runTask = nil
                 self?.app = nil
@@ -348,7 +393,45 @@ final class P2PService: ObservableObject {
         log("Subscribed to repo broadcasts")
     }
 
+    private func startPeerRefreshLoop() {
+        self.peerRefreshTask?.cancel()
+        self.peerRefreshTask = Task.detached(priority: .background) { [weak self, weak app = self.app] in
+            guard let self else { return }
+            while !Task.isCancelled {
+                guard let app else { break }
+                await self.refreshPeers(using: app)
+                try? await Task.sleep(for: .seconds(2))
+            }
+        }
+    }
+
+    private func refreshPeers(using app: Application) async {
+        do {
+            let peerIDs = try await app.peers.getPeerIDs(supportingProtocol: Self.gossipsubProtocol).get()
+            let rows = try await peerIDs
+                .sorted(by: { $0.b58String < $1.b58String })
+                .asyncMap { peerID async throws -> PeerSummary in
+                    let addresses = try await app.peers.getAddresses(forPeer: peerID).get()
+                    let protocols = try await app.peers.getProtocols(forPeer: peerID).get()
+                    return PeerSummary(
+                        peerID: peerID.b58String,
+                        addresses: addresses.map(\.description),
+                        protocols: protocols.map(\.stringValue)
+                    )
+                }
+
+            await MainActor.run {
+                self.peers = rows
+            }
+        } catch {
+            await MainActor.run {
+                self.log("Peer refresh failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
     private static let repoTopic = "mini-git/repo-announcements"
+    private static let gossipsubProtocol = SemVerProtocol("/meshsub/1.0.0")!
 
     private static let timestampFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -374,6 +457,9 @@ struct ContentView: View {
                 }
 
                 Section("P2P") {
+                    NavigationLink(destination: peersDetail) {
+                        Label("Peers", systemImage: "person.2")
+                    }
                     NavigationLink(destination: repoBroadcastsDetail) {
                         Label("Repo broadcasts", systemImage: "dot.radiowaves.left.and.right")
                     }
@@ -382,6 +468,15 @@ struct ContentView: View {
                     }
                     NavigationLink(destination: listeningAddressesDetail) {
                         Label("Listening addresses", systemImage: "network")
+                    }
+                }
+
+                if !p2p.peers.isEmpty {
+                    Section("Peers") {
+                        ForEach(p2p.peers.prefix(4)) { peer in
+                            Text(peer.peerID)
+                                .font(.caption.monospaced())
+                        }
                     }
                 }
             }
@@ -510,6 +605,39 @@ struct ContentView: View {
                     }
                 }
                 .frame(minHeight: 240)
+            }
+        }
+    }
+
+    private var peersDetail: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Peers").font(.largeTitle.bold())
+                Spacer()
+                Button("Refresh") {
+                    p2p.refreshPeers()
+                }
+            }
+
+            Text("Mac and iPhone peers should appear here when they share the gossipsub protocol and see each other on the network.")
+
+            if p2p.peers.isEmpty {
+                Text("No peers discovered yet")
+                    .foregroundStyle(.secondary)
+            } else {
+                List(p2p.peers) { peer in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(peer.peerID).bold()
+                            .font(.caption.monospaced())
+                            .textSelection(.enabled)
+                        Text(peer.protocols.joined(separator: ", "))
+                            .font(.caption2)
+                        Text(peer.addresses.joined(separator: "\n"))
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .textSelection(.enabled)
+                    }
+                }
             }
         }
     }
