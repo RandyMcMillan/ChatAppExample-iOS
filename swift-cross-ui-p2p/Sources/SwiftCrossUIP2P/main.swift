@@ -538,7 +538,7 @@ final class P2PDemoViewModel {
 }
 
 struct ContentView: View {
-    @Environment(P2PDemoViewModel.self) var model
+    @SwiftCrossUI.Environment(P2PDemoViewModel.self) var model
 
     var body: some View {
         ScrollView {
@@ -588,7 +588,7 @@ struct ContentView: View {
 
     @ViewBuilder
     var selectedDemo: some View {
-        switch model.selectedDemo ?? .overview {
+        switch model.selectedDemo ?? P2PDemoViewModel.Demo.overview {
             case .overview:
                 overviewPanel
             case .discovery:
@@ -701,14 +701,16 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Commits").font(.headline)
                 ForEach(model.gitCommits) { commit in
-                    Button(commit.shortOID + "  " + commit.summary) {
-                        model.selectGitCommit(commit.oid)
-                    }
-                    Text("\(commit.author) • \(commit.time)")
-                        .font(.caption)
-                    if !commit.refs.isEmpty {
-                        Text(commit.refs.joined(separator: ", "))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Button(commit.shortOID + "  " + commit.summary) {
+                            model.selectGitCommit(commit.oid)
+                        }
+                        Text("\(commit.author) • \(commit.time)")
                             .font(.caption)
+                        if !commit.refs.isEmpty {
+                            Text(commit.refs.joined(separator: ", "))
+                                .font(.caption)
+                        }
                     }
                 }
             }
