@@ -1,4 +1,5 @@
 module LibP2P {
+	requires cplusplus
 	umbrella "libp2p"
 
 	export *
