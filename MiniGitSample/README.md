@@ -24,3 +24,5 @@ repo.clone("https://...", ...)
 
 MiniGit adds convenient versions of those method as the extra parameters are for progress reporting and `GitRepository` has a copy of those already.
 Note that the API purposely uses `String` for remote repo because we want to support SSH repos as well and last time we check, Swift's [URL](https://developer.apple.com/documentation/foundation/url) does not support SSH protocol URLs.
+
+The sample also boots a local `swift-libp2p` node and shows its peer ID, listen port, and resolved multiaddrs in the UI.
