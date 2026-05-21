@@ -11,6 +11,7 @@
 #include <system_error>
 #include <type_traits>
 #include <typeinfo>
+#include <string>
 #include <utility>
 
 #define LIBP2P_OUTCOME_JOIN2(a, b) a##b
