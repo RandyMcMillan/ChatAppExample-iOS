@@ -8,7 +8,6 @@ let package = Package(
     platforms: [
         .macOS(.v11),
         .iOS(.v14),
-        .macCatalyst(.v14),
     ],
     products: [
         .executable(name: "SwiftCrossUIP2P", targets: ["SwiftCrossUIP2P"]),
@@ -38,12 +37,12 @@ let package = Package(
                 .product(
                     name: "GnostrGit",
                     package: "GnostrGit",
-                    condition: .when(platforms: [.iOS, .macCatalyst])
+                    condition: .when(platforms: [.iOS])
                 ),
                 .product(
                     name: "XGit",
                     package: "GnostrGit",
-                    condition: .when(platforms: [.iOS, .macCatalyst])
+                    condition: .when(platforms: [.iOS])
                 ),
             ]
         ),
