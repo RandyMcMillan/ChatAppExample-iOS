@@ -158,35 +158,24 @@ final class P2PService: ObservableObject {
         log("Cloning repo from \(announcement.senderPeerID)")
         repository.clone(announcement.cloneURL)
         broadcastCurrentRepo()
+        refreshPeers()
     }
 
     func refreshPeers() {
         guard let app else { return }
-
-        let app = app
         Task.detached(priority: .background) { [weak self] in
             guard let self else { return }
-            do {
-                let peerIDs = try await app.peers.getPeerIDs(supportingProtocol: Self.gossipsubProtocol).get()
-                let rows = try await peerIDs
-                    .sorted(by: { $0.b58String < $1.b58String })
-                    .asyncMap { peerID async throws -> PeerSummary in
-                        let addresses = try await app.peers.getAddresses(forPeer: peerID).get()
-                        let protocols = try await app.peers.getProtocols(forPeer: peerID).get()
-                        return PeerSummary(
-                            peerID: peerID.b58String,
-                            addresses: addresses.map(\.description),
-                            protocols: protocols.map(\.stringValue)
-                        )
-                    }
+            await self.refreshPeers(using: app)
+        }
+    }
 
-                await MainActor.run {
-                    self.peers = rows
-                }
-            } catch {
-                await MainActor.run {
-                    self.log("Peer refresh failed: \(error.localizedDescription)")
-                }
+    private func startPeerRefreshLoop(with app: Application) {
+        self.peerRefreshTask?.cancel()
+        self.peerRefreshTask = Task.detached(priority: .background) { [weak self] in
+            guard let self else { return }
+            while !Task.isCancelled {
+                await self.refreshPeers(using: app)
+                try? await Task.sleep(for: .seconds(2))
             }
         }
     }
@@ -201,7 +190,7 @@ final class P2PService: ObservableObject {
         let app = Self.makeApplication(peerID: peerID)
         self.app = app
         self.configurePubSub(app)
-        self.startPeerRefreshLoop()
+        self.startPeerRefreshLoop(with: app)
 
         app.eventLoopGroup.next().scheduleTask(in: .milliseconds(100)) { [weak self, weak app] in
             guard let self, let app else { return }
@@ -393,32 +382,21 @@ final class P2PService: ObservableObject {
         log("Subscribed to repo broadcasts")
     }
 
-    private func startPeerRefreshLoop() {
-        self.peerRefreshTask?.cancel()
-        self.peerRefreshTask = Task.detached(priority: .background) { [weak self, weak app = self.app] in
-            guard let self else { return }
-            while !Task.isCancelled {
-                guard let app else { break }
-                await self.refreshPeers(using: app)
-                try? await Task.sleep(for: .seconds(2))
-            }
-        }
-    }
-
     private func refreshPeers(using app: Application) async {
         do {
             let peerIDs = try await app.peers.getPeerIDs(supportingProtocol: Self.gossipsubProtocol).get()
-            let rows = try await peerIDs
-                .sorted(by: { $0.b58String < $1.b58String })
-                .asyncMap { peerID async throws -> PeerSummary in
-                    let addresses = try await app.peers.getAddresses(forPeer: peerID).get()
-                    let protocols = try await app.peers.getProtocols(forPeer: peerID).get()
-                    return PeerSummary(
+            var rows: [PeerSummary] = []
+            for peerID in peerIDs.sorted(by: { $0.b58String < $1.b58String }) {
+                let addresses = try await app.peers.getAddresses(forPeer: peerID).get()
+                let protocols = try await app.peers.getProtocols(forPeer: peerID).get()
+                rows.append(
+                    PeerSummary(
                         peerID: peerID.b58String,
                         addresses: addresses.map(\.description),
                         protocols: protocols.map(\.stringValue)
                     )
-                }
+                )
+            }
 
             await MainActor.run {
                 self.peers = rows
