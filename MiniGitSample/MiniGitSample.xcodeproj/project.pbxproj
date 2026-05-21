@@ -7,15 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B3365C72FBE18FE00C399AA /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D62FBE040B0056F790 /* GnostrGit */; settings = {ATTRIBUTES = (Weak, ); }; };
+		4B3365C82FBE18FE00C399AA /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D82FBE040B0056F790 /* XGit */; settings = {ATTRIBUTES = (Weak, ); }; };
 		4BA7DCC72FBE429400B507EE /* LibP2P in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCC82FBE429400B507EE /* LibP2P */; };
-		4BA7DCCB2FBE429400B507EF /* LibP2PPubSub in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCF2FBE429400B507EF /* LibP2PPubSub */; };
 		4BA7DCC92FBE429400B507EE /* LibP2PNoise in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCA2FBE429400B507EE /* LibP2PNoise */; };
+		4BA7DCCB2FBE429400B507EF /* LibP2PPubSub in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCF2FBE429400B507EF /* LibP2PPubSub */; };
 		4BA7DCCC2FBE429400B507F1 /* LibP2PYAMUX in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCC2FBE429400B507EE /* LibP2PYAMUX */; };
 		4BA7DCCE2FBE429400B507F2 /* LibP2PDCUtR in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCE2FBE429400B507EE /* LibP2PDCUtR */; };
 		4BA7DCD02FBE429400B507F3 /* LibP2PMDNS in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCD02FBE429400B507EE /* LibP2PMDNS */; };
 		4BA7DCD22FBE429400B507F4 /* LibP2PKadDHT in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCD22FBE429400B507EE /* LibP2PKadDHT */; };
-		4B3365C72FBE18FE00C399AA /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D62FBE040B0056F790 /* GnostrGit */; settings = {ATTRIBUTES = (Weak, ); }; };
-		4B3365C82FBE18FE00C399AA /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D82FBE040B0056F790 /* XGit */; settings = {ATTRIBUTES = (Weak, ); }; };
+		4BADD9482FBEA08900CA0051 /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B1381C92EF6DCA100ECBFC1 /* GnostrGit */; };
+		4BADD9492FBEA08900CA0051 /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B1381CB2EF6DCA100ECBFC1 /* XGit */; };
+		4BADD94A2FBEA08900CA0051 /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D12FBE03E00056F790 /* GnostrGit */; };
+		4BADD94B2FBEA08900CA0051 /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D32FBE03E00056F790 /* XGit */; };
+		4BADD94C2FBEA08900CA0051 /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7DB2FBE04A50056F790 /* GnostrGit */; };
+		4BADD94D2FBEA08900CA0051 /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7DD2FBE04A50056F790 /* XGit */; };
 		B701035627CD0B6900D43034 /* MiniGitSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035527CD0B6900D43034 /* MiniGitSampleApp.swift */; };
 		B701035827CD0B6900D43034 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035727CD0B6900D43034 /* ContentView.swift */; };
 		B701035A27CD0B6B00D43034 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B701035927CD0B6B00D43034 /* Assets.xcassets */; };
@@ -37,6 +43,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BADD94D2FBEA08900CA0051 /* XGit in Frameworks */,
+				4BADD94C2FBEA08900CA0051 /* GnostrGit in Frameworks */,
+				4BADD94B2FBEA08900CA0051 /* XGit in Frameworks */,
+				4BADD94A2FBEA08900CA0051 /* GnostrGit in Frameworks */,
+				4BADD9492FBEA08900CA0051 /* XGit in Frameworks */,
+				4BADD9482FBEA08900CA0051 /* GnostrGit in Frameworks */,
 				4BA7DCD22FBE429400B507F4 /* LibP2PKadDHT in Frameworks */,
 				4BA7DCD02FBE429400B507F3 /* LibP2PMDNS in Frameworks */,
 				4BA7DCCE2FBE429400B507F2 /* LibP2PDCUtR in Frameworks */,
@@ -328,6 +340,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -362,6 +375,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -402,6 +416,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		4B70D7DA2FBE04A50056F790 /* XCLocalSwiftPackageReference "../Git" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Git;
+		};
 		4BA7DCC12FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../swift-libp2p";
@@ -430,48 +448,9 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../swift-libp2p-pubsub";
 		};
-		4B70D7DA2FBE04A50056F790 /* XCLocalSwiftPackageReference "../Git" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Git;
-		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4BA7DCC82FBE429400B507EE /* LibP2P */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4BA7DCC12FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p" */;
-			productName = LibP2P;
-		};
-		4BA7DCCA2FBE429400B507EE /* LibP2PNoise */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4BA7DCC22FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-noise" */;
-			productName = LibP2PNoise;
-		};
-		4BA7DCCC2FBE429400B507EE /* LibP2PYAMUX */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4BA7DCC32FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-yamux" */;
-			productName = LibP2PYAMUX;
-		};
-		4BA7DCCE2FBE429400B507EE /* LibP2PDCUtR */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4BA7DCC42FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-dcutr" */;
-			productName = LibP2PDCUtR;
-		};
-		4BA7DCD02FBE429400B507EE /* LibP2PMDNS */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4BA7DCC52FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-mdns" */;
-			productName = LibP2PMDNS;
-		};
-		4BA7DCD22FBE429400B507EE /* LibP2PKadDHT */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4BA7DCC62FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-kad-dht" */;
-			productName = LibP2PKadDHT;
-		};
-		4BA7DCCF2FBE429400B507EF /* LibP2PPubSub */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4BA7DCC72FBE429400B507EF /* XCLocalSwiftPackageReference "../swift-libp2p-pubsub" */;
-			productName = LibP2PPubSub;
-		};
 		4B1381C92EF6DCA100ECBFC1 /* GnostrGit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = GnostrGit;
@@ -503,6 +482,41 @@
 		4B70D7DD2FBE04A50056F790 /* XGit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = XGit;
+		};
+		4BA7DCC82FBE429400B507EE /* LibP2P */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BA7DCC12FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p" */;
+			productName = LibP2P;
+		};
+		4BA7DCCA2FBE429400B507EE /* LibP2PNoise */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BA7DCC22FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-noise" */;
+			productName = LibP2PNoise;
+		};
+		4BA7DCCC2FBE429400B507EE /* LibP2PYAMUX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BA7DCC32FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-yamux" */;
+			productName = LibP2PYAMUX;
+		};
+		4BA7DCCE2FBE429400B507EE /* LibP2PDCUtR */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BA7DCC42FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-dcutr" */;
+			productName = LibP2PDCUtR;
+		};
+		4BA7DCCF2FBE429400B507EF /* LibP2PPubSub */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BA7DCC72FBE429400B507EF /* XCLocalSwiftPackageReference "../swift-libp2p-pubsub" */;
+			productName = LibP2PPubSub;
+		};
+		4BA7DCD02FBE429400B507EE /* LibP2PMDNS */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BA7DCC52FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-mdns" */;
+			productName = LibP2PMDNS;
+		};
+		4BA7DCD22FBE429400B507EE /* LibP2PKadDHT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4BA7DCC62FBE429400B507EE /* XCLocalSwiftPackageReference "../swift-libp2p-kad-dht" */;
+			productName = LibP2PKadDHT;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
