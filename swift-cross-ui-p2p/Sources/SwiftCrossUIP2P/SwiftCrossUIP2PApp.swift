@@ -9,7 +9,7 @@ import LibP2PNoise
 import LibP2PYAMUX
 import SwiftCrossUI
 
-#if os(iOS) || targetEnvironment(macCatalyst)
+#if os(iOS)
     import GnostrGit
     import XGit
 #endif
@@ -260,7 +260,7 @@ final class P2PDemoViewModel {
         let selectedCommitOID = gitSelectedCommitOID
         gitIsLoading = true
         gitLastError = nil
-        #if os(iOS) || targetEnvironment(macCatalyst)
+        #if os(iOS)
             gitRefreshTask = Task.detached(priority: .background) { [path, selectedCommitOID] in
                 let snapshot = GitRepoSnapshotLoader.loadGitSnapshot(
                     path: path,
@@ -443,7 +443,7 @@ enum GitRepoSnapshotLoader {
         return formatter
     }()
 
-    #if os(iOS) || targetEnvironment(macCatalyst)
+    #if os(iOS)
     static func loadGitSnapshot(path: String, selectedCommitOID: String?) -> GitRepoSnapshot {
         let url = URL(fileURLWithPath: path, isDirectory: true)
         let credentialsURL = FileManager.default.temporaryDirectory
