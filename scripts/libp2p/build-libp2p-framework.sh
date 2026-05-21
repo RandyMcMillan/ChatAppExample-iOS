@@ -168,6 +168,7 @@ build_platform() {
 package_framework() {
   local framework_args=()
   local platform
+  local slice_headers
 
   for platform in "${xcframework_platforms[@]}"; do
     framework_args+=(
@@ -185,6 +186,9 @@ package_framework() {
   xcodebuild -create-xcframework "${framework_args[@]}" -output "${framework_stage}"
   mkdir -p "${framework_root}"
   cp -R "${framework_stage}/." "${framework_root}/"
+  while IFS= read -r slice_headers; do
+    cp "${modulemap_source}" "${slice_headers}/module.modulemap"
+  done < <(find "${framework_root}" -mindepth 2 -maxdepth 2 -type d -name Headers | sort)
   mkdir -p "${framework_root}/Headers"
   cp "${modulemap_source}" "${framework_root}/Headers/module.modulemap"
   rm -rf "${framework_stage}"
