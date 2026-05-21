@@ -558,7 +558,6 @@ final class P2PService: ObservableObject {
     private func peerID(from string: String) throws -> PeerID {
             try PeerID(fromJSON: JSONEncoder().encode(PeerIDReference(id: string)))
         }
-    }
 }
 
 struct ContentView: View {
