@@ -489,7 +489,7 @@ enum GitRepoSnapshotLoader {
            let parent = sourceCommit.parents.first {
             let diffReceiver = GitDiff()
             repository.diff(parent, sourceCommit, diffReceiver)
-            selectedCommitDiff = makeDiffSnapshots(diffReceiver)
+            selectedCommitDiff = makeDiffSnapshots(diffReceiver.changes)
         }
 
         return GitRepoSnapshot(
@@ -519,8 +519,8 @@ enum GitRepoSnapshotLoader {
         )
     }
 
-    private static func makeDiffSnapshots(_ diffReceiver: GitDiff) -> [GitFileSnapshot] {
-        diffReceiver.changes.deltas.map { delta in
+    private static func makeDiffSnapshots(_ diff: Diff) -> [GitFileSnapshot] {
+        diff.deltas.map { delta in
             GitFileSnapshot(
                 path: delta.path,
                 hunks: delta.hunks.map { hunk in
