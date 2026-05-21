@@ -122,6 +122,15 @@ final class P2PService: ObservableObject {
 
     let peerID: PeerID
 
+    private static let repoTopic = "mini-git/repo-announcements"
+    private static let gossipsubProtocol = SemVerProtocol("/meshsub/1.0.0")!
+    private static let repoSnapshotProtocol = "/mini-git/repo-snapshot/1.0.0"
+    private static let timestampFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss"
+        return formatter
+    }()
+
     init() {
         peerID = Self.makePeerID(for: Self.runtimeProfile)
     }
@@ -469,7 +478,7 @@ final class P2PService: ObservableObject {
         }
     }
 
-        private func cloneRepo(from announcement: RepoAnnouncement) async {
+    private func cloneRepo(from announcement: RepoAnnouncement) async {
             guard let app else { return }
 
             do {
@@ -500,7 +509,7 @@ final class P2PService: ObservableObject {
             }
         }
 
-        private func makeRepoSnapshot() throws -> RepoSnapshot {
+    private func makeRepoSnapshot() throws -> RepoSnapshot {
             guard FileManager.default.fileExists(atPath: localRepoLocation.path) else {
                 throw NSError(domain: "MiniGitSample", code: 404, userInfo: [NSLocalizedDescriptionKey: "No local repository to serve"])
             }
@@ -530,7 +539,7 @@ final class P2PService: ObservableObject {
             )
         }
 
-        private func restoreRepo(_ snapshot: RepoSnapshot, to destination: URL) throws {
+    private func restoreRepo(_ snapshot: RepoSnapshot, to destination: URL) throws {
             let fileManager = FileManager.default
             if fileManager.fileExists(atPath: destination.path) {
                 try fileManager.removeItem(at: destination)
@@ -546,20 +555,10 @@ final class P2PService: ObservableObject {
             }
         }
 
-        private func peerID(from string: String) throws -> PeerID {
+    private func peerID(from string: String) throws -> PeerID {
             try PeerID(fromJSON: JSONEncoder().encode(PeerIDReference(id: string)))
         }
     }
-
-    private static let repoTopic = "mini-git/repo-announcements"
-    private static let gossipsubProtocol = SemVerProtocol("/meshsub/1.0.0")!
-    private static let repoSnapshotProtocol = "/mini-git/repo-snapshot/1.0.0"
-
-    private static let timestampFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm:ss"
-        return formatter
-    }()
 }
 
 struct ContentView: View {
@@ -679,7 +678,7 @@ struct ContentView: View {
     private var repoBroadcastsDetail: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Repo broadcasts").font(.largeTitle.bold())
-            Text("The current repo is announced over gossipsub so peers can discover clone sources.")
+            Text("The current repo is announced over gossipsub so peers can discover a p2p clone source.")
 
             HStack {
                 Text("Swift p2p network").font(.headline)
@@ -721,7 +720,7 @@ struct ContentView: View {
                         Text(announcement.listenAddresses.joined(separator: ", "))
                             .font(.caption2)
                             .foregroundStyle(.secondary)
-                        Button("Clone announced repo") {
+                        Button("Clone from peer") {
                             p2p.clone(announcement: announcement)
                         }
                     }
