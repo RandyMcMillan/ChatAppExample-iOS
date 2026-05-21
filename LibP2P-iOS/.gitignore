@@ -1,3 +1,8 @@
+LibP2P.xcframework.zip
+LibP2P.xcframework/ios-arm64/libp2p.a
+LibP2P.xcframework/ios-arm64_x86_64-simulator/libp2p.a
+LibP2P.xcframework/macos-arm64/libp2p.a
+
 .build/
 .swiftpm/
 build/
