@@ -261,7 +261,10 @@ final class P2PDemoViewModel {
         gitLastError = nil
         #if os(iOS) || targetEnvironment(macCatalyst)
             gitRefreshTask = Task.detached(priority: .background) { [path, selectedCommitOID] in
-                let snapshot = Self.loadGitSnapshot(path: path, selectedCommitOID: selectedCommitOID)
+                let snapshot = GitRepoSnapshotLoader.loadGitSnapshot(
+                    path: path,
+                    selectedCommitOID: selectedCommitOID
+                )
                 await MainActor.run { [weak self] in
                     self?.applyGitSnapshot(snapshot)
                 }
@@ -337,99 +340,6 @@ final class P2PDemoViewModel {
         }
     }
 
-    #if os(iOS) || targetEnvironment(macCatalyst)
-    private static func loadGitSnapshot(path: String, selectedCommitOID: String?) -> GitRepoSnapshot {
-        let url = URL(fileURLWithPath: path, isDirectory: true)
-        let credentialsURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("swift-cross-ui-p2p-git-credentials.json")
-        let credentialManager = CredentialsManager(credentialsFileUrl: credentialsURL)
-        let repository = GitRepository(url, credentialManager)
-        repository.open()
-
-        guard repository.hasRepo else {
-            return GitRepoSnapshot(
-                path: path,
-                exists: false,
-                currentBranch: "",
-                repositoryState: "No repository",
-                remotes: [],
-                commits: [],
-                stagedChanges: [],
-                unstagedChanges: [],
-                selectedCommit: nil,
-                selectedCommitDiff: [],
-                refreshedAt: Self.timestampFormatter.string(from: Date()),
-                error: "No git repository found at \(path)"
-            )
-        }
-
-        repository.updateStatus()
-        repository.updateCommitGraph()
-
-        let commits = repository.commitGraph.commits.prefix(30).map { commit in
-            Self.makeCommitSnapshot(commit)
-        }
-        let selectedCommit = commits.first(where: { $0.oid == selectedCommitOID }) ?? commits.first
-        let staged = Self.makeDiffSnapshots(repository.status.stagedChanges)
-        let unstaged = Self.makeDiffSnapshots(repository.status.unstagedChanges)
-        let remotes = repository.getRemotes().map {
-            GitRemoteSnapshot(name: $0.name, url: $0.url)
-        }
-
-        var selectedCommitDiff: [GitFileSnapshot] = []
-        if let selectedCommit,
-           let sourceCommit = repository.commitGraph.commits.first(where: {
-               $0.oid.description() == selectedCommit.oid
-           }),
-           let parent = sourceCommit.parents.first {
-            let diffReceiver = GitDiff()
-            repository.diff(parent, sourceCommit, diffReceiver)
-            selectedCommitDiff = Self.makeDiffSnapshots(diffReceiver)
-        }
-
-        return GitRepoSnapshot(
-            path: path,
-            exists: true,
-            currentBranch: repository.status.currentBranch,
-            repositoryState: String(describing: repository.status.state),
-            remotes: remotes,
-            commits: commits,
-            stagedChanges: staged,
-            unstagedChanges: unstaged,
-            selectedCommit: selectedCommit,
-            selectedCommitDiff: selectedCommitDiff,
-            refreshedAt: Self.timestampFormatter.string(from: Date()),
-            error: nil
-        )
-    }
-
-    private static func makeCommitSnapshot(_ commit: GitCommit) -> GitCommitSnapshot {
-        GitCommitSnapshot(
-            oid: commit.oid.description(),
-            shortOID: commit.oid.shortDescription,
-            summary: commit.summary,
-            author: "\(commit.author.name) <\(commit.author.email)>",
-            time: Self.commitDateFormatter.string(from: commit.time),
-            refs: commit.refs.map(\.shorthand)
-        )
-    }
-
-    private static func makeDiffSnapshots(_ diffReceiver: GitDiff) -> [GitFileSnapshot] {
-        diffReceiver.changes.deltas.map { delta in
-            GitFileSnapshot(
-                path: delta.path,
-                hunks: delta.hunks.map { hunk in
-                    GitHunkSnapshot(
-                        header: hunk.header,
-                        lines: hunk.lines.map {
-                            GitLineSnapshot(kind: $0.kind, text: $0.textTrimmed)
-                        }
-                    )
-                }
-            )
-        }
-    }
-
     private static func defaultRepositoryPath() -> String {
         let cwd = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
         let candidates = [cwd, cwd.deletingLastPathComponent()]
@@ -442,20 +352,6 @@ final class P2PDemoViewModel {
         }
         return cwd.path
     }
-    #else
-    private static func defaultRepositoryPath() -> String {
-        let cwd = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-        let candidates = [cwd, cwd.deletingLastPathComponent()]
-        for candidate in candidates {
-            if FileManager.default.fileExists(
-                atPath: candidate.appendingPathComponent(".git").path
-            ) {
-                return candidate.path
-            }
-        }
-        return cwd.path
-    }
-    #endif
 
     private static func makeApplication(peerID: PeerID) -> Application {
         let app = Application(.testing, peerID: peerID)
@@ -524,12 +420,6 @@ final class P2PDemoViewModel {
         return formatter
     }()
 
-    private static let commitDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm"
-        return formatter
-    }()
-
     private enum RuntimeProfile: String {
         case macOS
         case macCatalyst
@@ -537,6 +427,114 @@ final class P2PDemoViewModel {
         case iPhone
         case madeForiPad
     }
+}
+
+enum GitRepoSnapshotLoader {
+    private static let timestampFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss"
+        return formatter
+    }()
+
+    private static let commitDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        return formatter
+    }()
+
+    #if os(iOS) || targetEnvironment(macCatalyst)
+    static func loadGitSnapshot(path: String, selectedCommitOID: String?) -> GitRepoSnapshot {
+        let url = URL(fileURLWithPath: path, isDirectory: true)
+        let credentialsURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("swift-cross-ui-p2p-git-credentials.json")
+        let credentialManager = CredentialsManager(credentialsFileUrl: credentialsURL)
+        let repository = GitRepository(url, credentialManager)
+        repository.open()
+
+        guard repository.hasRepo else {
+            return GitRepoSnapshot(
+                path: path,
+                exists: false,
+                currentBranch: "",
+                repositoryState: "No repository",
+                remotes: [],
+                commits: [],
+                stagedChanges: [],
+                unstagedChanges: [],
+                selectedCommit: nil,
+                selectedCommitDiff: [],
+                refreshedAt: timestampFormatter.string(from: Date()),
+                error: "No git repository found at \(path)"
+            )
+        }
+
+        repository.updateStatus()
+        repository.updateCommitGraph()
+
+        let commits = repository.commitGraph.commits.prefix(30).map { commit in
+            makeCommitSnapshot(commit)
+        }
+        let selectedCommit = commits.first(where: { $0.oid == selectedCommitOID }) ?? commits.first
+        let staged = makeDiffSnapshots(repository.status.stagedChanges)
+        let unstaged = makeDiffSnapshots(repository.status.unstagedChanges)
+        let remotes = repository.getRemotes().map {
+            GitRemoteSnapshot(name: $0.name, url: $0.url)
+        }
+
+        var selectedCommitDiff: [GitFileSnapshot] = []
+        if let selectedCommit,
+           let sourceCommit = repository.commitGraph.commits.first(where: {
+               $0.oid.description() == selectedCommit.oid
+           }),
+           let parent = sourceCommit.parents.first {
+            let diffReceiver = GitDiff()
+            repository.diff(parent, sourceCommit, diffReceiver)
+            selectedCommitDiff = makeDiffSnapshots(diffReceiver)
+        }
+
+        return GitRepoSnapshot(
+            path: path,
+            exists: true,
+            currentBranch: repository.status.currentBranch,
+            repositoryState: String(describing: repository.status.state),
+            remotes: remotes,
+            commits: commits,
+            stagedChanges: staged,
+            unstagedChanges: unstaged,
+            selectedCommit: selectedCommit,
+            selectedCommitDiff: selectedCommitDiff,
+            refreshedAt: timestampFormatter.string(from: Date()),
+            error: nil
+        )
+    }
+
+    private static func makeCommitSnapshot(_ commit: GitCommit) -> GitCommitSnapshot {
+        GitCommitSnapshot(
+            oid: commit.oid.description(),
+            shortOID: commit.oid.shortDescription,
+            summary: commit.summary,
+            author: "\(commit.author.name) <\(commit.author.email)>",
+            time: commitDateFormatter.string(from: commit.time),
+            refs: commit.refs.map(\.shorthand)
+        )
+    }
+
+    private static func makeDiffSnapshots(_ diffReceiver: GitDiff) -> [GitFileSnapshot] {
+        diffReceiver.changes.deltas.map { delta in
+            GitFileSnapshot(
+                path: delta.path,
+                hunks: delta.hunks.map { hunk in
+                    GitHunkSnapshot(
+                        header: hunk.header,
+                        lines: hunk.lines.map {
+                            GitLineSnapshot(kind: $0.kind, text: $0.textTrimmed)
+                        }
+                    )
+                }
+            )
+        }
+    }
+    #endif
 }
 
 struct ContentView: View {
