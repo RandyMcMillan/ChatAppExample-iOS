@@ -9,6 +9,7 @@ The first pass includes:
 - TCP + Noise + Yamux
 - mDNS discovery
 - KadDHT / DCUtR wiring
+- a local git repository viewer backed by `Git`
 
 Run it with:
 

@@ -558,6 +558,8 @@ struct ContentView: View {
                 discoveryPanel
             case .catalog:
                 catalogPanel
+            case .gitRepo:
+                gitRepoPanel
         }
     }
 
@@ -616,6 +618,110 @@ struct ContentView: View {
                     )
                 )
                 Button("Queue ping") { model.sendLocalPing() }
+            }
+        }
+        .padding(12)
+    }
+
+    var gitRepoPanel: some View {
+        let selectedCommit = model.gitCommits.first(where: { $0.oid == model.gitSelectedCommitOID })
+
+        return VStack(alignment: .leading, spacing: 10) {
+            Text("Git Repo Viewer").font(.headline)
+            TextField(
+                "Repository path",
+                text: Binding(
+                    get: { model.gitRepositoryPath },
+                    set: { model.gitRepositoryPath = $0 }
+                )
+            )
+            HStack {
+                Button("Use workspace root") {
+                    model.useWorkspaceRepositoryRoot()
+                }
+                Button("Refresh") {
+                    model.refreshGitRepository()
+                }
+                Spacer()
+                Text(model.gitIsLoading ? "Loading..." : "Ready")
+            }
+            HStack {
+                Text("Repository: \(model.gitHasRepository ? "found" : "missing")")
+                Spacer()
+                Text("Branch: \(model.gitCurrentBranch.isEmpty ? "unknown" : model.gitCurrentBranch)")
+                Spacer()
+                Text("State: \(model.gitRepositoryState.isEmpty ? "unknown" : model.gitRepositoryState)")
+            }
+            if let lastError = model.gitLastError {
+                Text(lastError).foregroundColor(.red)
+            }
+            if !model.gitRemotes.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Remotes").font(.headline)
+                    ForEach(model.gitRemotes) { remote in
+                        Text("\(remote.name): \(remote.url)")
+                            .font(.caption)
+                    }
+                }
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Commits").font(.headline)
+                ForEach(model.gitCommits) { commit in
+                    Button(commit.shortOID + "  " + commit.summary) {
+                        model.selectGitCommit(commit.oid)
+                    }
+                    Text("\(commit.author) • \(commit.time)")
+                        .font(.caption)
+                    if !commit.refs.isEmpty {
+                        Text(commit.refs.joined(separator: ", "))
+                            .font(.caption)
+                    }
+                }
+            }
+            if let selectedCommit {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Selected commit").font(.headline)
+                    Text(selectedCommit.oid).font(.caption.monospaced())
+                    Text(selectedCommit.summary)
+                    if !selectedCommit.refs.isEmpty {
+                        Text("Refs: \(selectedCommit.refs.joined(separator: ", "))")
+                            .font(.caption)
+                    }
+                }
+            }
+            diffSection(title: "Staged changes", files: model.gitStagedChanges)
+            diffSection(title: "Unstaged changes", files: model.gitUnstagedChanges)
+            diffSection(title: "Selected commit diff", files: model.gitSelectedCommitDiff)
+            Text("Last refreshed: \(model.gitLastRefreshed)")
+                .font(.caption)
+        }
+        .padding(12)
+    }
+
+    func diffSection(title: String, files: [GitFileSnapshot]) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title).font(.headline)
+            if files.isEmpty {
+                Text("No changes")
+                    .font(.caption)
+            }
+            ForEach(files) { file in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(file.path)
+                        .font(.body)
+                        .fontWeight(.bold)
+                    ForEach(file.hunks) { hunk in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(hunk.header).font(.caption.monospaced())
+                            ForEach(hunk.lines) { line in
+                                Text("\(line.kind) \(line.text)")
+                                    .font(.caption.monospaced())
+                            }
+                        }
+                        .padding(.leading, 8)
+                    }
+                }
+                .padding(.vertical, 4)
             }
         }
         .padding(12)
