@@ -70,6 +70,27 @@ struct PeerSummary: Identifiable, Hashable {
     var id: String { peerID }
 }
 
+struct RepoSnapshotRequest: Codable, Sendable {
+    let repositoryName: String
+}
+
+struct RepoSnapshotFile: Codable, Identifiable, Hashable, Sendable {
+    var id: String { path }
+
+    let path: String
+    let contents: Data
+}
+
+struct RepoSnapshot: Codable, Hashable, Sendable {
+    let repositoryName: String
+    let createdAt: TimeInterval
+    let files: [RepoSnapshotFile]
+}
+
+private struct PeerIDReference: Codable {
+    let id: String
+}
+
 @MainActor
 final class P2PService: ObservableObject {
     private enum RuntimeProfile: String {
@@ -138,7 +159,7 @@ final class P2PService: ObservableObject {
 
         let announcement = RepoAnnouncement(
             senderPeerID: peerIDString,
-            cloneURL: remoteRepoLocation,
+            cloneURL: "p2p://\(peerIDString)\(Self.repoSnapshotProtocol)",
             repositoryName: currentRepositoryName,
             listenAddresses: listenAddresses,
             timestamp: Date().timeIntervalSince1970
@@ -155,10 +176,10 @@ final class P2PService: ObservableObject {
     }
 
     func clone(announcement: RepoAnnouncement) {
-        log("Cloning repo from \(announcement.senderPeerID)")
-        repository.clone(announcement.cloneURL)
-        broadcastCurrentRepo()
-        refreshPeers()
+        log("Cloning repo from peer \(announcement.senderPeerID)")
+        Task {
+            await self.cloneRepo(from: announcement)
+        }
     }
 
     func refreshPeers() {
@@ -189,6 +210,7 @@ final class P2PService: ObservableObject {
 
         let app = Self.makeApplication(peerID: peerID)
         self.app = app
+        self.configureRepoSnapshotRoute(app)
         self.configurePubSub(app)
         self.startPeerRefreshLoop(with: app)
 
@@ -382,6 +404,39 @@ final class P2PService: ObservableObject {
         log("Subscribed to repo broadcasts")
     }
 
+    private func configureRepoSnapshotRoute(_ app: Application) {
+        app.group("mini-git") { routes in
+            routes.on("repo-snapshot", "1.0.0") { [weak self] req -> Response<Data> in
+                guard let self else { return .close }
+
+                switch req.event {
+                case .ready:
+                    self.log("Repo snapshot request ready")
+                    return .stayOpen
+
+                case .data:
+                    do {
+                        let snapshot = try self.makeRepoSnapshot()
+                        self.log("Serving repo snapshot with \(snapshot.files.count) files")
+                        return .respondThenClose(try JSONEncoder().encode(snapshot))
+                    } catch {
+                        req.logger.error("Repo snapshot failed: \(error.localizedDescription)")
+                        self.log("Repo snapshot failed: \(error.localizedDescription)")
+                        return .close
+                    }
+
+                case .closed:
+                    return .close
+
+                case .error(let error):
+                    req.logger.error("Repo snapshot stream error: \(error.localizedDescription)")
+                    self.log("Repo snapshot stream error: \(error.localizedDescription)")
+                    return .close
+                }
+            }
+        }
+    }
+
     private func refreshPeers(using app: Application) async {
         do {
             let peerIDs = try await app.peers.getPeers(supportingProtocol: Self.gossipsubProtocol).get()
@@ -408,10 +463,96 @@ final class P2PService: ObservableObject {
                 self.log("Peer refresh failed: \(error.localizedDescription)")
             }
         }
+
+        private func cloneRepo(from announcement: RepoAnnouncement) async {
+            guard let app else { return }
+
+            do {
+                let peerID = try self.peerID(from: announcement.senderPeerID)
+                let peerInfo = PeerInfo(
+                    peer: peerID,
+                    addresses: announcement.listenAddresses.compactMap { try? Multiaddr($0) }
+                )
+                try await app.peers.add(peerInfo: peerInfo)
+
+                let request = try JSONEncoder().encode(RepoSnapshotRequest(repositoryName: announcement.repositoryName))
+                let response = try await app.newRequest(
+                    to: peerID,
+                    forProtocol: Self.repoSnapshotProtocol,
+                    withRequest: request
+                ).get()
+                let snapshot = try JSONDecoder().decode(RepoSnapshot.self, from: response)
+                try self.restoreRepo(snapshot, to: localRepoLocation)
+
+                repository.open()
+                repository.updateCommitGraph()
+                broadcastCurrentRepo()
+                refreshPeers()
+                log("Cloned repo snapshot from \(announcement.senderPeerID)")
+            } catch {
+                lastError = error.localizedDescription
+                log("Clone failed: \(error.localizedDescription)")
+            }
+        }
+
+        private func makeRepoSnapshot() throws -> RepoSnapshot {
+            guard FileManager.default.fileExists(atPath: localRepoLocation.path) else {
+                throw NSError(domain: "MiniGitSample", code: 404, userInfo: [NSLocalizedDescriptionKey: "No local repository to serve"])
+            }
+
+            var files: [RepoSnapshotFile] = []
+            let enumerator = FileManager.default.enumerator(
+                at: localRepoLocation,
+                includingPropertiesForKeys: [.isDirectoryKey],
+                options: [],
+                errorHandler: { url, error in
+                    self.log("Skipping \(url.lastPathComponent): \(error.localizedDescription)")
+                    return true
+                }
+            )
+
+            while let item = enumerator?.nextObject() as? URL {
+                let values = try item.resourceValues(forKeys: [.isDirectoryKey])
+                guard values.isDirectory != true else { continue }
+                let data = try Data(contentsOf: item)
+                let relativePath = item.path.replacingOccurrences(
+                    of: localRepoLocation.path + "/",
+                    with: ""
+                )
+                files.append(RepoSnapshotFile(path: relativePath, contents: data))
+            }
+
+            return RepoSnapshot(
+                repositoryName: currentRepositoryName,
+                createdAt: Date().timeIntervalSince1970,
+                files: files
+            )
+        }
+
+        private func restoreRepo(_ snapshot: RepoSnapshot, to destination: URL) throws {
+            let fileManager = FileManager.default
+            if fileManager.fileExists(atPath: destination.path) {
+                try fileManager.removeItem(at: destination)
+            }
+
+            try fileManager.createDirectory(at: destination, withIntermediateDirectories: true)
+
+            for file in snapshot.files {
+                let fileURL = destination.appendingPathComponent(file.path)
+                let parent = fileURL.deletingLastPathComponent()
+                try fileManager.createDirectory(at: parent, withIntermediateDirectories: true)
+                try file.contents.write(to: fileURL, options: .atomic)
+            }
+        }
+
+        private func peerID(from string: String) throws -> PeerID {
+            try PeerID(fromJSON: JSONEncoder().encode(PeerIDReference(id: string)))
+        }
     }
 
     private static let repoTopic = "mini-git/repo-announcements"
     private static let gossipsubProtocol = SemVerProtocol("/meshsub/1.0.0")!
+    private static let repoSnapshotProtocol = "/mini-git/repo-snapshot/1.0.0"
 
     private static let timestampFormatter: DateFormatter = {
         let formatter = DateFormatter()
