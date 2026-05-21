@@ -10,6 +10,9 @@
 
 #include <libp2p/outcome/outcome.hpp>
 
+#include <string>
+#include <type_traits>
+
 /**
  * Boost 1.87.0 (1.86.0?) removed overloads with `error_code` and only kept
  * throwing overload.
