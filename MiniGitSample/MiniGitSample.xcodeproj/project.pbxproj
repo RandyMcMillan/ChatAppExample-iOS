@@ -10,10 +10,10 @@
 		4BA7DCC72FBE429400B507EE /* LibP2P in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCC82FBE429400B507EE /* LibP2P */; };
 		4BA7DCCB2FBE429400B507EF /* LibP2PPubSub in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCF2FBE429400B507EF /* LibP2PPubSub */; };
 		4BA7DCC92FBE429400B507EE /* LibP2PNoise in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCA2FBE429400B507EE /* LibP2PNoise */; };
-		4BA7DCCC2FBE429400B507EE /* LibP2PYAMUX in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCC2FBE429400B507EE /* LibP2PYAMUX */; };
-		4BA7DCCE2FBE429400B507EE /* LibP2PDCUtR in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCE2FBE429400B507EE /* LibP2PDCUtR */; };
-		4BA7DCD02FBE429400B507EE /* LibP2PMDNS in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCD02FBE429400B507EE /* LibP2PMDNS */; };
-		4BA7DCD22FBE429400B507EE /* LibP2PKadDHT in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCD22FBE429400B507EE /* LibP2PKadDHT */; };
+		4BA7DCCC2FBE429400B507F1 /* LibP2PYAMUX in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCC2FBE429400B507EE /* LibP2PYAMUX */; };
+		4BA7DCCE2FBE429400B507F2 /* LibP2PDCUtR in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCCE2FBE429400B507EE /* LibP2PDCUtR */; };
+		4BA7DCD02FBE429400B507F3 /* LibP2PMDNS in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCD02FBE429400B507EE /* LibP2PMDNS */; };
+		4BA7DCD22FBE429400B507F4 /* LibP2PKadDHT in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCD22FBE429400B507EE /* LibP2PKadDHT */; };
 		4B3365C72FBE18FE00C399AA /* GnostrGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D62FBE040B0056F790 /* GnostrGit */; settings = {ATTRIBUTES = (Weak, ); }; };
 		4B3365C82FBE18FE00C399AA /* XGit in Frameworks */ = {isa = PBXBuildFile; productRef = 4B70D7D82FBE040B0056F790 /* XGit */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B701035627CD0B6900D43034 /* MiniGitSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035527CD0B6900D43034 /* MiniGitSampleApp.swift */; };
@@ -37,10 +37,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BA7DCD22FBE429400B507EE /* LibP2PKadDHT in Frameworks */,
-				4BA7DCD02FBE429400B507EE /* LibP2PMDNS in Frameworks */,
-				4BA7DCCE2FBE429400B507EE /* LibP2PDCUtR in Frameworks */,
-				4BA7DCCC2FBE429400B507EE /* LibP2PYAMUX in Frameworks */,
+				4BA7DCD22FBE429400B507F4 /* LibP2PKadDHT in Frameworks */,
+				4BA7DCD02FBE429400B507F3 /* LibP2PMDNS in Frameworks */,
+				4BA7DCCE2FBE429400B507F2 /* LibP2PDCUtR in Frameworks */,
+				4BA7DCCC2FBE429400B507F1 /* LibP2PYAMUX in Frameworks */,
 				4BA7DCC92FBE429400B507EE /* LibP2PNoise in Frameworks */,
 				4BA7DCCB2FBE429400B507EF /* LibP2PPubSub in Frameworks */,
 				4BA7DCC72FBE429400B507EE /* LibP2P in Frameworks */,
