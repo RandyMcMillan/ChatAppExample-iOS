@@ -2,9 +2,6 @@ import DefaultBackend
 import Foundation
 import SwiftCrossUI
 
-#if canImport(SwiftBundlerRuntime)
-    import SwiftBundlerRuntime
-#endif
 
 enum SubjectArea: String, CaseIterable, Identifiable {
     var id: Self { self }

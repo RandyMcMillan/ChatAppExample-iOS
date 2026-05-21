@@ -1,10 +1,6 @@
 import DefaultBackend
 import SwiftCrossUI
 
-#if canImport(SwiftBundlerRuntime)
-    import SwiftBundlerRuntime
-#endif
-
 @main
 @HotReloadable
 struct CounterApp: App {

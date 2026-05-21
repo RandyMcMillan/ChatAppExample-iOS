@@ -7,10 +7,6 @@ import SwiftCrossUI
     import UWP
 #endif
 
-#if canImport(SwiftBundlerRuntime)
-    import SwiftBundlerRuntime
-#endif
-
 @main
 @HotReloadable
 struct CounterApp: App {

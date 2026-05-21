@@ -2,9 +2,6 @@ import DefaultBackend
 import Foundation
 import SwiftCrossUI
 
-#if canImport(SwiftBundlerRuntime)
-    import SwiftBundlerRuntime
-#endif
 
 struct Person {
     var name: String

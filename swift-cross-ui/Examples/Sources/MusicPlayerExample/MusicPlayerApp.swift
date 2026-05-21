@@ -3,9 +3,6 @@ import Foundation
 import SwiftCrossUI
 import MiniAudio
 
-#if canImport(SwiftBundlerRuntime)
-    import SwiftBundlerRuntime
-#endif
 
 @main
 @HotReloadable

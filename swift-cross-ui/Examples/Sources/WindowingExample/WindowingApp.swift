@@ -2,10 +2,6 @@ import DefaultBackend
 import Foundation
 import SwiftCrossUI
 
-#if canImport(SwiftBundlerRuntime)
-    import SwiftBundlerRuntime
-#endif
-
 @available(tvOS, unavailable)
 struct FileDialogDemo: View {
     @State var selectedFile: URL? = nil
