@@ -1,0 +1,67 @@
+{
+  "$schema" : "https:\/\/json-schema.org\/draft\/2020-12\/schema",
+  "description" : "A Swift Bundler configuration file",
+  "properties" : {
+    "apps" : {
+      "description" : "The configuration for each app in the package (packages can contain multiple apps). Maps app name to app configuration.",
+      "patternProperties" : {
+        "^.*$" : {
+          "properties" : {
+            "category" : {
+              "description" : "The app's category. See [Apple's documentation](https:\/\/developer.apple.com\/documentation\/bundleresources\/information_property_list\/lsapplicationcategorytype) for more details.",
+              "type" : "string"
+            },
+            "icon" : {
+              "description" : "The path to the app's icon.",
+              "type" : "string"
+            },
+            "identifier" : {
+              "description" : "The app's identifier (e.g. `com.example.ExampleApp`).",
+              "type" : "string"
+            },
+            "plist" : {
+              "description" : "A dictionary containing extra entries to add to the app's `Info.plist` file.",
+              "patternProperties" : {
+                "^.*$" : {
+                  "type" : [
+                    "number",
+                    "string",
+                    "object",
+                    "array",
+                    "boolean"
+                  ]
+                }
+              },
+              "type" : "object"
+            },
+            "product" : {
+              "description" : "The name of the executable product.",
+              "type" : "string"
+            },
+            "version" : {
+              "description" : "The app's current version.",
+              "type" : "string"
+            }
+          },
+          "required" : [
+            "identifier",
+            "product",
+            "version"
+          ],
+          "type" : "object"
+        }
+      },
+      "type" : "object"
+    },
+    "format_version" : {
+      "description" : "The configuration format version.",
+      "type" : "integer"
+    }
+  },
+  "required" : [
+    "format_version",
+    "apps"
+  ],
+  "title" : "Bundler.toml",
+  "type" : "object"
+}
