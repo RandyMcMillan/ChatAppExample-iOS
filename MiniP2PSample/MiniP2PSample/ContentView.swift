@@ -5,8 +5,8 @@
 //  Created by Lightech on 10/24/2048.
 //
 
-import Crypto
 import Foundation
+import CryptoKit
 import LibP2P
 import SwiftUI
 #if os(iOS)
