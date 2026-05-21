@@ -321,14 +321,15 @@ final class P2PService: ObservableObject {
                 }
 
                 Task { @MainActor in
-                    guard announcement.senderPeerID != self?.peerIDString else {
-                        self?.log("Saw own repo broadcast")
+                    guard let self else { return }
+                    guard announcement.senderPeerID != self.peerIDString else {
+                        self.log("Saw own repo broadcast")
                         return
                     }
-                    self?.repoAnnouncements.removeAll { $0.id == announcement.id }
-                    self?.repoAnnouncements.insert(announcement, at: 0)
-                    self?.repoAnnouncements = Array((self?.repoAnnouncements ?? []).prefix(10))
-                    self?.log("Discovered repo: \(announcement.repositoryName) from \(announcement.senderPeerID)")
+                    self.repoAnnouncements.removeAll { $0.id == announcement.id }
+                    self.repoAnnouncements.insert(announcement, at: 0)
+                    self.repoAnnouncements = Array(self.repoAnnouncements.prefix(10))
+                    self.log("Discovered repo: \(announcement.repositoryName) from \(announcement.senderPeerID)")
                 }
             case .error(let error):
                 Task { @MainActor in
