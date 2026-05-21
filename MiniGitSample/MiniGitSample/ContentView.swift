@@ -365,148 +365,31 @@ struct ContentView: View {
     @StateObject private var p2p = P2PService()
 
     var body: some View {
-        VStack {
-            Text("On Mac Catalyst, you should be able to find the cloned repo in `~/Documents/\(localRepoLocation.lastPathComponent)/`.").italic()
-
-            Button("Clone remote Git repo") {
-                repo.clone(remoteRepoLocation)
-                // We want to do repo.updateCommitGraph() but this will be invoked
-                // on main thread so likely before clone finishes in background thread.
-                // We don't want to do another callback so maybe await/async.
-            }
-
-            if remoteProgress.inProgress {
-                ProgressView(remoteProgress.operation)
-            }
-
-            if repo.hasRepo {
-                // Hide the buttons if there are operations in progress
-                if !remoteProgress.inProgress {
-                    Button("Push to origin") {
-                        let allRemotes = repo.getRemotes()     // get the list of remotes
-                        let remoteOrigin = allRemotes[0]       // assuming you have only one remote i.e. origin
-                        repo.push(remoteOrigin, false)         // push all branches to the corresponding one in origin
-                    }
-
-                    Button("Fetch from origin") {
-                        let allRemotes = repo.getRemotes()
-                        let remoteOrigin = allRemotes[0]
-                        repo.fetch(remoteOrigin)
-                    }
-
-                    Button("Merge origin/master into current branch") {
-                        repo.updateCommitGraph()
-                        for c in repo.commitGraph.commits {
-                            for ref in c.refs {
-                                if ref.name == "refs/remotes/origin/master" {
-                                    print("Found", ref.name)
-                                     repo.merge([ref]) // merge the changes in the remote repo "origin/master" into the local "master"
-                                }
-                            }
-                        }
+        NavigationView {
+            List {
+                Section("Git") {
+                    NavigationLink(destination: repositoryDetail) {
+                        Label("Repository", systemImage: "folder")
                     }
                 }
 
-                // At the moment, clone will update hasRepo after completion. So this
-                // has the effect of automatically update the UI if the clone is successful.
-                List(commitGraph.commits) { commit in
-                    VStack(alignment: .leading) {
-                        Text(commit.message).bold()
-                        Text(commit.author.name)
+                Section("P2P") {
+                    NavigationLink(destination: repoBroadcastsDetail) {
+                        Label("Repo broadcasts", systemImage: "dot.radiowaves.left.and.right")
                     }
-                }
-                .listStyle(.plain)
-            }
-
-            Divider()
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Swift p2p network").font(.headline)
-                Text("Runtime profile: \(p2p.runtimeProfile)")
-                Text("Peer ID: \(p2p.peerIDString)")
-                    .font(.caption.monospaced())
-                    .textSelection(.enabled)
-                Text("Listen port: \(p2p.listenPort)")
-                Text("State: \(p2p.stateLabel)")
-
-                HStack {
-                    Button("Start p2p node") {
-                        p2p.start()
+                    NavigationLink(destination: networkActivityDetail) {
+                        Label("Network activity", systemImage: "waveform")
                     }
-                    Button("Stop p2p node") {
-                        p2p.stop()
+                    NavigationLink(destination: listeningAddressesDetail) {
+                        Label("Listening addresses", systemImage: "network")
                     }
-                    .disabled(!p2p.isRunning)
-                }
-
-                if let lastError = p2p.lastError {
-                    Text("Last error: \(lastError)")
-                        .foregroundStyle(.red)
-                }
-
-                HStack {
-                    Text("Repo broadcasts").font(.headline)
-                    Spacer()
-                    Button("Broadcast now") {
-                        p2p.broadcastCurrentRepo()
-                    }
-                }
-
-                if p2p.repoAnnouncements.isEmpty {
-                    Text("No repo broadcasts yet")
-                        .foregroundStyle(.secondary)
-                } else {
-                    List(p2p.repoAnnouncements) { announcement in
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(announcement.repositoryName).bold()
-                            Text(announcement.cloneURL)
-                                .font(.caption.monospaced())
-                                .textSelection(.enabled)
-                            Text("From: \(announcement.senderPeerID)")
-                                .font(.caption2)
-                            Text(announcement.listenAddresses.joined(separator: ", "))
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                            Button("Clone announced repo") {
-                                p2p.clone(announcement: announcement)
-                            }
-                        }
-                    }
-                    .frame(minHeight: 180)
-                }
-
-                HStack {
-                    Text("Network activity").font(.headline)
-                    Spacer()
-                    Button("Clear") {
-                        p2p.clearActivityLog()
-                    }
-                }
-
-                if p2p.activityLog.isEmpty {
-                    Text("No activity yet")
-                        .foregroundStyle(.secondary)
-                } else {
-                    List(p2p.activityLog.indices, id: \.self) { index in
-                        Text(p2p.activityLog[index])
-                            .font(.caption.monospaced())
-                    }
-                    .frame(minHeight: 180)
-                }
-
-                Text("Listening addresses").font(.subheadline.bold())
-                if p2p.listenAddresses.isEmpty {
-                    Text("No addresses yet")
-                        .foregroundStyle(.secondary)
-                } else {
-                    List(p2p.listenAddresses, id: \.self) { address in
-                        Text(address)
-                            .font(.caption.monospaced())
-                    }
-                    .frame(minHeight: 140)
                 }
             }
+            .listStyle(.sidebar)
+
+            repositoryDetail
         }
+        .navigationViewStyle(DoubleColumnNavigationViewStyle())
         .padding(5)
         .onAppear {
             if !credentialAdded {
@@ -520,6 +403,157 @@ struct ContentView: View {
         }
         .onDisappear {
             p2p.stop()
+        }
+    }
+
+    private var repositoryDetail: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("MiniGitSample").font(.largeTitle.bold())
+            Text("On Mac Catalyst, you should be able to find the cloned repo in `~/Documents/\(localRepoLocation.lastPathComponent)/`.").italic()
+
+            Button("Clone remote Git repo") {
+                repo.clone(remoteRepoLocation)
+            }
+
+            if remoteProgress.inProgress {
+                ProgressView(remoteProgress.operation)
+            }
+
+            if repo.hasRepo {
+                if !remoteProgress.inProgress {
+                    HStack {
+                        Button("Push to origin") {
+                            let allRemotes = repo.getRemotes()
+                            let remoteOrigin = allRemotes[0]
+                            repo.push(remoteOrigin, false)
+                        }
+
+                        Button("Fetch from origin") {
+                            let allRemotes = repo.getRemotes()
+                            let remoteOrigin = allRemotes[0]
+                            repo.fetch(remoteOrigin)
+                        }
+
+                        Button("Merge origin/master into current branch") {
+                            repo.updateCommitGraph()
+                            for c in repo.commitGraph.commits {
+                                for ref in c.refs where ref.name == "refs/remotes/origin/master" {
+                                    repo.merge([ref])
+                                }
+                            }
+                        }
+                    }
+                }
+
+                List(commitGraph.commits) { commit in
+                    VStack(alignment: .leading) {
+                        Text(commit.message).bold()
+                        Text(commit.author.name)
+                    }
+                }
+                .listStyle(.plain)
+            } else {
+                Text("No repository cloned yet.")
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var repoBroadcastsDetail: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Repo broadcasts").font(.largeTitle.bold())
+            Text("The current repo is announced over gossipsub so peers can discover clone sources.")
+
+            HStack {
+                Text("Swift p2p network").font(.headline)
+                Spacer()
+                Button("Broadcast now") {
+                    p2p.broadcastCurrentRepo()
+                }
+            }
+
+            HStack {
+                Text("State: \(p2p.stateLabel)")
+                Spacer()
+                Button("Start p2p node") {
+                    p2p.start()
+                }
+                Button("Stop p2p node") {
+                    p2p.stop()
+                }
+                .disabled(!p2p.isRunning)
+            }
+
+            if let lastError = p2p.lastError {
+                Text("Last error: \(lastError)")
+                    .foregroundStyle(.red)
+            }
+
+            if p2p.repoAnnouncements.isEmpty {
+                Text("No repo broadcasts yet")
+                    .foregroundStyle(.secondary)
+            } else {
+                List(p2p.repoAnnouncements) { announcement in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(announcement.repositoryName).bold()
+                        Text(announcement.cloneURL)
+                            .font(.caption.monospaced())
+                            .textSelection(.enabled)
+                        Text("From: \(announcement.senderPeerID)")
+                            .font(.caption2)
+                        Text(announcement.listenAddresses.joined(separator: ", "))
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        Button("Clone announced repo") {
+                            p2p.clone(announcement: announcement)
+                        }
+                    }
+                }
+                .frame(minHeight: 240)
+            }
+        }
+    }
+
+    private var networkActivityDetail: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Network activity").font(.largeTitle.bold())
+                Spacer()
+                Button("Clear") {
+                    p2p.clearActivityLog()
+                }
+            }
+
+            if p2p.activityLog.isEmpty {
+                Text("No activity yet")
+                    .foregroundStyle(.secondary)
+            } else {
+                List(p2p.activityLog.indices, id: \.self) { index in
+                    Text(p2p.activityLog[index])
+                        .font(.caption.monospaced())
+                }
+            }
+        }
+    }
+
+    private var listeningAddressesDetail: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Listening addresses").font(.largeTitle.bold())
+            Text("Runtime profile: \(p2p.runtimeProfile)")
+            Text("Peer ID: \(p2p.peerIDString)")
+                .font(.caption.monospaced())
+                .textSelection(.enabled)
+            Text("Listen port: \(p2p.listenPort)")
+
+            if p2p.listenAddresses.isEmpty {
+                Text("No addresses yet")
+                    .foregroundStyle(.secondary)
+            } else {
+                List(p2p.listenAddresses, id: \.self) { address in
+                    Text(address)
+                        .font(.caption.monospaced())
+                }
+            }
         }
     }
 }
