@@ -19,7 +19,7 @@
  */
 namespace boost_outcome {
   template <typename F>
-  outcome::result<std::invoke_result_t<F>> tryCatch(const F &f) {
+  libp2p::outcome::result<std::invoke_result_t<F>> tryCatch(const F &f) {
     try {
       return f();
     } catch (const boost::system::system_error &e) {
@@ -27,7 +27,7 @@ namespace boost_outcome {
     }
   }
 
-  outcome::result<std::string> to_string(const auto &x) {
+  libp2p::outcome::result<std::string> to_string(const auto &x) {
     return tryCatch([&] { return x.to_string(); });
   }
 }  // namespace boost_outcome
