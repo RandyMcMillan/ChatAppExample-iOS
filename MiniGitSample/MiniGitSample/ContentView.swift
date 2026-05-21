@@ -384,10 +384,12 @@ final class P2PService: ObservableObject {
 
     private func refreshPeers(using app: Application) async {
         do {
-            let peerIDs = try await app.peers.getPeerIDs(supportingProtocol: Self.gossipsubProtocol).get()
+            let peerIDs = try await app.peers.getPeers(supportingProtocol: Self.gossipsubProtocol).get()
             var rows: [PeerSummary] = []
-            for peerID in peerIDs.sorted(by: { $0.b58String < $1.b58String }) {
-                let addresses = try await app.peers.getAddresses(forPeer: peerID).get()
+            for peerIDString in peerIDs.sorted() {
+                let peerInfo = try await app.peers.getPeerInfo(byID: peerIDString).get()
+                let peerID = peerInfo.peer
+                let addresses = peerInfo.addresses
                 let protocols = try await app.peers.getProtocols(forPeer: peerID).get()
                 rows.append(
                     PeerSummary(
