@@ -141,9 +141,8 @@ final class P2PService: ObservableObject {
 
     func clone(announcement: RepoAnnouncement) {
         log("Cloning repo from \(announcement.senderPeerID)")
-        repoAnnouncements.removeAll { $0.id == announcement.id }
-        repoAnnouncements.insert(announcement, at: 0)
-        repoAnnouncements = Array(repoAnnouncements.prefix(10))
+        repo.clone(announcement.cloneURL)
+        broadcastCurrentRepo()
     }
 
     func start() {
@@ -437,6 +436,37 @@ struct ContentView: View {
                 if let lastError = p2p.lastError {
                     Text("Last error: \(lastError)")
                         .foregroundStyle(.red)
+                }
+
+                HStack {
+                    Text("Repo broadcasts").font(.headline)
+                    Spacer()
+                    Button("Broadcast now") {
+                        p2p.broadcastCurrentRepo()
+                    }
+                }
+
+                if p2p.repoAnnouncements.isEmpty {
+                    Text("No repo broadcasts yet")
+                        .foregroundStyle(.secondary)
+                } else {
+                    List(p2p.repoAnnouncements) { announcement in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(announcement.repositoryName).bold()
+                            Text(announcement.cloneURL)
+                                .font(.caption.monospaced())
+                                .textSelection(.enabled)
+                            Text("From: \(announcement.senderPeerID)")
+                                .font(.caption2)
+                            Text(announcement.listenAddresses.joined(separator: ", "))
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                            Button("Clone announced repo") {
+                                p2p.clone(announcement: announcement)
+                            }
+                        }
+                    }
+                    .frame(minHeight: 180)
                 }
 
                 HStack {
