@@ -12,7 +12,7 @@
 
 #import "Repository.h"
 
-#import <Clibgit2/git2.h>
+@import Clibgit2;
 
 #import "internal/StringHelpers.mm"
 
