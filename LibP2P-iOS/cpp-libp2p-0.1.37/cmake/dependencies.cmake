@@ -29,8 +29,10 @@ find_package(OpenSSL CONFIG REQUIRED)
 hunter_add_package(libsecp256k1)
 find_package(libsecp256k1 CONFIG REQUIRED)
 
-hunter_add_package(lsquic)
-find_package(lsquic CONFIG REQUIRED)
+if (LIBP2P_ENABLE_QUIC)
+  hunter_add_package(lsquic)
+  find_package(lsquic CONFIG REQUIRED)
+endif ()
 
 # https://developers.google.com/protocol-buffers/
 hunter_add_package(Protobuf)
