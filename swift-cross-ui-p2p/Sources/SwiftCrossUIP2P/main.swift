@@ -15,11 +15,9 @@ import SwiftCrossUI
 
 @main
 struct SwiftCrossUIP2PApp: App {
-    @State var viewModel = P2PDemoViewModel()
-
     var body: some Scene {
         WindowGroup("SwiftCrossUI P2P") {
-            ContentView(model: viewModel)
+            ContentView()
         }
         .defaultSize(width: 980, height: 760)
     }
@@ -262,11 +260,7 @@ final class P2PDemoViewModel {
 }
 
 struct ContentView: View {
-    @State var model: P2PDemoViewModel
-
-    init(model: P2PDemoViewModel) {
-        _model = State(initialValue: model)
-    }
+    @State var model = P2PDemoViewModel()
 
     var body: some View {
         ScrollView {
@@ -289,7 +283,7 @@ struct ContentView: View {
             Text("Cross-platform kitchen sink for libp2p demos")
             Text("Peer ID: \(model.peerIDString)")
                 .font(.caption.monospaced())
-                .textSelection(.enabled)
+                .textSelectionEnabled()
         }
     }
 
@@ -414,7 +408,7 @@ struct ContentView: View {
             }
             if let lastError = model.lastError {
                 Text("Last error: \(lastError)")
-                    .foregroundStyle(.red)
+                    .foregroundColor(.red)
             }
         }
         .padding(12)
