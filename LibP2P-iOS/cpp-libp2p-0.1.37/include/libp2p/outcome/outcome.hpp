@@ -72,14 +72,12 @@ namespace libp2p::outcome {
       return category;
     }
   };
-}  // namespace libp2p::outcome
 
-template <libp2p::outcome::IsEnumErrorCode E>
-struct std::is_error_code_enum<E> : std::true_type {};
-
-namespace outcome {
   template <class R>
   using result = boost::outcome_v2::result<R>;
   using boost::outcome_v2::failure;
   using boost::outcome_v2::success;
-}  // namespace outcome
+}  // namespace libp2p::outcome
+
+template <libp2p::outcome::IsEnumErrorCode E>
+struct std::is_error_code_enum<E> : std::true_type {};
