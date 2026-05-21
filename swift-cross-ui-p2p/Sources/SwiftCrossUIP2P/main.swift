@@ -538,7 +538,7 @@ final class P2PDemoViewModel {
 }
 
 struct ContentView: View {
-    @State var model = P2PDemoViewModel()
+    @Environment(P2PDemoViewModel.self) var model
 
     var body: some View {
         ScrollView {
@@ -581,10 +581,7 @@ struct ContentView: View {
             Text("Demo")
             Picker(
                 of: P2PDemoViewModel.Demo.allCases,
-                selection: Binding(
-                    get: { model.selectedDemo },
-                    set: { model.selectedDemo = $0 }
-                )
+                selection: model.$selectedDemo
             )
         }
     }
@@ -670,10 +667,7 @@ struct ContentView: View {
             Text("Git Repo Viewer").font(.headline)
             TextField(
                 "Repository path",
-                text: Binding(
-                    get: { model.gitRepositoryPath },
-                    set: { model.gitRepositoryPath = $0 }
-                )
+                text: model.$gitRepositoryPath
             )
             HStack {
                 Button("Use workspace root") {
