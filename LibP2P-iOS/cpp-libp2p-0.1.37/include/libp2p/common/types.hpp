@@ -96,7 +96,7 @@ namespace libp2p {
 
   inline auto operator<=>(const SpanOfBytes auto &lhs,
                           const SpanOfBytes auto &rhs) {
-    return lexicographicalCompareThreeWay(
+    return libp2p::common::detail::lexicographicalCompareThreeWay(
         lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
   }
 
