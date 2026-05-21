@@ -6,9 +6,9 @@ import PackageDescription
 let package = Package(
     name: "swift-cross-ui-p2p",
     platforms: [
-        .macOS(.v10_15),
-        .iOS(.v13),
-        .macCatalyst(.v13),
+        .macOS(.v11),
+        .iOS(.v14),
+        .macCatalyst(.v14),
     ],
     products: [
         .executable(name: "SwiftCrossUIP2P", targets: ["SwiftCrossUIP2P"]),
@@ -21,6 +21,7 @@ let package = Package(
         .package(path: "../swift-libp2p-dcutr"),
         .package(path: "../swift-libp2p-mdns"),
         .package(path: "../swift-libp2p-kad-dht"),
+        .package(name: "GnostrGit", path: "../Git"),
     ],
     targets: [
         .executableTarget(
@@ -34,6 +35,8 @@ let package = Package(
                 .product(name: "LibP2PDCUtR", package: "swift-libp2p-dcutr"),
                 .product(name: "LibP2PMDNS", package: "swift-libp2p-mdns"),
                 .product(name: "LibP2PKadDHT", package: "swift-libp2p-kad-dht"),
+                .product(name: "GnostrGit", package: "GnostrGit"),
+                .product(name: "XGit", package: "GnostrGit"),
             ]
         ),
     ]

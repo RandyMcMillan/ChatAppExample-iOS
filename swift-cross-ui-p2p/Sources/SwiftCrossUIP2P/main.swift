@@ -7,6 +7,7 @@ import LibP2PKadDHT
 import LibP2PMDNS
 import LibP2PNoise
 import LibP2PYAMUX
+import GnostrGit
 import SwiftCrossUI
 
 #if os(iOS)
@@ -18,6 +19,55 @@ struct SwiftCrossUIP2PApp: App {
     var body: some Scene {
         WindowGroup("SwiftCrossUI P2P") {
             ContentView()
+        }
+
+        struct GitLineSnapshot: Identifiable, Hashable, Sendable {
+            var id: String { "\(kind)|\(text)" }
+            let kind: String
+            let text: String
+        }
+
+        struct GitHunkSnapshot: Identifiable, Hashable, Sendable {
+            var id: String { header }
+            let header: String
+            let lines: [GitLineSnapshot]
+        }
+
+        struct GitFileSnapshot: Identifiable, Hashable, Sendable {
+            var id: String { path }
+            let path: String
+            let hunks: [GitHunkSnapshot]
+        }
+
+        struct GitCommitSnapshot: Identifiable, Hashable, Sendable {
+            var id: String { oid }
+            let oid: String
+            let shortOID: String
+            let summary: String
+            let author: String
+            let time: String
+            let refs: [String]
+        }
+
+        struct GitRemoteSnapshot: Identifiable, Hashable, Sendable {
+            var id: String { name }
+            let name: String
+            let url: String
+        }
+
+        struct GitRepoSnapshot: Hashable, Sendable {
+            let path: String
+            let exists: Bool
+            let currentBranch: String
+            let repositoryState: String
+            let remotes: [GitRemoteSnapshot]
+            let commits: [GitCommitSnapshot]
+            let stagedChanges: [GitFileSnapshot]
+            let unstagedChanges: [GitFileSnapshot]
+            let selectedCommit: GitCommitSnapshot?
+            let selectedCommitDiff: [GitFileSnapshot]
+            let refreshedAt: String
+            let error: String?
         }
         .defaultSize(width: 980, height: 760)
     }
@@ -37,6 +87,7 @@ final class P2PDemoViewModel {
         case overview = "Overview"
         case discovery = "Discovery"
         case catalog = "Module Catalog"
+        case gitRepo = "Git Repo Viewer"
     }
 
     struct PeerSummary: Identifiable, Hashable {
@@ -52,9 +103,23 @@ final class P2PDemoViewModel {
     var activityLog: [String] = []
     var lastError: String?
     var draftMessage = "Hello from SwiftCrossUI P2P"
+    var gitRepositoryPath = Self.defaultRepositoryPath()
+    var gitIsLoading = false
+    var gitHasRepository = false
+    var gitCurrentBranch = ""
+    var gitRepositoryState = ""
+    var gitRemotes: [GitRemoteSnapshot] = []
+    var gitCommits: [GitCommitSnapshot] = []
+    var gitStagedChanges: [GitFileSnapshot] = []
+    var gitUnstagedChanges: [GitFileSnapshot] = []
+    var gitSelectedCommitOID: String?
+    var gitSelectedCommitDiff: [GitFileSnapshot] = []
+    var gitLastRefreshed = ""
+    var gitLastError: String?
 
     private var app: Application?
     private var runTask: Task<Void, Never>?
+    private var gitRefreshTask: Task<Void, Never>?
 
     let peerID: PeerID
     let runtimeProfile: String
