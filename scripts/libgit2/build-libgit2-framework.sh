@@ -243,7 +243,6 @@ function build_libpcre() {
 function build_openssl() {
 	setup_variables $1
 
-	reset_source_tree openssl-3.0.4
 	ensure_tarball openssl-3.0.4.tar.gz https://www.openssl.org/source/openssl-3.0.4.tar.gz
 	verify_sha256 openssl-3.0.4.tar.gz.sha256 openssl-3.0.4.tar.gz
 	ensure_unpacked_tarball openssl-3.0.4 openssl-3.0.4.tar.gz https://www.openssl.org/source/openssl-3.0.4.tar.gz
