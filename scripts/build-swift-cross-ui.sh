@@ -54,4 +54,4 @@ install_dependencies() {
 
 install_dependencies
 
-exec swift build --package-path "${package_path}" "$@"
+exec swift build --package-path "${package_path}" --product SwiftCrossUI "$@"
