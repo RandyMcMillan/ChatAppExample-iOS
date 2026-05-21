@@ -101,7 +101,9 @@ final class P2PService: ObservableObject {
 
         runTask = Task.detached(priority: .background) { [weak self, app] in
             do {
-                self?.log("Executing libp2p application")
+                await MainActor.run {
+                    self?.log("Executing libp2p application")
+                }
                 try await app.execute()
             } catch {
                 await MainActor.run {
@@ -262,8 +264,8 @@ struct ContentView: View {
                 Text("No activity yet")
                     .foregroundStyle(.secondary)
             } else {
-                List(service.activityLog, id: \.self) { entry in
-                    Text(entry)
+                List(service.activityLog.indices, id: \.self) { index in
+                    Text(service.activityLog[index])
                         .font(.caption.monospaced())
                 }
                 .frame(minHeight: 180)
