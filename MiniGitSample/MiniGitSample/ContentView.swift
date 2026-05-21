@@ -414,10 +414,14 @@ final class P2PService: ObservableObject {
                     self.log("Repo snapshot request ready")
                     return .stayOpen
 
-                case .data:
+                case .data(let payload):
                     do {
+                        let request = try JSONDecoder().decode(
+                            RepoSnapshotRequest.self,
+                            from: Data(payload.readableBytesView)
+                        )
                         let snapshot = try self.makeRepoSnapshot()
-                        self.log("Serving repo snapshot with \(snapshot.files.count) files")
+                        self.log("Serving repo snapshot for \(request.repositoryName) with \(snapshot.files.count) files")
                         return .respondThenClose(try JSONEncoder().encode(snapshot))
                     } catch {
                         req.logger.error("Repo snapshot failed: \(error.localizedDescription)")
@@ -463,6 +467,7 @@ final class P2PService: ObservableObject {
                 self.log("Peer refresh failed: \(error.localizedDescription)")
             }
         }
+    }
 
         private func cloneRepo(from announcement: RepoAnnouncement) async {
             guard let app else { return }
@@ -504,11 +509,7 @@ final class P2PService: ObservableObject {
             let enumerator = FileManager.default.enumerator(
                 at: localRepoLocation,
                 includingPropertiesForKeys: [.isDirectoryKey],
-                options: [],
-                errorHandler: { url, error in
-                    self.log("Skipping \(url.lastPathComponent): \(error.localizedDescription)")
-                    return true
-                }
+                options: []
             )
 
             while let item = enumerator?.nextObject() as? URL {
