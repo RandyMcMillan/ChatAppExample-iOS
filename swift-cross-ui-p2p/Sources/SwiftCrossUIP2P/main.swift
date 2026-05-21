@@ -93,6 +93,8 @@ final class P2PDemoViewModel {
         case overview = "Overview"
         case discovery = "Discovery"
         case catalog = "Module Catalog"
+        case protocolLab = "Protocol Lab"
+        case repoTopology = "Repo Topology"
         case gitRepo = "Git Repo Viewer"
     }
 
@@ -595,6 +597,10 @@ struct ContentView: View {
                 discoveryPanel
             case .catalog:
                 catalogPanel
+            case .protocolLab:
+                protocolLabPanel
+            case .repoTopology:
+                repoTopologyPanel
             case .gitRepo:
                 gitRepoPanel
         }
@@ -658,6 +664,70 @@ struct ContentView: View {
             }
         }
         .padding(12)
+    }
+
+    var protocolLabPanel: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Protocol Lab").font(.headline)
+            Text("A living legend of the stack in use right now.")
+            protocolChip(title: "Noise", detail: "secure transport")
+            protocolChip(title: "Yamux", detail: "multiplexed streams")
+            protocolChip(title: "mDNS", detail: "LAN peer discovery")
+            protocolChip(title: "KadDHT", detail: "distributed lookup")
+            protocolChip(title: "DCUtR", detail: "relay-assisted hole punching")
+            protocolChip(title: "Git", detail: "repo browsing + history rendering")
+            Text("Peer count: \(model.discoveredPeers.count)")
+            Text("Listen addresses: \(model.listenAddresses.count)")
+            if let firstAddress = model.listenAddresses.first {
+                Text(firstAddress).font(.caption.monospaced())
+            }
+        }
+        .padding(12)
+    }
+
+    var repoTopologyPanel: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Repo Topology").font(.headline)
+            Text("A compact story of what this repo looks like.")
+            Text("Commits loaded: \(model.gitCommits.count)")
+            Text("Remotes configured: \(model.gitRemotes.count)")
+            Text("Staged files: \(model.gitStagedChanges.count)")
+            Text("Unstaged files: \(model.gitUnstagedChanges.count)")
+            if let head = model.gitCommits.first {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("HEAD").font(.caption)
+                    Text("\(head.shortOID) — \(head.summary)")
+                    Text(head.author).font(.caption)
+                }
+            }
+            if !model.gitCommits.isEmpty {
+                let prefix = model.gitCommits.prefix(8)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Recent commits").font(.headline)
+                    ForEach(Array(prefix.enumerated()), id: \.offset) { index, commit in
+                        HStack(alignment: .top, spacing: 8) {
+                            Text("#\(index + 1)").font(.caption.monospaced())
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(commit.shortOID + " " + commit.summary)
+                                Text(commit.refs.isEmpty ? "No refs" : commit.refs.joined(separator: ", "))
+                                    .font(.caption)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .padding(12)
+    }
+
+    func protocolChip(title: String, detail: String) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            Text(title)
+                .font(.body)
+                .fontWeight(.bold)
+                .frame(width: 90, alignment: .leading)
+            Text(detail)
+        }
     }
 
     var gitRepoPanel: some View {
