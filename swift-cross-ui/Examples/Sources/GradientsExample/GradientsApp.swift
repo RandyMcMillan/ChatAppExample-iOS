@@ -207,7 +207,7 @@ struct AngularGradientView: View {
                 AngularGradient(
                     colors: colors,
                     center: .center,
-                    angle: .degrees(90),
+                    angle: .degrees(90)
                 )
                 .frame(width: 300)
 
