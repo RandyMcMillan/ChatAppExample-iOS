@@ -9,6 +9,11 @@ import CryptoKit
 import Foundation
 import LibP2P
 import LibP2PPubSub
+import LibP2PNoise
+import LibP2PYAMUX
+import LibP2PDCUtR
+import LibP2PMDNS
+import LibP2PKadDHT
 import SwiftUI
 import GnostrGit
 #if os(iOS)
@@ -131,7 +136,7 @@ final class P2PService: ObservableObject {
 
         do {
             let payload = try JSONEncoder().encode(announcement)
-            let _ = app.pubsub.publish(topic: Self.repoTopic, data: payload, on: nil)
+            let _ = app.pubsub.publish(payload.byteArray, toTopic: Self.repoTopic)
             log("Broadcast repo: \(announcement.repositoryName) -> \(announcement.cloneURL)")
         } catch {
             lastError = error.localizedDescription
@@ -141,7 +146,7 @@ final class P2PService: ObservableObject {
 
     func clone(announcement: RepoAnnouncement) {
         log("Cloning repo from \(announcement.senderPeerID)")
-        repo.clone(announcement.cloneURL)
+        repository.clone(announcement.cloneURL)
         broadcastCurrentRepo()
     }
 
