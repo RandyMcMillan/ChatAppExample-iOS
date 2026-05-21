@@ -8,6 +8,7 @@
 import CryptoKit
 import Foundation
 import LibP2P
+import LibP2PPubSub
 import SwiftUI
 import GnostrGit
 #if os(iOS)
@@ -46,6 +47,16 @@ func addCredential() {
 }
 let repository = GitRepository(localRepoLocation, credentialManager)
 
+struct RepoAnnouncement: Codable, Identifiable, Hashable {
+    var id: String { "\(senderPeerID)|\(cloneURL)" }
+
+    let senderPeerID: String
+    let cloneURL: String
+    let repositoryName: String
+    let listenAddresses: [String]
+    let timestamp: TimeInterval
+}
+
 @MainActor
 final class P2PService: ObservableObject {
     private enum RuntimeProfile: String {
@@ -67,9 +78,11 @@ final class P2PService: ObservableObject {
     @Published private(set) var state: State = .stopped
     @Published private(set) var lastError: String?
     @Published private(set) var activityLog: [String] = []
+    @Published private(set) var repoAnnouncements: [RepoAnnouncement] = []
 
     private var app: Application?
     private var runTask: Task<Void, Never>?
+    private var announcementSubscription: PubSub.SubscriptionHandler?
 
     let peerID: PeerID
 
@@ -97,8 +110,40 @@ final class P2PService: ObservableObject {
         peerID.b58String
     }
 
+    var currentRepositoryName: String {
+        localRepoLocation.lastPathComponent
+    }
+
     func clearActivityLog() {
         activityLog.removeAll()
+    }
+
+    func broadcastCurrentRepo() {
+        guard let app else { return }
+
+        let announcement = RepoAnnouncement(
+            senderPeerID: peerIDString,
+            cloneURL: remoteRepoLocation,
+            repositoryName: currentRepositoryName,
+            listenAddresses: listenAddresses,
+            timestamp: Date().timeIntervalSince1970
+        )
+
+        do {
+            let payload = try JSONEncoder().encode(announcement)
+            let _ = app.pubsub.publish(topic: Self.repoTopic, data: payload, on: nil)
+            log("Broadcast repo: \(announcement.repositoryName) -> \(announcement.cloneURL)")
+        } catch {
+            lastError = error.localizedDescription
+            log("Error broadcasting repo: \(error.localizedDescription)")
+        }
+    }
+
+    func clone(announcement: RepoAnnouncement) {
+        log("Cloning repo from \(announcement.senderPeerID)")
+        repoAnnouncements.removeAll { $0.id == announcement.id }
+        repoAnnouncements.insert(announcement, at: 0)
+        repoAnnouncements = Array(repoAnnouncements.prefix(10))
     }
 
     func start() {
@@ -110,6 +155,7 @@ final class P2PService: ObservableObject {
 
         let app = Self.makeApplication(peerID: peerID)
         self.app = app
+        self.configurePubSub(app)
 
         app.eventLoopGroup.next().scheduleTask(in: .milliseconds(100)) { [weak self, weak app] in
             guard let self, let app else { return }
@@ -129,6 +175,7 @@ final class P2PService: ObservableObject {
                     self.state = .running
                     self.log("Node is running")
                 }
+                self.broadcastCurrentRepo()
             }
         }
 
@@ -187,6 +234,7 @@ final class P2PService: ObservableObject {
         app.logger.logLevel = .notice
         app.security.use(.noise)
         app.muxers.use(.yamux)
+        app.pubsub.use(.gossipsub(emitSelf: true))
         app.dcutr.use(.dcutr)
         app.discovery.use(.mdns)
         app.discovery.use(.kadDHT)
@@ -247,6 +295,55 @@ final class P2PService: ObservableObject {
         let formatter = Self.timestampFormatter
         activityLog.append("[\(formatter.string(from: Date()))] \(message)")
     }
+
+    private func configurePubSub(_ app: Application) {
+        let subscription = try! app.pubsub.gossipsub.subscribe(
+            .init(
+                topic: Self.repoTopic,
+                signaturePolicy: .strictSign,
+                validator: .acceptAll,
+                messageIDFunc: .concatFromAndSequenceFields
+            )
+        )
+
+        let eventLoop = app.eventLoopGroup.next()
+        subscription.on = { [weak self] event in
+            switch event {
+            case .newPeer(let peer):
+                Task { @MainActor in
+                    self?.log("Repo topic peer: \(peer.b58String)")
+                }
+            case .data(let message):
+                guard let announcement = try? JSONDecoder().decode(RepoAnnouncement.self, from: message.data) else {
+                    Task { @MainActor in
+                        self?.log("Ignored invalid repo announcement")
+                    }
+                    return eventLoop.makeSucceededVoidFuture()
+                }
+
+                Task { @MainActor in
+                    guard announcement.senderPeerID != self?.peerIDString else {
+                        self?.log("Saw own repo broadcast")
+                        return
+                    }
+                    self?.repoAnnouncements.removeAll { $0.id == announcement.id }
+                    self?.repoAnnouncements.insert(announcement, at: 0)
+                    self?.repoAnnouncements = Array((self?.repoAnnouncements ?? []).prefix(10))
+                    self?.log("Discovered repo: \(announcement.repositoryName) from \(announcement.senderPeerID)")
+                }
+            case .error(let error):
+                Task { @MainActor in
+                    self?.lastError = error.localizedDescription
+                    self?.log("Repo topic error: \(error.localizedDescription)")
+                }
+            }
+            return eventLoop.makeSucceededVoidFuture()
+        }
+        self.announcementSubscription = subscription
+        log("Subscribed to repo broadcasts")
+    }
+
+    private static let repoTopic = "mini-git/repo-announcements"
 
     private static let timestampFormatter: DateFormatter = {
         let formatter = DateFormatter()
