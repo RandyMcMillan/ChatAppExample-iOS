@@ -58,7 +58,7 @@ namespace libp2p::common {
     template <class I1, class I2>
     constexpr auto lexicographicalCompareThreeWay(
         I1 f1, I1 l1, I2 f2, I2 l2) {
-      return detail::lexicographicalCompareThreeWay(
+      return lexicographicalCompareThreeWay(
           f1, l1, f2, l2, compare_three_way{});
     }
 #else
