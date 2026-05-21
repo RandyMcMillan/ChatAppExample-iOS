@@ -3,19 +3,19 @@
 import Foundation
 import PackageDescription
 
+let env = ProcessInfo.processInfo.environment
+
 var exampleDependencies: [Target.Dependency] = [
     .product(name: "SwiftCrossUI", package: "swift-cross-ui"),
     .product(name: "DefaultBackend", package: "swift-cross-ui"),
 ]
 var hotReloadingDependencies: [Package.Dependency] = []
+let hotReloadingEnabled = env["SWIFT_BUNDLER_HOT_RELOADING"] == "1"
 
-// The Swift Bundler runtime requires Swift >=6.0
 #if compiler(>=6.0)
+if hotReloadingEnabled {
     hotReloadingDependencies = [
-        .package(
-            url: "https://github.com/moreSwift/swift-bundler",
-            revision: "6527cb29084f79cb4d2300f98acd7c057abb4a67"
-        )
+        .package(name: "swift-bundler", path: "../../swift-bundler")
     ]
     exampleDependencies.append(
         .product(
@@ -24,6 +24,7 @@ var hotReloadingDependencies: [Package.Dependency] = []
             condition: .when(platforms: [.macOS, .linux])
         )
     )
+}
 #endif
 
 let package = Package(
