@@ -129,6 +129,7 @@ final class P2PDemoViewModel {
         runtimeProfile = Self.runtimeProfile.rawValue
         listenPort = Self.listenPort
         peerID = Self.makePeerID(for: Self.runtimeProfile)
+        refreshGitRepository()
     }
 
     var peerIDString: String {
@@ -238,6 +239,31 @@ final class P2PDemoViewModel {
         log("Ping: \(draftMessage)")
     }
 
+    func useWorkspaceRepositoryRoot() {
+        gitRepositoryPath = Self.defaultRepositoryPath()
+        refreshGitRepository()
+    }
+
+    func refreshGitRepository() {
+        gitRefreshTask?.cancel()
+        let path = gitRepositoryPath
+        let selectedCommitOID = gitSelectedCommitOID
+        gitIsLoading = true
+        gitLastError = nil
+
+        gitRefreshTask = Task.detached(priority: .background) { [path, selectedCommitOID] in
+            let snapshot = Self.loadGitSnapshot(path: path, selectedCommitOID: selectedCommitOID)
+            await MainActor.run { [weak self] in
+                self?.applyGitSnapshot(snapshot)
+            }
+        }
+    }
+
+    func selectGitCommit(_ oid: String) {
+        gitSelectedCommitOID = oid
+        refreshGitRepository()
+    }
+
     private func recordDiscoveredPeer(peerID: String, addresses: [String]) {
         let peer = PeerSummary(peerID: peerID, addresses: addresses)
         if !discoveredPeers.contains(peer) {
@@ -249,6 +275,144 @@ final class P2PDemoViewModel {
     private func log(_ message: String) {
         let formatter = Self.timestampFormatter
         activityLog.append("[\(formatter.string(from: Date()))] \(message)")
+    }
+
+    private func applyGitSnapshot(_ snapshot: GitRepoSnapshot) {
+        gitIsLoading = false
+        gitHasRepository = snapshot.exists
+        gitCurrentBranch = snapshot.currentBranch
+        gitRepositoryState = snapshot.repositoryState
+        gitRemotes = snapshot.remotes
+        gitCommits = snapshot.commits
+        gitStagedChanges = snapshot.stagedChanges
+        gitUnstagedChanges = snapshot.unstagedChanges
+        gitLastRefreshed = snapshot.refreshedAt
+        gitLastError = snapshot.error
+
+        if gitSelectedCommitOID == nil {
+            gitSelectedCommitOID = snapshot.selectedCommit?.oid
+        }
+
+        if let selectedCommit = gitSelectedCommitOID {
+            if let commit = snapshot.commits.first(where: { $0.oid == selectedCommit }) {
+                gitSelectedCommitOID = commit.oid
+            } else {
+                gitSelectedCommitOID = snapshot.selectedCommit?.oid
+            }
+        }
+
+        gitSelectedCommitDiff = snapshot.selectedCommitDiff
+        if !snapshot.exists {
+            gitCommits = []
+            gitStagedChanges = []
+            gitUnstagedChanges = []
+            gitSelectedCommitDiff = []
+        }
+    }
+
+    private static func loadGitSnapshot(path: String, selectedCommitOID: String?) -> GitRepoSnapshot {
+        let url = URL(fileURLWithPath: path, isDirectory: true)
+        let credentialsURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("swift-cross-ui-p2p-git-credentials.json")
+        let credentialManager = CredentialsManager(credentialsFileUrl: credentialsURL)
+        let repository = GitRepository(url, credentialManager)
+        repository.open()
+
+        guard repository.hasRepo else {
+            return GitRepoSnapshot(
+                path: path,
+                exists: false,
+                currentBranch: "",
+                repositoryState: "No repository",
+                remotes: [],
+                commits: [],
+                stagedChanges: [],
+                unstagedChanges: [],
+                selectedCommit: nil,
+                selectedCommitDiff: [],
+                refreshedAt: Self.timestampFormatter.string(from: Date()),
+                error: "No git repository found at \(path)"
+            )
+        }
+
+        repository.updateStatus()
+        repository.updateCommitGraph()
+
+        let commits = repository.commitGraph.commits.prefix(30).map { commit in
+            Self.makeCommitSnapshot(commit)
+        }
+        let selectedCommit = commits.first(where: { $0.oid == selectedCommitOID }) ?? commits.first
+        let staged = Self.makeDiffSnapshots(repository.status.stagedChanges)
+        let unstaged = Self.makeDiffSnapshots(repository.status.unstagedChanges)
+        let remotes = repository.getRemotes().map {
+            GitRemoteSnapshot(name: $0.name, url: $0.url)
+        }
+
+        var selectedCommitDiff: [GitFileSnapshot] = []
+        if let selectedCommit,
+           let sourceCommit = repository.commitGraph.commits.first(where: {
+               $0.oid.description() == selectedCommit.oid
+           }),
+           let parent = sourceCommit.parents.first {
+            let diffReceiver = GitDiff()
+            repository.diff(parent, sourceCommit, diffReceiver)
+            selectedCommitDiff = Self.makeDiffSnapshots(diffReceiver)
+        }
+
+        return GitRepoSnapshot(
+            path: path,
+            exists: true,
+            currentBranch: repository.status.currentBranch,
+            repositoryState: String(describing: repository.status.state),
+            remotes: remotes,
+            commits: commits,
+            stagedChanges: staged,
+            unstagedChanges: unstaged,
+            selectedCommit: selectedCommit,
+            selectedCommitDiff: selectedCommitDiff,
+            refreshedAt: Self.timestampFormatter.string(from: Date()),
+            error: nil
+        )
+    }
+
+    private static func makeCommitSnapshot(_ commit: GitCommit) -> GitCommitSnapshot {
+        GitCommitSnapshot(
+            oid: commit.oid.description(),
+            shortOID: commit.oid.shortDescription,
+            summary: commit.summary,
+            author: "\(commit.author.name) <\(commit.author.email)>",
+            time: Self.commitDateFormatter.string(from: commit.time),
+            refs: commit.refs.map(\.shorthand)
+        )
+    }
+
+    private static func makeDiffSnapshots(_ diffReceiver: GitDiff) -> [GitFileSnapshot] {
+        diffReceiver.changes.deltas.map { delta in
+            GitFileSnapshot(
+                path: delta.path,
+                hunks: delta.hunks.map { hunk in
+                    GitHunkSnapshot(
+                        header: hunk.header,
+                        lines: hunk.lines.map {
+                            GitLineSnapshot(kind: $0.kind, text: $0.textTrimmed)
+                        }
+                    )
+                }
+            )
+        }
+    }
+
+    private static func defaultRepositoryPath() -> String {
+        let cwd = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+        let candidates = [cwd, cwd.deletingLastPathComponent()]
+        for candidate in candidates {
+            if FileManager.default.fileExists(
+                atPath: candidate.appendingPathComponent(".git").path
+            ) {
+                return candidate.path
+            }
+        }
+        return cwd.path
     }
 
     private static func makeApplication(peerID: PeerID) -> Application {
@@ -315,6 +479,12 @@ final class P2PDemoViewModel {
     private static let timestampFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm:ss"
+        return formatter
+    }()
+
+    private static let commitDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
         return formatter
     }()
 
