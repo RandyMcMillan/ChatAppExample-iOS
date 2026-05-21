@@ -7,11 +7,12 @@
 #pragma once
 
 #include <array>
+#include <algorithm>
 #include <compare>
 #include <cstdint>
-#include <functional>
 #include <span>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 namespace libp2p::common {
