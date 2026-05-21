@@ -109,7 +109,7 @@ final class P2PDemoViewModel {
     var activityLog: [String] = []
     var lastError: String?
     var draftMessage = "Hello from SwiftCrossUI P2P"
-    var gitRepositoryPath = Self.defaultRepositoryPath()
+    var gitRepositoryPath = ""
     var gitIsLoading = false
     var gitHasRepository = false
     var gitCurrentBranch = ""
@@ -135,6 +135,7 @@ final class P2PDemoViewModel {
         runtimeProfile = Self.runtimeProfile.rawValue
         listenPort = Self.listenPort
         peerID = Self.makePeerID(for: Self.runtimeProfile)
+        gitRepositoryPath = Self.defaultRepositoryPath()
         refreshGitRepository()
     }
 
