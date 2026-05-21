@@ -250,6 +250,9 @@ function build_openssl() {
 	local work_dir="$BUILD_ROOT/$PLATFORM/openssl-3.0.4"
 	local source_dir="$work_dir/source"
 
+	if [ $FORCE -eq 1 ]; then
+		rm -rf "$work_dir"
+	fi
 	mkdir -p "$work_dir"
 	if [ ! -d "$source_dir" ]; then
 		cp -R "$PROJECT_ROOT/openssl-3.0.4" "$source_dir"
