@@ -30,9 +30,6 @@ let package = Package(
                 .product(name: "Clibgit2", package: "libgit2-ios"),
             ],
             exclude: ["internal"],
-            cxxSettings: [
-                .unsafeFlags(["-fmodules", "-fcxx-modules"]),
-            ],
             linkerSettings: [
                 .linkedLibrary("z"),
                 .linkedLibrary("iconv"),
