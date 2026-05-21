@@ -12,6 +12,7 @@
 #include <libp2p/multi/multiaddress.hpp>
 #include <libp2p/outcome/outcome.hpp>
 #include <libp2p/peer/peer_id.hpp>
+#include <array>
 #include <memory>
 #include <optional>
 
