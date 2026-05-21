@@ -10,11 +10,10 @@
 #include <boost/asio/ip/udp.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <libp2p/multi/multiaddress.hpp>
+#include <libp2p/outcome/outcome.hpp>
 #include <libp2p/peer/peer_id.hpp>
 #include <memory>
 #include <optional>
-#include <qtils/bytes.hpp>
-#include <qtils/outcome.hpp>
 
 namespace boost::asio {
   class io_context;
@@ -137,7 +136,7 @@ namespace libp2p::transport::lsquic {
     std::optional<Connecting> connecting_;
     struct Reading {
       static constexpr size_t kMaxUdpPacketSize = 64 << 10;
-      qtils::BytesN<kMaxUdpPacketSize> buf;
+      std::array<uint8_t, kMaxUdpPacketSize> buf;
       boost::asio::ip::udp::endpoint remote;
     };
     Reading reading_;
