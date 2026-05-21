@@ -11,6 +11,7 @@ import SwiftCrossUI
 
 #if os(iOS) || targetEnvironment(macCatalyst)
     import GnostrGit
+    import XGit
 #endif
 
 #if os(iOS)
