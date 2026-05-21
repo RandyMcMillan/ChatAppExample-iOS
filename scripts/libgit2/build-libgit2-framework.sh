@@ -247,10 +247,14 @@ function build_openssl() {
 	ensure_tarball openssl-3.0.4.tar.gz https://www.openssl.org/source/openssl-3.0.4.tar.gz
 	verify_sha256 openssl-3.0.4.tar.gz.sha256 openssl-3.0.4.tar.gz
 	ensure_unpacked_tarball openssl-3.0.4 openssl-3.0.4.tar.gz https://www.openssl.org/source/openssl-3.0.4.tar.gz
-	cd openssl-3.0.4
-	if [ -f Makefile ]; then
-		run_cmd make distclean
+	local work_dir="$BUILD_ROOT/$PLATFORM/openssl-3.0.4"
+	local source_dir="$work_dir/source"
+
+	mkdir -p "$work_dir"
+	if [ ! -d "$source_dir" ]; then
+		cp -R "$PROJECT_ROOT/openssl-3.0.4" "$source_dir"
 	fi
+	cd "$source_dir"
 
 	case $PLATFORM in
 		"iphoneos")
