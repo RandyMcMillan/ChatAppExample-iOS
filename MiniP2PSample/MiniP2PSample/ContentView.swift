@@ -23,7 +23,7 @@ final class P2PService: ObservableObject {
         case madeForiPad
     }
 
-    private enum State: String {
+    enum State: String {
         case stopped
         case starting
         case running
@@ -37,7 +37,11 @@ final class P2PService: ObservableObject {
     private var app: Application?
     private var runTask: Task<Void, Never>?
 
-    let peerID: PeerID = Self.makePeerID(for: Self.runtimeProfile)
+    let peerID: PeerID
+
+    init() {
+        peerID = Self.makePeerID(for: Self.runtimeProfile)
+    }
 
     var runtimeProfile: String {
         Self.runtimeProfile.rawValue
