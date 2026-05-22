@@ -8,20 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		4B6C6EB82FBE6B34008C157D /* LibP2P in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCC72FBE429400B507EE /* LibP2P */; };
-		B701035627CD0B6900D43034 /* MiniP2PSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035527CD0B6900D43034 /* MiniP2PSampleApp.swift */; };
+		B701035627CD0B6900D43034 /* GnostrP2PKitchenSinkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035527CD0B6900D43034 /* GnostrP2PKitchenSinkApp.swift */; };
 		B701035827CD0B6900D43034 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035727CD0B6900D43034 /* ContentView.swift */; };
 		B701035A27CD0B6B00D43034 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B701035927CD0B6B00D43034 /* Assets.xcassets */; };
 		B701035D27CD0B6B00D43034 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B701035C27CD0B6B00D43034 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B701035227CD0B6900D43034 /* MiniP2PSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MiniP2PSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B701035527CD0B6900D43034 /* MiniP2PSampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniP2PSampleApp.swift; sourceTree = "<group>"; };
+		B701035227CD0B6900D43034 /* GnostrP2PKitchenSink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GnostrP2PKitchenSink.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B701035527CD0B6900D43034 /* GnostrP2PKitchenSinkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GnostrP2PKitchenSinkApp.swift; sourceTree = "<group>"; };
 		B701035727CD0B6900D43034 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B701035927CD0B6B00D43034 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B701035C27CD0B6B00D43034 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B701036327CD0C0000D43034 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
-		B701036427CD0C6800D43034 /* MiniP2PSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MiniP2PSample.entitlements; sourceTree = "<group>"; };
+		B701036427CD0C6800D43034 /* GnostrP2PKitchenSink.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GnostrP2PKitchenSink.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,7 +39,7 @@
 		B701034927CD0B6900D43034 = {
 			isa = PBXGroup;
 			children = (
-				B701035427CD0B6900D43034 /* MiniP2PSample */,
+				B701035427CD0B6900D43034 /* GnostrP2PKitchenSink */,
 				B701035327CD0B6900D43034 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -47,22 +47,22 @@
 		B701035327CD0B6900D43034 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B701035227CD0B6900D43034 /* MiniP2PSample.app */,
+				B701035227CD0B6900D43034 /* GnostrP2PKitchenSink.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B701035427CD0B6900D43034 /* MiniP2PSample */ = {
+		B701035427CD0B6900D43034 /* GnostrP2PKitchenSink */ = {
 			isa = PBXGroup;
 			children = (
-				B701036427CD0C6800D43034 /* MiniP2PSample.entitlements */,
+				B701036427CD0C6800D43034 /* GnostrP2PKitchenSink.entitlements */,
 				B701036327CD0C0000D43034 /* README.md */,
-				B701035527CD0B6900D43034 /* MiniP2PSampleApp.swift */,
+				B701035527CD0B6900D43034 /* GnostrP2PKitchenSinkApp.swift */,
 				B701035727CD0B6900D43034 /* ContentView.swift */,
 				B701035927CD0B6B00D43034 /* Assets.xcassets */,
 				B701035B27CD0B6B00D43034 /* Preview Content */,
 			);
-			path = MiniP2PSample;
+			path = GnostrP2PKitchenSink;
 			sourceTree = "<group>";
 		};
 		B701035B27CD0B6B00D43034 /* Preview Content */ = {
@@ -76,9 +76,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B701035127CD0B6900D43034 /* MiniP2PSample */ = {
+		B701035127CD0B6900D43034 /* GnostrP2PKitchenSink */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B701036027CD0B6B00D43034 /* Build configuration list for PBXNativeTarget "MiniP2PSample" */;
+			buildConfigurationList = B701036027CD0B6B00D43034 /* Build configuration list for PBXNativeTarget "GnostrP2PKitchenSink" */;
 			buildPhases = (
 				B701034E27CD0B6900D43034 /* Sources */,
 				B701034F27CD0B6900D43034 /* Frameworks */,
@@ -88,12 +88,12 @@
 			);
 			dependencies = (
 			);
-			name = MiniP2PSample;
+			name = GnostrP2PKitchenSink;
 			packageProductDependencies = (
 				4BA7DCC72FBE429400B507EE /* LibP2P */,
 			);
-			productName = MiniP2PSample;
-			productReference = B701035227CD0B6900D43034 /* MiniP2PSample.app */;
+			productName = GnostrP2PKitchenSink;
+			productReference = B701035227CD0B6900D43034 /* GnostrP2PKitchenSink.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -111,7 +111,7 @@
 					};
 				};
 			};
-			buildConfigurationList = B701034D27CD0B6900D43034 /* Build configuration list for PBXProject "MiniP2PSample" */;
+			buildConfigurationList = B701034D27CD0B6900D43034 /* Build configuration list for PBXProject "GnostrP2PKitchenSink" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -127,7 +127,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B701035127CD0B6900D43034 /* MiniP2PSample */,
+				B701035127CD0B6900D43034 /* GnostrP2PKitchenSink */,
 			);
 		};
 /* End PBXProject section */
@@ -150,7 +150,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B701035827CD0B6900D43034 /* ContentView.swift in Sources */,
-				B701035627CD0B6900D43034 /* MiniP2PSampleApp.swift in Sources */,
+				B701035627CD0B6900D43034 /* GnostrP2PKitchenSinkApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,11 +278,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = MiniP2PSample/MiniP2PSample.entitlements;
+				CODE_SIGN_ENTITLEMENTS = GnostrP2PKitchenSink/GnostrP2PKitchenSink.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"MiniP2PSample/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"GnostrP2PKitchenSink/Preview Content\"";
 				DEVELOPMENT_TEAM = M684FYCYG6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -296,7 +296,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.gnostr.MiniP2PSample;
+				PRODUCT_BUNDLE_IDENTIFIER = org.gnostr.GnostrP2PKitchenSink;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -312,11 +312,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = MiniP2PSample/MiniP2PSample.entitlements;
+				CODE_SIGN_ENTITLEMENTS = GnostrP2PKitchenSink/GnostrP2PKitchenSink.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"MiniP2PSample/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"GnostrP2PKitchenSink/Preview Content\"";
 				DEVELOPMENT_TEAM = M684FYCYG6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -330,7 +330,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.gnostr.MiniP2PSample;
+				PRODUCT_BUNDLE_IDENTIFIER = org.gnostr.GnostrP2PKitchenSink;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -344,7 +344,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B701034D27CD0B6900D43034 /* Build configuration list for PBXProject "MiniP2PSample" */ = {
+		B701034D27CD0B6900D43034 /* Build configuration list for PBXProject "GnostrP2PKitchenSink" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B701035E27CD0B6B00D43034 /* Debug */,
@@ -353,7 +353,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B701036027CD0B6B00D43034 /* Build configuration list for PBXNativeTarget "MiniP2PSample" */ = {
+		B701036027CD0B6B00D43034 /* Build configuration list for PBXNativeTarget "GnostrP2PKitchenSink" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B701036127CD0B6B00D43034 /* Debug */,
