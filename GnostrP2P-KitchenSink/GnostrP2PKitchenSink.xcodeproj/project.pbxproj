@@ -115,9 +115,6 @@
 				Base,
 			);
 			mainGroup = B701034927CD0B6900D43034;
-			packageReferences = (
-				4BADD9422FBE6FD500CA0051 /* XCLocalSwiftPackageReference "../swift-libp2p" */,
-			);
 			productRefGroup = B701035327CD0B6900D43034 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
