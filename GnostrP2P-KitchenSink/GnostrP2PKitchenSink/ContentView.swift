@@ -8,6 +8,7 @@ import SwiftUI
 
 enum KitchenSinkTab: String, CaseIterable, Hashable {
     case overview = "Overview"
+    case p2p = "P2P"
     case controls = "Controls"
     case lists = "Lists"
     case presentation = "Presentation"
@@ -103,12 +104,17 @@ final class KitchenSinkViewModel: ObservableObject {
 
 struct ContentView: View {
     @StateObject private var model = KitchenSinkViewModel()
+    @StateObject private var p2p = P2PService()
 
     var body: some View {
         TabView(selection: $model.selectedTab) {
             overviewTab
                 .tabItem { Label("Overview", systemImage: "house") }
                 .tag(KitchenSinkTab.overview)
+
+            p2pTab
+                .tabItem { Label("P2P", systemImage: "network") }
+                .tag(KitchenSinkTab.p2p)
 
             controlsTab
                 .tabItem { Label("Controls", systemImage: "slider.horizontal.3") }
@@ -165,6 +171,7 @@ struct ContentView: View {
                         statRow(label: "Counter", value: "\(model.counter)")
                         statRow(label: "Mode", value: model.favoriteMode)
                         statRow(label: "Items", value: "\(model.items.count)")
+                        statRow(label: "P2P state", value: p2pStateLabel)
                     }
                 }
 
@@ -175,6 +182,99 @@ struct ContentView: View {
                         TextEditor(text: $model.notes)
                             .frame(minHeight: 140)
                             .overlay(RoundedRectangle(cornerRadius: 8).stroke(.quaternary))
+                    }
+                }
+            }
+            .padding(16)
+        }
+    }
+
+    private var p2pTab: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                titleBlock(
+                    title: "P2P",
+                    subtitle: "Start a libp2p node, discover peers, and inspect listen addresses."
+                )
+
+                GroupBox {
+                    VStack(alignment: .leading, spacing: 10) {
+                        statRow(label: "Runtime profile", value: p2p.runtimeProfile)
+                        statRow(label: "Peer ID", value: p2p.peerIDString)
+                            .textSelection(.enabled)
+                        statRow(label: "Listen port", value: "\(p2p.listenPort)")
+                        statRow(label: "State", value: p2pStateLabel)
+
+                        HStack {
+                            Button("Start node") { p2p.start() }
+                            Button("Stop node") { p2p.stop() }
+                                .disabled(!p2p.isRunning)
+                            Button("Restart") { p2p.restart() }
+                        }
+
+                        HStack {
+                            TextField(
+                                "Ping message",
+                                text: Binding(
+                                    get: { p2p.draftMessage },
+                                    set: { p2p.draftMessage = $0 }
+                                )
+                            )
+                            Button("Queue ping") { p2p.sendLocalPing() }
+                        }
+                    }
+                }
+
+                GroupBox {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Listen addresses")
+                            .font(.headline)
+                        if p2p.listenAddresses.isEmpty {
+                            Text("Start the node to populate listen addresses.")
+                        }
+                        ForEach(p2p.listenAddresses, id: \.self) { address in
+                            Text(address)
+                                .font(.caption.monospaced())
+                        }
+                    }
+                }
+
+                GroupBox {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Discovered peers")
+                            .font(.headline)
+                        if p2p.discoveredPeers.isEmpty {
+                            Text("No peers discovered yet.")
+                        }
+                        ForEach(p2p.discoveredPeers) { peer in
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(peer.peerID)
+                                    .font(.caption.monospaced())
+                                ForEach(peer.addresses, id: \.self) { address in
+                                    Text(address)
+                                        .font(.caption)
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                }
+
+                GroupBox {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Activity")
+                            .font(.headline)
+                        if let lastError = p2p.lastError {
+                            Text("Last error: \(lastError)")
+                                .foregroundStyle(.red)
+                        }
+                        Button("Clear") {
+                            p2p.clearActivityLog()
+                        }
+                        ForEach(p2p.activityLog, id: \.self) { line in
+                            Text(line)
+                                .font(.caption.monospaced())
+                        }
                     }
                 }
             }
@@ -371,6 +471,10 @@ struct ContentView: View {
             Spacer()
             Text(value)
         }
+    }
+
+    private var p2pStateLabel: String {
+        p2p.state.rawValue.capitalized
     }
 }
 

@@ -72,6 +72,10 @@ final class P2PService: ObservableObject {
         state == .running
     }
 
+    func clearActivityLog() {
+        activityLog.removeAll()
+    }
+
     func start() {
         guard runTask == nil else { return }
 
