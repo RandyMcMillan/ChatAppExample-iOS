@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4B6C6EB82FBE6B34008C157D /* LibP2P in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA7DCC72FBE429400B507EE /* LibP2P */; };
 		B701035627CD0B6900D43034 /* GnostrP2PKitchenSinkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035527CD0B6900D43034 /* GnostrP2PKitchenSinkApp.swift */; };
 		B701035827CD0B6900D43034 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B701035727CD0B6900D43034 /* ContentView.swift */; };
 		B701035A27CD0B6B00D43034 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B701035927CD0B6B00D43034 /* Assets.xcassets */; };
@@ -29,7 +28,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B6C6EB82FBE6B34008C157D /* LibP2P in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,9 +87,6 @@
 			dependencies = (
 			);
 			name = GnostrP2PKitchenSink;
-			packageProductDependencies = (
-				4BA7DCC72FBE429400B507EE /* LibP2P */,
-			);
 			productName = GnostrP2PKitchenSink;
 			productReference = B701035227CD0B6900D43034 /* GnostrP2PKitchenSink.app */;
 			productType = "com.apple.product-type.application";
@@ -300,7 +295,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -334,7 +329,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -364,20 +359,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		4BADD9422FBE6FD500CA0051 /* XCLocalSwiftPackageReference "../LibP2P-iOS" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../swift-libp2p";
-		};
-/* End XCLocalSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		4BA7DCC72FBE429400B507EE /* LibP2P */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4BADD9422FBE6FD500CA0051 /* XCLocalSwiftPackageReference "../LibP2P-iOS" */;
-			productName = LibP2P;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B701034A27CD0B6900D43034 /* Project object */;
 }
