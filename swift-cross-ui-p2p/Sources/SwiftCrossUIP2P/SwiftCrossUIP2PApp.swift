@@ -342,15 +342,26 @@ final class P2PDemoViewModel {
     }
 
     private static func defaultRepositoryPath() -> String {
+        let fileRoot = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
         let cwd = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-        let candidates = [cwd, cwd.deletingLastPathComponent()]
-        for candidate in candidates {
-            if FileManager.default.fileExists(
-                atPath: candidate.appendingPathComponent(".git").path
-            ) {
-                return candidate.path
+
+        for start in [fileRoot, cwd] {
+            var candidate = start
+            while true {
+                if FileManager.default.fileExists(atPath: candidate.appendingPathComponent(".git").path) {
+                    return candidate.path
+                }
+
+                let parent = candidate.deletingLastPathComponent()
+                if parent.path == candidate.path {
+                    break
+                }
+                candidate = parent
             }
         }
+
         return cwd.path
     }
 
