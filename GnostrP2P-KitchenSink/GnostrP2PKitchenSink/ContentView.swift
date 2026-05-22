@@ -285,7 +285,7 @@ struct ContentView: View {
                 Spacer()
                 if model.selectedItem == item {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.accent)
+                        .foregroundStyle(.tint)
                 }
             }
         }
