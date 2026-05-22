@@ -163,7 +163,7 @@ final class P2PDemoViewModel {
         app.discovery.onPeerDiscovered(app) { [weak self] peer in
             let peerID = peer.peer.b58String
             let addresses = peer.addresses.map(\.description)
-            Task { @MainActor in
+            DispatchQueue.main.async { [weak self] in
                 self?.recordDiscoveredPeer(
                     peerID: peerID,
                     addresses: addresses
