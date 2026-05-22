@@ -121,6 +121,10 @@ let package = Package(
         .executableTarget(
             name: "TapGesturesExample",
             dependencies: exampleDependencies
+        ),
+        .executableTarget(
+            name: "DesktopExample",
+            dependencies: exampleDependencies
         )
     ]
 )
