@@ -11,6 +11,5 @@ struct GnostrP2PKitchenSinkApp: App {
         WindowGroup("GnostrP2P Kitchen Sink") {
             ContentView()
         }
-        .defaultSize(width: 1100, height: 780)
     }
 }
