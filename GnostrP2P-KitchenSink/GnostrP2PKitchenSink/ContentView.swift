@@ -235,51 +235,69 @@ struct ContentView: View {
                     subtitle: "Add, select, and remove items."
                 )
 
-                GroupBox {
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            TextField("New item", text: $model.newItemText)
-                            Button("Add") { model.addItem() }
-                        }
-
-                        Picker("Selected item", selection: $model.selectedItem) {
-                            Text("None").tag(String?.none)
-                            ForEach(model.items, id: \.self) { item in
-                                Text(item).tag(Optional(item))
-                            }
-                        }
-
-                        List {
-                            ForEach(model.items, id: \.self) { item in
-                                Button {
-                                    model.selectedItem = item
-                                    model.log("Selected \(item)")
-                                } label: {
-                                    HStack {
-                                        Text(item)
-                                        Spacer()
-                                        if model.selectedItem == item {
-                                            Image(systemName: "checkmark.circle.fill")
-                                                .foregroundStyle(.accent)
-                                        }
-                                    }
-                                }
-                            }
-                            .onDelete { offsets in
-                                for index in offsets.sorted(by: >) {
-                                    let removed = model.items[index]
-                                    model.items.remove(at: index)
-                                    model.log("Deleted \(removed)")
-                                }
-                                model.selectedItem = model.items.first
-                            }
-                        }
-                        .frame(minHeight: 240)
-                    }
-                }
+                listsPanel
             }
             .padding(16)
         }
+    }
+
+    private var listsPanel: some View {
+        GroupBox {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    TextField("New item", text: $model.newItemText)
+                    Button("Add") { model.addItem() }
+                }
+
+                selectedItemPicker
+                itemList
+            }
+        }
+    }
+
+    private var selectedItemPicker: some View {
+        Picker("Selected item", selection: $model.selectedItem) {
+            Text("None").tag(String?.none)
+            ForEach(model.items, id: \.self) { item in
+                Text(item).tag(Optional(item))
+            }
+        }
+    }
+
+    private var itemList: some View {
+        List {
+            ForEach(model.items, id: \.self) { item in
+                itemRow(item)
+            }
+            .onDelete(perform: deleteItems)
+        }
+        .frame(minHeight: 240)
+    }
+
+    @ViewBuilder
+    private func itemRow(_ item: String) -> some View {
+        Button {
+            model.selectedItem = item
+            model.log("Selected \(item)")
+        } label: {
+            HStack {
+                Text(item)
+                Spacer()
+                if model.selectedItem == item {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.accent)
+                }
+            }
+        }
+    }
+
+    private func deleteItems(at offsets: IndexSet) {
+        for index in offsets.sorted(by: >) {
+            let removed = model.items[index]
+            model.items.remove(at: index)
+            model.log("Deleted \(removed)")
+        }
+        model.selectedItem = model.items.first
     }
 
     private var presentationTab: some View {
